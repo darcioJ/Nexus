@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    /* Ambiente de Execução (Node.js 2026) */
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ESNext"],
+    "types": ["node"], // Garante que o process seja reconhecido
+
+    /* Layout de Arquivos */
+    "rootDir": "./",                             // Mudamos para a raiz para incluir configs
+    "outDir": "./dist",
+    "baseUrl": ".",
+
+    /* Configurações de Saída */
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    /* Rigor Tático (Strictness) */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleDetection": "force"
+  },
+  /* INCLUSÃO: Aqui está o segredo */
+  "include": [
+    "src/**/*",                                  // Monitora o código fonte
+    "prisma.config.ts",                          // Monitora a config do Prisma na raiz
+    ".env"                                       // Opcional: ajuda em algumas extensões
+  ],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}

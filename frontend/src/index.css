@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+:root {
+
+  --color-admin-panel: #6366f1;
+
+  /* --- ELEMENTAIS: Energias de Ponto Zero --- */
+  --color-fogo: #ff3d00;
+  /* Solar Flare: Um laranja que queima com branco no núcleo */
+  --color-gelo: #7dd3fc;
+  /* Glacial Ether: Ciano pálido, como nitrogênio líquido */
+  --color-raio: #facc15;
+  /* Kinetic Gold: Amarelo denso de condutividade máxima */
+
+  /* --- CORRUPTORAS: Antimatéria e Entropia --- */
+  --color-veneno: #d946ef;
+  /* Viral Orchid: Um magent tóxico que parece brilhar no escuro */
+  --color-sombra: #0f172a;
+  /* Abyssal Slate: O azul tão escuro que a luz se perde nele */
+  --color-caos: #4f46e5;
+  /* Warp Indigo: A cor da dobra espacial, instável e profunda */
+
+  /* --- ESPIRITUAIS: Frequências da Alma (Contraste de Interface Clara) --- */
+  --color-bencao: #b45309;
+  /* Sacred Amber: Dourado denso que emana aura sem sumir na cerâmica branca */
+  --color-vital: #059669;
+  /* Jade Protocol: Verde regenerativo com saturação técnica para legibilidade total */
+  --color-lumen: #0284c7;
+  /* Plasma Sky: Um azul etéreo de alta visibilidade que simula luz pura sobre o fundo */
+
+  /* --- SISTEMA: Resposta de Hardware --- */
+  --color-sangue: #be123c;
+  /* Internal Alert: Vermelho profundo de hemoglobina digital */
+  --color-neutro: #94a3b8;
+  /* Alloy Grey: Alumínio escovado para frames passivos */
+
+  /* --- 01. IDENTITY: Virtual Sapphire (O Início do Link) --- */
+  /* Um azul elétrico profundo que representa a mente despertando na rede */
+  --color-step-identity: #3b82f6;
+  --color-step-identity-soft: #eff6ff;
+
+  /* --- 02. BACKGROUND: Copper Catalyst (A Memória da Terra) --- */
+  /* Um bronze industrial que evoca a fundação e a história do personagem */
+  --color-step-background: #d97706;
+  --color-step-background-soft: #fffbeb;
+
+  /* --- 02.1. KITS: Carbon Graphite (A Ferramenta do Operador) --- */
+  /* Tons de metal forjado e grafite para representar a durabilidade dos itens */
+  --color-step-kits: #475569;
+  --color-step-kits-soft: #f8fafc;
+
+  /* --- 03. ATTRIBUTES: Overclocked Emerald (O Poder do Processamento) --- */
+  /* Verde Matrix saturado para sinalizar que os sistemas internos estão no ápice */
+  --color-step-attributes: #10b981;
+  --color-step-attributes-soft: #ecfdf5;
+
+  /* --- 04. WEAPONS: Supernova Ember (A Fricção do Combate) --- */
+  /* Um vermelho alaranjado vulcânico. Representa o metal derretido e a agressão */
+  --color-step-weapons: #f97316;
+  --color-step-weapons-soft: #fff7ed;
+
+  /* --- 05. REVIEW: Liquid Mercury (A Sincronia Estável) --- */
+  /* Cinza prateado de alta refletividade. O estado final de perfeição fria */
+  --color-step-review: #64748b;
+  --color-step-review-soft: #f1f5f9;
+
+  /* --- ATRIBUTOS: THE REFRACTION CORE --- */
+  --color-strength: #ef4444;
+  /* Kinetic Red */
+  --color-agility: #06b6d4;
+  /* Velocity Teal */
+  --color-vitality: #84cc16;
+  /* Bio-Lime */
+  --color-intelligence: #8b5cf6;
+  /* Neural Violet */
+  --color-perception: #f59e0b;
+  /* Amber Vision */
+  --color-essence: #ec4899;
+  /* Soul Rose */
+
+  /* --- STATUS: THE BIO-TELEMETRY --- */
+  --nexus-hp: #dc2626;
+  /* Vital Core */
+  --nexus-san: #2563eb;
+  /* Logic Stream */
+  --nexus-soul: #a855f7;
+  /* Spirit Flow */
+
+  /* --- UTILITY --- */
+  --nexus-full: #1e293b;
+  /* Onyx Finish */
+
+  /* --- 07. STATUS: THE CONDITION MATRIX (Mapeamento Total) --- */
+
+  /* [ELEMENTAL] */
+  --status-queimado: var(--color-fogo);
+  --status-congelado: var(--color-gelo);
+  --status-paralisado: var(--color-raio);
+
+  /* [CORRUPTOR] */
+  --status-envenenado: var(--color-veneno);
+  --status-assombrado: var(--color-sombra);
+  --status-caotico: var(--color-caos);
+  --status-insano: #2e004f;
+  /* Deep Obsidiana */
+
+  /* [ESPIRITUAL] */
+  --status-abencoado: var(--color-bencao);
+  --status-revigorado: var(--color-vital);
+  --status-desorientado: #a5b4fc;
+  /* Lavanda Eon */
+
+  /* [UNIVERSAL/ALERTA] */
+  --status-sangrando: #ff003c;
+  /* Arterial Red */
+  --status-descontrolado: #f97316;
+  /* Overdrive Orange */
+  --status-estabilizado: #94a3b8;
+  /* Sync Clear */
+}
+
+@theme {
+
+  --color-admin-panel: var(--color-admin-panel)
+
+  --color-fogo: var(--color-fogo);
+  --color-gelo: var(--color-gelo);
+  --color-raio: var(--color-raio);
+  --color-veneno: var(--color-veneno);
+  --color-sombra: var(--color-sombra);
+  --color-caos: var(--color-caos);
+
+  --color-step-identity: var(--color-step-identity);
+  --color-step-identity-soft: var(--color-step-identity-soft);
+  --color-step-background: var(--color-step-background);
+  --color-step-background-soft: var(--color-step-background-soft);
+  --color-step-kits: var(--color-step-kits);
+  --color-step-kits-soft: var(--color-step-kits-soft);
+  --color-step-attributes: var(--color-step-attributes);
+  --color-step-attributes-soft: var(--color-step-attributes-soft);
+  --color-step-weapons: var(--color-step-weapons);
+  --color-step-weapons-soft: var(--color-step-weapons-soft);
+  --color-step-review: var(--color-step-review);
+  --color-step-review-soft: var(--color-step-review-soft);
+
+  --color-strength: var(--color-strength);
+  --color-agility: var(--color-agility);
+  --color-vitality: var(--color-vitality);
+  --color-intelligence: var(--color-intelligence);
+  --color-perception: var(--color-perception);
+  --color-essence: var(--color-essence);
+
+  --nexus-hp: var(--nexus-hp);
+  --nexus-san: var(--nexus-san);
+  --nexus-soul: var(--nexus-soul);
+  --nexus-full: var(--nexus-full);
+
+  --status-queimado: var(--status-queimado);
+  --status-congelado: var(--status-congelado);
+  --status-paralisado: var(--status-paralisado);
+  --status-envenenado: var(--status-envenenado);
+  --status-assombrado: var(--status-assombrado);
+  --status-caotico: var(--status-caotico);
+  --status-abencoado: var(--status-abencoado);
+  --status-revigorado: var(--status-revigorado);
+  --status-desorientado: var(--status-desorientado);
+  --status-sangrando: var(--status-sangrando);
+  --status-insano: var(--status-insano);
+  --status-descontrolado: var(--status-descontrolado);
+  --status-estabilizado: var(--status-estabilizado);
+}
+
+/* --- REFINAMENTO TÁTICO: UTILITÁRIOS GLOBAIS --- */
+@layer base {
+
+  /* Remove o destaque azul ao tocar no mobile */
+  .tap-highlight-transparent {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Esconde a barra de rolagem lateral nos filtros mantendo a funcionalidade */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
