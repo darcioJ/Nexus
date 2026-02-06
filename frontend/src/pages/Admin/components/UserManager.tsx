@@ -17,7 +17,7 @@ export const UserManager = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const { notify, notifyError } = useNotification();
+    const { notifySuccess, notifyError } = useNotification();
 
     // 📡 FETCH: Carregamento de Sinais
     const loadUsers = async () => {
@@ -26,7 +26,7 @@ export const UserManager = () => {
             const data = await userService.getUsers();
             setUsers(data.users);
         } catch (error) {
-            notifyError(error);
+            notifyError(error, "Falha na varredura de usuários");
             console.error("❌ Erro na varredura de usuários:", error);
         } finally {
             setIsLoading(false);
@@ -58,7 +58,7 @@ export const UserManager = () => {
         try {
             triggerHaptic('MEDIUM');
             await userService.updateUser(user._id, { role: newRole });
-            notify({ title: "Sucesso", message: "Nível alterado", type: "SUCCESS" });
+            notifySuccess("Sucesso", "Nível alterado");
             loadUsers();
         } catch (error) {
             notifyError(error, "Falha ao alterar privilégio");
@@ -69,12 +69,11 @@ export const UserManager = () => {
         if (!confirm("⚠️ ATENÇÃO: A purgação de usuário removerá permanentemente a ficha e o acesso. Confirmar?")) return;
 
         try {
-            triggerHaptic('IMPACT');
             await userService.deleteUser(id);
-            notify({ title: "Sucesso", message: "Usuário removido com sucesso", type: "SUCCESS" });
+            notifySuccess("Sucesso", "Usuário removido com sucesso");
             loadUsers();
         } catch (error) {
-            notifyError(error);
+            notifyError(error, "Falha ao remover usuário");
         }
     };
 
@@ -102,7 +101,7 @@ export const UserManager = () => {
                 </div>
                 <button
                     onClick={loadUsers}
-                    className="w-14 h-14 bg-white border border-white rounded-[1.5rem] flex items-center justify-center text-slate-400 hover:text-admin-panel hover:shadow-lg transition-all active:scale-95"
+                    className="w-14 h-14 bg-white border border-white rounded-3xl flex items-center justify-center text-slate-400 hover:text-admin-panel hover:shadow-lg transition-all active:scale-95"
                 >
                     {isLoading ? <Loader2 size={20} className="animate-spin" /> : <Activity size={20} />}
                 </button>

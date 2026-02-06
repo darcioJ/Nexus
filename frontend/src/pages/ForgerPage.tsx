@@ -36,7 +36,7 @@ export function ForgerPage() {
     const navigate = useNavigate();
     const { vault, isLoading: vaultLoading } = useVault();
     const { methods, step, nextStep, prevStep, hasError, setHasError, canProceed } = useDossier();
-    const { notify, notifyError } = useNotification();
+    const { notifySuccess, notifyError } = useNotification();
 
     const { scrollY } = useScroll();
     const [isScrolled, setIsScrolled] = useState(false);
@@ -64,15 +64,11 @@ export function ForgerPage() {
                 // AGORA DISPARA A NOTIFICAÇÃO TAMBÉM:
                 triggerError: () => {
                     setHasError(true);
-                    notify({
-                        title: "Debug_Alert",
-                        message: "Teste manual de inconsistência de sinal.",
-                        type: "ERROR"
-                    });
+                    notifyError("Debug_Alert", "Teste manual de inconsistência de sinal.")
                 }
             };
         }
-    }, [methods, vault, setHasError, notify]);
+    }, [methods, vault, setHasError, notifyError]);
 
     const getErrorMessage = () => {
         const { errors } = methods.formState;
@@ -102,11 +98,7 @@ export function ForgerPage() {
             setHasError(true); // Mantemos para a animação de "shake" no formulário
             triggerHaptic('HEAVY');
 
-            notify({
-                title: "Sincronia Interrompida",
-                message: getErrorMessage() || "Dados insuficientes para avançar.",
-                type: "ERROR"
-            });
+            notifyError("Sincronia Interrompida", getErrorMessage() || "Dados insuficientes para avançar.");
             return;
         }
 
@@ -124,13 +116,6 @@ export function ForgerPage() {
                 const { name } = characterData.identity;
 
                 triggerHaptic('SUCCESS');
-
-                // NOTIFICAÇÃO DE SUCESSO: Feedback visual da imortalização
-                notify({
-                    title: "Protocolo Concluído",
-                    message: `O sinal de ${name} foi imortalizado com sucesso.`,
-                    type: "SUCCESS"
-                });
 
                 localStorage.setItem("@Nexus:PendingCharId", _id);
                 localStorage.setItem("@Nexus:PendingCharName", name);
