@@ -11,6 +11,7 @@ import { VaultProvider } from './contexts/vault/VaultProvider';
 import { NexusProvider } from './contexts/nexus/NexusProvider';
 import { AuthProvider } from './contexts/auth/AuthProvider';
 import { NotificationProvider } from './contexts/notification/NotificationProvider';
+import { SocketProvider } from './contexts/socket/SocketProvider';
 
 const GuestGuard = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem("@Nexus:Token");
@@ -36,44 +37,46 @@ const MasterGuard = ({ children }: { children: React.ReactNode }) => {
 
 export default function App() {
   return (
-    <NotificationProvider>
+    <BrowserRouter>
       <AuthProvider>
-        <VaultProvider>
-          <NexusProvider>
-            <BrowserRouter>
-              <Routes>
-                {/* 🚫 ACESSO APENAS DESLOGADO */}
-                <Route path="/" element={<GuestGuard><ForgerPage /></GuestGuard>} />
-                <Route path="/auth" element={<GuestGuard><AuthPage /></GuestGuard>} />
+        <SocketProvider>
+          <NotificationProvider>
+            <VaultProvider>
+              <NexusProvider>
+                <Routes>
+                  {/* 🚫 ACESSO APENAS DESLOGADO */}
+                  <Route path="/" element={<GuestGuard><ForgerPage /></GuestGuard>} />
+                  <Route path="/auth" element={<GuestGuard><AuthPage /></GuestGuard>} />
 
-                {/* 🔐 DASHBOARD E SUB-PÁGINAS */}
-                <Route path="/dashboard" element={<DashboardLayout />}>
-                  <Route index element={<WelcomePage />} />
+                  {/* 🔐 DASHBOARD E SUB-PÁGINAS */}
+                  <Route path="/dashboard" element={<DashboardLayout />}>
+                    <Route index element={<WelcomePage />} />
 
-                  {/* Acesso Público Logado */}
-                  <Route path="wiki" element={<Nexuspedia />} />
-                  <Route path="profile" element={<ProfilePage />} />
+                    {/* Acesso Público Logado */}
+                    <Route path="wiki" element={<Nexuspedia />} />
+                    <Route path="profile" element={<ProfilePage />} />
 
-                  {/* 👑 ACESSO EXCLUSIVO: ARQUITETO (MASTER) */}
-                  <Route path="master-panel" element={
-                    <MasterGuard>
-                      <MasterPanelPage />
-                    </MasterGuard>
-                  } />
+                    {/* 👑 ACESSO EXCLUSIVO: ARQUITETO (MASTER) */}
+                    <Route path="master-panel" element={
+                      <MasterGuard>
+                        <MasterPanelPage />
+                      </MasterGuard>
+                    } />
 
-                  <Route path='admin-panel' element={
-                    <MasterGuard>
-                      <AdminPanelPage />
-                    </MasterGuard>
-                  } />
-                </Route>
+                    <Route path='admin-panel' element={
+                      <MasterGuard>
+                        <AdminPanelPage />
+                      </MasterGuard>
+                    } />
+                  </Route>
 
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </BrowserRouter>
-          </NexusProvider>
-        </VaultProvider>
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </NexusProvider>
+            </VaultProvider>
+          </NotificationProvider>
+        </SocketProvider>
       </AuthProvider>
-    </NotificationProvider>
+    </BrowserRouter>
   );
 }

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { LogOut, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { triggerHaptic } from '../../utils/triggerHaptic';
+import { useAuth } from '../../hooks/useAuth';
 
 interface DashboardHeaderProps {
     isConnected: boolean;
@@ -15,8 +14,8 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     currentPath,
     onMenuClick
 }) => {
-    const navigate = useNavigate();
     const [time, setTime] = useState(new Date().toLocaleTimeString('pt-BR', { hour12: false }));
+    const { logout } = useAuth();
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -24,13 +23,6 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         }, 1000);
         return () => clearInterval(timer);
     }, []);
-
-    const handleLogout = () => {
-        triggerHaptic('HEAVY');
-        localStorage.removeItem("@Nexus:Token");
-        localStorage.removeItem("@Nexus:User");
-        navigate('/auth');
-    };
 
     const pathName = currentPath.split('/').pop()?.replace('-', '_') || 'Overview';
 
@@ -89,7 +81,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
                 {/* Saída de Emergência */}
                 <button
-                    onClick={handleLogout}
+                    onClick={logout}
                     className="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center bg-white/40 border border-white text-slate-400 hover:bg-rose-500 hover:text-white transition-all duration-300 group shadow-xs"
                 >
                     <LogOut size={16} className="transition-transform group-hover:translate-x-0.5" />

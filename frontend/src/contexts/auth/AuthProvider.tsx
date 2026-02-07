@@ -1,7 +1,11 @@
 import React, { useState, useCallback } from "react";
 import { AuthContext, type User } from "./AuthContext";
+import { useNavigate } from 'react-router-dom';
+import { triggerHaptic } from "../../utils/triggerHaptic";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
+
   // Inicialização segura: tenta recuperar o usuário do storage
   const [user, setUser] = useState<User | null>(() => {
     const savedUser = localStorage.getItem("@Nexus:User");
@@ -26,14 +30,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem("@Nexus:Token");
     localStorage.removeItem("@Nexus:User");
     setUser(null);
-  }, []);
+
+    triggerHaptic("MEDIUM")
+
+    navigate('/auth', { replace: true });
+  }, [navigate]);
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      login, 
-      logout, 
-      signed: !!user 
+    <AuthContext.Provider value={{
+      user,
+      login,
+      logout,
+      signed: !!user
     }}>
       {children}
     </AuthContext.Provider>
