@@ -1,74 +1,99 @@
 import * as LucideIcons from 'lucide-react';
 import { InputGroup } from '../InputGroup';
 import { ColorInput } from '../../../../components/common/ColorInput';
+import { IconInput } from '../../../../components/common/IconInput';
+
+// Importação das classes globais do Prisma Nexus
+import {
+  inputBaseClass,
+  selectBaseClass,
+  categories
+} from '../../../../config/vault.config';
 
 export const EssenceFields = ({ register, statusEffects, watch, setValue }: any) => {
-  // Observar valores para o preview em tempo real
-  const selectedIcon = watch('iconName');
-  
-  // Lista de categorias fixas conforme solicitado
-  const categories = ['Elemental', 'Corruptora', 'Espiritual'];
-
-  // Componente de ícone dinâmico para o preview
-  const IconPreview = ({ name }: { name: string }) => {
-    const Icon = (LucideIcons as any)[name];
-    return Icon ? <Icon size={20} strokeWidth={2.5} /> : <LucideIcons.HelpCircle size={20} className="opacity-20" />;
-  };
-
   return (
     <>
-      {/* 1. CLASSIFICAÇÃO TÉCNICA */}
+      {/* 1. CLASSIFICAÇÃO TÉCNICA (CATEGORIA) */}
       <InputGroup label="Categoria de Origem">
-        <select {...register('category', { required: true })} className="nexus-select-high">
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-      </InputGroup>
-
-      <InputGroup label="Vantagem Tática">
-        <input
-          {...register('advantageAgainst')}
-          className="nexus-input-high"
-          placeholder="ex: Criogênese, Autômatos..."
-        />
-      </InputGroup>
-
-      {/* 2. IDENTIDADE VISUAL: ÍCONE COM PREVIEW */}
-      <InputGroup label="Ícone Lucide (Nome exato)">
         <div className="relative group">
-          <input
-            {...register('iconName')}
-            className="nexus-input-high pl-12"
-            placeholder="ex: Flame, Zap, Droplets..."
-          />
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-admin-panel shadow-inner transition-transform group-focus-within:scale-110">
-            <IconPreview name={selectedIcon} />
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors duration-300 z-10">
+            <LucideIcons.Layers size={18} strokeWidth={2.5} />
+          </div>
+
+          <select {...register('category', { required: true })} className={`${selectBaseClass} pl-12`}>
+            {categories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-30">
+            <LucideIcons.ChevronDown size={16} />
           </div>
         </div>
       </InputGroup>
 
-      {/* 3. IDENTIDADE VISUAL: RODA DE CORES */}
-      <InputGroup label="Assinatura Cromática (Refração)">
-        <ColorInput 
-          register={register} 
-          watch={watch} 
-          setValue={setValue} 
-          name="colorVar" 
-        />
+      {/* 2. VANTAGEM TÁTICA */}
+      <InputGroup label="Vantagem Tática">
+        <div className="relative group">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors duration-300 z-10">
+            <LucideIcons.Crosshair size={18} strokeWidth={2.5} />
+          </div>
+
+          <input
+            {...register('advantageAgainst')}
+            className={`${inputBaseClass} pl-12 pr-10`}
+            placeholder="ex: Autômatos, Criogênese..."
+          />
+
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-stone-300 group-focus-within:bg-indigo-500 group-focus-within:shadow-[0_0_8px_#6366f1] transition-all" />
+        </div>
       </InputGroup>
 
-      {/* 4. VÍNCULO DE EFEITO (FULL WIDTH) */}
+      {/* 3. IDENTIDADE VISUAL (Sintonização de Ícone) */}
+      <div className="col-span-2">
+        <InputGroup label="Ícone Representativo (Lucide)">
+          <IconInput
+            register={register}
+            watch={watch}
+            setValue={setValue}
+            name="iconName"
+          />
+        </InputGroup>
+      </div>
+
+      {/* 4. ASSINATURA CROMÁTICA (Módulo de Sintonização) */}
+      <div className="col-span-2">
+        <InputGroup label="Assinatura Cromática (Refração)">
+          <ColorInput
+            register={register}
+            watch={watch}
+            setValue={setValue}
+            name="colorVar"
+          />
+        </InputGroup>
+      </div>
+
+      {/* 5. VÍNCULO DE EFEITO (Full Width) */}
       <div className="col-span-2">
         <InputGroup label="Efeito de Status Vinculado (Protocolo Base)">
-          <select {...register('baseStatusId')} className="nexus-select-high">
-            <option value="">Puramente Destrutiva (Sem Status)</option>
-            {statusEffects.map((status: any) => (
-              <option key={status._id} value={status._id}>
-                {status.name.toUpperCase()} — [{status.type}]
-              </option>
-            ))}
-          </select>
+          <div className="relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors duration-300 z-10">
+              <LucideIcons.Dna size={18} strokeWidth={2.5} />
+            </div>
+
+            <select {...register('baseStatusId')} className={`${selectBaseClass} pl-12`}>
+              <option value="">Puramente Destrutiva (Sem Status)</option>
+              {statusEffects.map((status: any) => (
+                <option key={status.key} value={status._id}>
+                  {status.name} — {status.type}
+                </option>
+              ))}
+            </select>
+
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-30">
+              <LucideIcons.ChevronDown size={16} />
+            </div>
+          </div>
         </InputGroup>
       </div>
     </>

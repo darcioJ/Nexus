@@ -9,7 +9,10 @@ import {
 // --- INFRAESTRUTURA NEXUS ---
 import { userService } from '../../../services/userService'; // Certifique-se de criar este service
 import { triggerHaptic } from '../../../utils/triggerHaptic';
+
 import { useNotification } from '../../../hooks/useNotification';
+import { useConfirm } from '../../../hooks/useConfirm';
+
 import { StatCard } from './StatCard';
 
 export const UserManager = () => {
@@ -18,6 +21,7 @@ export const UserManager = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const { notifySuccess, notifyError } = useNotification();
+    const { confirmDanger, confirmWarning } = useConfirm();
 
     // 📡 FETCH: Carregamento de Sinais
     const loadUsers = async () => {
@@ -53,7 +57,12 @@ export const UserManager = () => {
     // 🎮 COMANDOS ADMINISTRATIVOS
     const handleToggleRole = async (user: any) => {
         const newRole = user.role === 'MASTER' ? 'PLAYER' : 'MASTER';
-        if (!confirm(`Confirmar alteração de privilégios para [${user.name}]?`)) return;
+        const ok = await confirmWarning(
+            "Alterar privilégios?",
+            `Confirmar alteração de privilégios para [${user.name}]?. Esta operação não pode ser revertida.`
+        );
+
+        if (!ok) return;
 
         try {
             triggerHaptic('MEDIUM');
@@ -66,7 +75,12 @@ export const UserManager = () => {
     };
 
     const handleDeleteUser = async (id: string) => {
-        if (!confirm("⚠️ ATENÇÃO: A purgação de usuário removerá permanentemente a ficha e o acesso. Confirmar?")) return;
+        const ok = await confirmDanger(
+            "Deletar usuário?",
+            `A purgação de usuário removerá permanentemente o acesso. Esta operação não pode ser revertida.`
+        );
+
+        if (!ok) return;
 
         try {
             await userService.deleteUser(id);

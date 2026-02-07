@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Plus, Activity, ChevronRight, ShieldCheck,
-  Terminal, Cpu, Globe, Zap
+  Activity, ChevronRight, ShieldCheck,
+  Terminal, Globe, Zap
 } from 'lucide-react';
 
 // --- INFRAESTRUTURA NEXUS ---
 import { DossierAtmosphere } from '../../components/shared/DossierAtmosphere';
-import { useVault } from '../../hooks/useVault';
 import { triggerHaptic } from '../../utils/triggerHaptic';
 
 // --- COMPONENTES DE GESTÃO ---
@@ -19,7 +18,6 @@ import { AdminNavbar } from './components/AdminNavbar';
 export const AdminPanelPage = () => {
   const [activeTab, setActiveTab] = useState<'vault' | 'users' | 'system'>('vault');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isRefreshing } = useVault();
 
   const handleTabChange = (tab: 'vault' | 'users' | 'system') => {
     triggerHaptic('LIGHT');
@@ -41,7 +39,7 @@ export const AdminPanelPage = () => {
       <AdminNavbar activeTab={activeTab} onTabChange={handleTabChange} />
 
       {/* --- CAMADA 2: ÁREA DE TRABALHO --- */}
-      <main className="relative z-10 flex-1 w-full max-w-[1600px] mx-auto p-6 lg:p-12 flex flex-col gap-12">
+      <main className="relative z-10 flex-1 w-full max-w-400 mx-auto p-6 lg:p-12 flex flex-col gap-12">
 
         {/* HEADER DE TELEMETRIA (HUD STYLE) */}
         <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 animate-in fade-in slide-in-from-left-8 duration-700">
@@ -69,21 +67,6 @@ export const AdminPanelPage = () => {
               {/* Linha de Design Prisma */}
               <div className="absolute -bottom-4 left-0 w-32 h-1.5 bg-indigo-600 rounded-full" />
             </div>
-          </div>
-
-          {/* Botão de Ação Primária (Apenas no Vault) */}
-          <div className="flex items-center gap-4">
-            {activeTab === 'vault' && (
-              <button
-                onClick={() => { triggerHaptic('MEDIUM'); setIsModalOpen(true); }}
-                className="group h-16 px-10 bg-indigo-600 text-white rounded-[1.75rem] flex items-center gap-4 font-black text-[11px] uppercase tracking-[0.25em] hover:bg-indigo-700 transition-all shadow-2xl shadow-indigo-200 active:scale-95"
-              >
-                <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center group-hover:rotate-90 transition-transform duration-500">
-                  <Plus size={20} />
-                </div>
-                Registrar Ativo
-              </button>
-            )}
           </div>
         </header>
 

@@ -4,6 +4,9 @@ import { Search, Plus, Database, Activity, Binary, Box } from 'lucide-react';
 
 // --- INFRAESTRUTURA NEXUS ---
 import { useVault } from '../../../hooks/useVault';
+import { useNotification } from '../../../hooks/useNotification';
+import { useConfirm } from '../../../hooks/useConfirm';
+
 import { triggerHaptic } from '../../../utils/triggerHaptic';
 import { VAULT_CONFIG, type VaultTab } from '../../../config/vault.config'; // Importando a inteligência central
 
@@ -17,6 +20,8 @@ export const VaultManager = () => {
         weapons, clubs, statusEffects, essences, archetypes, attributes,
         refreshVault, isRefreshing
     } = useVault();
+    const { notifySuccess, notifyError } = useNotification();
+    const { confirmDanger } = useConfirm();
 
     const [activeTab, setActiveTab] = useState<VaultTab>('weapons');
     const [searchTerm, setSearchTerm] = useState('');
@@ -53,16 +58,26 @@ export const VaultManager = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm(`⚠️ Confirmar purgação permanente em ${VAULT_CONFIG[activeTab].label}?`)) return;
+        // Aciona o Modal de Decisão com visual de Perigo (Rose/Red)
+        const ok = await confirmDanger(
+            "Expurgar dados?",
+            `Você está prestes a remover permanentemente este registro de ${VAULT_CONFIG[activeTab].label}. Esta operação não pode ser revertida.`
+        );
+
+        // Se o usuário clicar em 'Abortar', a execução para aqui
+        if (!ok) return;
+
         try {
-            triggerHaptic('IMPACT');
-            // Chamada dinâmica baseada no arquivo de config
+            // Feedback tátil pesado para confirmar a intenção
+            triggerHaptic("MEDIUM");
+
             await VAULT_CONFIG[activeTab].delete(id);
-            triggerHaptic('SUCCESS');
+
+            notifySuccess("Dados expurgados.", "Informação deletada com sucesso.");
             refreshVault();
         } catch (error) {
-            console.error(error)
-            triggerHaptic('HEAVY');
+            notifyError(error, "Erro ao deletar dados.");
+            console.error(error);
         }
     };
 

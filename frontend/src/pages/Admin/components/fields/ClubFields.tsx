@@ -1,56 +1,54 @@
+import * as LucideIcons from 'lucide-react';
 import { InputGroup } from '../InputGroup';
+import { IconInput } from '../../../../components/common/IconInput';
 
-export const ClubFields = ({ register, attributes }: any) => {
+import { inputBaseClass, selectBaseClass } from '../../../../config/vault.config';
+
+export const ClubFields = ({ register, attributes, setValue, watch }: any) => {
+
   return (
     <>
-      {/* 1. MECÂNICA DE BÔNUS */}
+      {/* 1. MECÂNICA DE BÔNUS (Módulo Esquerdo) */}
       <InputGroup label="Atributo de Vínculo">
-        <select {...register('bonus.attributeKey')} className="nexus-select-high">
-          <option value="">Nenhum Atributo</option>
-          {attributes.map((a: any) => (
-            <option key={a.key} value={a.key}>
-              {a.name}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select {...register('bonus.attributeKey')} className={selectBaseClass}>
+            <option value="">Nenhum Atributo</option>
+            {attributes.map((a: any) => (
+              <option key={a.key} value={a.key}>
+                {a.name}
+              </option>
+            ))}
+          </select>
+          {/* Seta customizada para o select */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-30">
+            <LucideIcons.ChevronDown size={16} />
+          </div>
+        </div>
       </InputGroup>
 
-      <InputGroup label="Valor do Bônus">
-        <input 
-          {...register('bonus.value', { valueAsNumber: true })} 
-          type="number" 
-          className="nexus-input-high" 
-          placeholder="ex: 1" 
-        />
-      </InputGroup>
-
-      {/* 2. IDENTIDADE VISUAL */}
-      <InputGroup label="Ícone (Lucide Name)">
-        <input 
-          {...register('iconName')} 
-          className="nexus-input-high" 
-          placeholder="ex: Shield, Users, Tentacle" 
-        />
-      </InputGroup>
-
-      <InputGroup label="CSS Color Var">
-        <input 
-          {...register('colorVar')} 
-          className="nexus-input-high" 
-          placeholder="ex: --color-emerald-500" 
-        />
-      </InputGroup>
-
-      {/* 3. CLASSIFICAÇÃO DE LORE */}
-      <div className="col-span-2">
-        <InputGroup label="Tipo de Afiliação (Tag de Interface)">
-          <input 
-            {...register('typeLabel')} 
-            className="nexus-input-high" 
-            placeholder="ex: Ordem Secreta, Clã de Mercenários" 
+      <InputGroup label="Magnitude (Bônus)">
+        <div className="relative">
+          <input
+            {...register('bonus.value', { valueAsNumber: true })}
+            type="number"
+            className={`${inputBaseClass} pr-12`}
+            placeholder="0"
           />
-        </InputGroup>
-      </div>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-[10px] font-black text-indigo-600/40">
+            PTS
+          </div>
+        </div>
+      </InputGroup>
+
+      {/* 2. IDENTIDADE VISUAL: SELETOR DE ÍCONE (Prisma Lux) */}
+      <InputGroup label="Ícone Representativo (Lucide)">
+        <IconInput
+          register={register}
+          watch={watch}
+          setValue={setValue}
+          name="iconName"
+        />
+      </InputGroup>
     </>
   );
 };
