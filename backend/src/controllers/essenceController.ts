@@ -13,7 +13,7 @@ export const createEssence = async (req: Request, res: Response) => {
       advantageAgainst,
       iconName,
       colorVar,
-      baseStatusId,
+      statusId,
     } = req.body;
 
     // Verificação de Chave Única para evitar duplicidade elemental
@@ -33,7 +33,8 @@ export const createEssence = async (req: Request, res: Response) => {
       advantageAgainst,
       iconName,
       colorVar,
-      baseStatusId,
+      statusId,
+      isSystem: false,
     });
 
     await newEssence.save();
@@ -57,11 +58,28 @@ export const updateEssence = async (req: Request, res: Response) => {
     const { id } = req.params;
     const updates = req.body;
 
-    // O populate('baseStatusId') é opcional no retorno, mas útil para o Admin confirmar o vínculo
+    const target = await Essence.findById(id);
+    if (!target)
+      return res
+        .status(404)
+        .json({ message: "Sinal elemental não localizado." });
+
+    // AJUSTE: Proteção de Núcleo (isSystem)
+    if (target.isSystem && (updates.key || updates.isSystem !== undefined)) {
+      return res.status(403).json({
+        message:
+          "Proteção de Núcleo: Proibido alterar chaves de sistema elementais.",
+      });
+    }
+
+    // Impede que essências comuns virem "isSystem" via Front
+    if (!target.isSystem) delete updates.isSystem;
+
+    // O populate('statusId') é opcional no retorno, mas útil para o Admin confirmar o vínculo
     const updated = await Essence.findByIdAndUpdate(id, updates, {
       new: true,
       runValidators: true,
-    }).populate("baseStatusId");
+    }).populate("statusId");
 
     if (!updated) {
       return res
@@ -85,6 +103,14 @@ export const updateEssence = async (req: Request, res: Response) => {
 export const deleteEssence = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+
+    const target = await Essence.findById(id);
+    if (!target) return res.status(404).json({ message: "Alvo não detectado." });
+
+    // AJUSTE: Bloqueio direto por flag isSystem (Protege a 'normal' automaticamente)
+    if (target.isSystem) {
+      return res.status(403).json({ message: "Operação Negada: Essência de sistema protegida." });
+    }
 
     const essenceId = id as string;
 

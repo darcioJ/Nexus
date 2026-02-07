@@ -31,7 +31,7 @@ export const VitalControl = ({ character, vault, onModulate, onStatusChange }: V
 
   const activeEssence = useMemo(() => {
     if (!currentStatus) return null;
-    return vault?.essences?.find(e => e.baseStatusId === currentStatus._id);
+    return vault?.essences?.find(e => e.statusId === currentStatus._id);
   }, [vault, currentStatus]);
 
   const getStatusKey = (name: string) =>

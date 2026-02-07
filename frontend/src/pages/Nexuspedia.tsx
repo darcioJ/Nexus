@@ -160,7 +160,7 @@ const EssenceCrystalCard = ({ essence, onClick }) => {
 };
 
 export const EssenceDetailModal = ({ essence, onClose }) => {
-  const statusData = essence.baseStatusId;
+  const statusData = essence.statusId;
 
   const modalJSX = (
     <div className="fixed inset-0 z-100 flex items-center justify-center p-0 md:p-6 lg:p-12 overflow-hidden">

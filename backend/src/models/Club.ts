@@ -9,6 +9,7 @@ export interface IClub extends Document {
     attributeId: Types.ObjectId;
     value: number; // 1
   };
+  isSystem: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,6 +32,7 @@ const clubSchema = new Schema<IClub>(
       },
       value: { type: Number, required: true, default: 1 },
     },
+    isSystem: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

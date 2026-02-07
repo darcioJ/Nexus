@@ -8,7 +8,8 @@ export interface IEssence extends Document {
   advantageAgainst: string; // O seu antigo 'vs'
   iconName: string; // 'Flame', 'Zap'
   colorVar: string; // '--color-fogo'
-  baseStatusId: Schema.Types.ObjectId; // Link para o StatusEffect
+  statusId: Schema.Types.ObjectId; // Link para o StatusEffect
+  isSystem: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,19 +23,20 @@ const essenceSchema = new Schema<IEssence>(
       enum: ["Elemental", "Corruptora", "Espiritual", "Universal"],
       required: true,
     },
-        description: {
-          type: String,
-          required: false,
-          default: "-DADOS_EXPURGADOS-",
-        },
+    description: {
+      type: String,
+      required: false,
+      default: "-DADOS_EXPURGADOS-",
+    },
     advantageAgainst: { type: String, required: true },
     iconName: { type: String, required: true },
     colorVar: { type: String, required: true },
-    baseStatusId: {
+    statusId: {
       type: Schema.Types.ObjectId,
       ref: "StatusEffect",
       required: true,
     },
+    isSystem: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

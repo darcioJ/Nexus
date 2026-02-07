@@ -6,7 +6,7 @@ import { NodeCard } from './NodeCardWeapon';
 
 export const WeaponDetailModal = ({ weapon, onClose }) => {
     const essence = weapon.essenceId;
-    const status = essence?.baseStatusId;
+    const status = essence?.statusId;
     const colorToken = essence?.colorVar || 'var(--color-neutro)';
 
     const hasSynergy = weapon?.specialNotes?.includes('SINERGIA:');

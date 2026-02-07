@@ -38,7 +38,7 @@ export const WeaponCardReview = ({ data }) => {
 
     // 3. DESESTRUTURAÇÃO SEGURA (Dados Populados)
     const essence = selectedWeapon.essenceId;
-    const status = essence?.baseStatusId;
+    const status = essence?.statusId;
     const colorToken = essence?.colorVar || 'var(--color-neutro)';
 
     const hasSynergy = selectedWeapon?.specialNotes?.includes('SINERGIA:');

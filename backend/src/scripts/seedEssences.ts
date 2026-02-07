@@ -43,7 +43,7 @@ async function seedDatabase() {
         advantageAgainst: 'Plantas, Insetos e criaturas de criogênese.',
         iconName: 'Flame',
         colorVar: 'var(--color-fogo)',
-        baseStatusId: getStatusId('Queimado')
+        statusId: getStatusId('Queimado')
       },
       {
         key: 'ice',
@@ -53,7 +53,7 @@ async function seedDatabase() {
         advantageAgainst: 'Aquáticos, Demônios e criaturas piroclásticas.',
         iconName: 'Snowflake',
         colorVar: 'var(--color-gelo)',
-        baseStatusId: getStatusId('Congelado')
+        statusId: getStatusId('Congelado')
       },
       {
         key: 'thunder',
@@ -63,7 +63,7 @@ async function seedDatabase() {
         advantageAgainst: 'Metálicos, Voadores e organismos condutores.',
         iconName: 'Zap',
         colorVar: 'var(--color-raio)',
-        baseStatusId: getStatusId('Paralisado')
+        statusId: getStatusId('Paralisado')
       },
       {
         key: 'poison',
@@ -73,7 +73,7 @@ async function seedDatabase() {
         advantageAgainst: 'Organismos vivos e sistemas frágeis.',
         iconName: 'Skull',
         colorVar: 'var(--color-veneno)',
-        baseStatusId: getStatusId('Envenenado')
+        statusId: getStatusId('Envenenado')
       },
       {
         key: 'dark',
@@ -83,7 +83,7 @@ async function seedDatabase() {
         advantageAgainst: 'Seres espirituais e purificados.',
         iconName: 'Moon',
         colorVar: 'var(--color-sombra)',
-        baseStatusId: getStatusId('Assombrado')
+        statusId: getStatusId('Assombrado')
       },
       {
         key: 'chaos',
@@ -93,7 +93,7 @@ async function seedDatabase() {
         advantageAgainst: 'Seres de ordem e máquinas.',
         iconName: 'Dices',
         colorVar: 'var(--color-caos)',
-        baseStatusId: getStatusId('Caótico')
+        statusId: getStatusId('Caótico')
       },
       {
         key: 'blessing',
@@ -103,7 +103,7 @@ async function seedDatabase() {
         advantageAgainst: 'Mortos-vivos e entidades corrompidas.',
         iconName: 'Sun',
         colorVar: 'var(--color-bencao)',
-        baseStatusId: getStatusId('Abençoado')
+        statusId: getStatusId('Abençoado')
       },
       {
         key: 'vital',
@@ -113,7 +113,7 @@ async function seedDatabase() {
         advantageAgainst: 'Patógenos e degradação mental.',
         iconName: 'Leaf',
         colorVar: 'var(--color-vital)',
-        baseStatusId: getStatusId('Revigorado')
+        statusId: getStatusId('Revigorado')
       },
       {
         key: 'lumen',
@@ -123,7 +123,7 @@ async function seedDatabase() {
         advantageAgainst: 'Seres de alta cognição.',
         iconName: 'Eye',
         colorVar: 'var(--color-lumen)',
-        baseStatusId: getStatusId('Desorientado')
+        statusId: getStatusId('Desorientado')
       }
     ];
 

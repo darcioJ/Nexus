@@ -13,6 +13,7 @@ export interface IWeapon extends Document {
   range: "Curto" | "Médio" | "Longo";
   description?: string; // O "effect" do seu dado original
   specialNotes: ISpecialNote[];
+  isSystem: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,6 +36,7 @@ const weaponSchema = new Schema<IWeapon>(
         content: { type: String, required: true },
       },
     ],
+    isSystem: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

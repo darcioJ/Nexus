@@ -81,7 +81,7 @@ export const EssenceFields = ({ register, statusEffects, watch, setValue }: any)
               <LucideIcons.Dna size={18} strokeWidth={2.5} />
             </div>
 
-            <select {...register('baseStatusId')} className={`${selectBaseClass} pl-12`}>
+            <select {...register('statusId')} className={`${selectBaseClass} pl-12`}>
               <option value="">Puramente Destrutiva (Sem Status)</option>
               {statusEffects.map((status: any) => (
                 <option key={status.key} value={status._id}>

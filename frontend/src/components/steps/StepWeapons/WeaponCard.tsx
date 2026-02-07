@@ -8,7 +8,7 @@ import { WeaponDossier } from './WeaponDossier';
 export const WeaponCard = ({ weapon, isSelected, onSelect, register }) => {
     // 1. EXTRAÇÃO DE DADOS DO BANCO (Populate System)
     const essence = weapon.essenceId; 
-    const status = essence?.baseStatusId; // O objeto de aflição (Queimado, etc.)
+    const status = essence?.statusId; // O objeto de aflição (Queimado, etc.)
     const colorToken = essence?.colorVar || 'var(--color-neutro)';
 
     return (

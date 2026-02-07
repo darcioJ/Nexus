@@ -8,6 +8,7 @@ export interface IAttribute extends Document {
   colorVar: string; // '--color-strength'
   modLabel: string; // 'Dano Físico'
   modDiv: number; // 3, 4, 0.5
+  isSystem: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,6 +26,7 @@ const attributeSchema = new Schema<IAttribute>(
     colorVar: { type: String, required: true },
     modLabel: { type: String, required: true },
     modDiv: { type: Number, required: true, default: 1 },
+    isSystem: { type: Boolean, default: false }
   },
   { timestamps: true },
 );

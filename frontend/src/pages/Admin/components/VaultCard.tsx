@@ -20,7 +20,7 @@ export const VaultCard = React.memo(({ item, type, onEdit, onDelete }: VaultCard
 
     const meta = {
       weapons: { tag: item.typeLabel, primary: item.essenceId?.name, secondary: item.range || 'Físico' },
-      essences: { tag: item.category, primary: item.advantageAgainst, secondary: item.baseStatusId?.name || 'Nenhum' },
+      essences: { tag: item.category, primary: item.advantageAgainst, secondary: item.statusId?.name || 'Nenhum' },
       clubs: { tag: 'Clube', primary: `+${item.bonus?.value} ${item.bonus?.attributeKey}`, secondary: item.key },
       status: { tag: item.type, primary: item.resistance, secondary: item.key },
       attributes: { tag: item.label, primary: item.description, secondary: item.modLabel },

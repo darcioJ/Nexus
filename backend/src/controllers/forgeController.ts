@@ -15,24 +15,25 @@ export const getForgeData = async (req: Request, res: Response) => {
     // Execução paralela de todas as coleções do Core
     const [attributes, essences, archetypes, weapons, clubs, statusEffects] =
       await Promise.all([
-        Attribute.find().sort({ label: 1 }),
+        Attribute.find().sort({ name: 1 }),
 
-        Essence.find().populate("baseStatusId"),
+        Essence.find().populate("statusId"),
 
         Archetype.find().sort({ name: 1 }),
+
         Weapon.find().populate({
           path: "essenceId",
-          populate: { path: "baseStatusId" },
+          populate: { path: "statusId" },
         }),
 
-        Club.find().sort({ name: 1 }),
+        Club.find().populate("bonus.attributeId").sort({ name: 1 }),
 
         StatusEffect.find().sort({ name: 1 }),
       ]);
 
     // Retornamos um objeto de resposta estruturado e com metadados de sincronia
     res.json({
-      version: "2.0.0-PROCESSED",
+      version: "2.1.0-STABLE",
       timestamp: new Date().toISOString(),
       vault: {
         attributes,

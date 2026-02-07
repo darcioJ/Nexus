@@ -1,5 +1,4 @@
 import * as z from "zod";
-const APP_VERSION = "1.0.0";
 
 export const characterSchema = z.object({
   identity: z.object({
@@ -9,7 +8,7 @@ export const characterSchema = z.object({
 
   background: z.object({
     club: z.string().min(1, "Selecione sua origem"), // Agora recebe o _id do DB
-    biography: z.string().max(500, "Máximo 500 caracteres"),
+    biography: z.string().max(500, "Máximo 500 caracteres").optional().default(""),
     archetype: z.string().min(1, "Escolha um kit inicial"),
   }),
 
@@ -28,9 +27,6 @@ export const characterSchema = z.object({
   weapons: z.object({
     primary: z.string().min(1, "Selecione uma arma"), // Agora recebe o _id do DB
   }),
-
-  createdAt: z.string().optional(),
-  version: z.string().optional(),
 });
 
 export type CharacterData = z.infer<typeof characterSchema>;
@@ -51,8 +47,6 @@ export const DEFAULT_VALUES: CharacterData = {
     perception: 6,
     essence: 6,
   },
-  createdAt: new Date().toISOString(),
-  version: APP_VERSION,
 };
 
 export const CHAR_LIMITS = {

@@ -32,6 +32,7 @@ export const createWeapon = async (req: Request, res: Response) => {
       range,
       description,
       specialNotes,
+      isSystem: false,
     });
 
     await newWeapon.save();
@@ -39,18 +40,16 @@ export const createWeapon = async (req: Request, res: Response) => {
     // Retornamos a arma populada para o Admin Panel já exibir o ícone/cor da essência
     const populatedWeapon = await Weapon.findById(newWeapon._id).populate({
       path: "essenceId",
-      populate: { path: "baseStatusId" },
+      populate: { path: "statusId" },
     });
 
     console.log(
       `⚔️ Nexus_Forge: Armamento [${name}] forjado e vinculado ao Vault.`,
     );
-    res
-      .status(201)
-      .json({
-        message: "Arma registrada com sucesso.",
-        weapon: populatedWeapon,
-      });
+    res.status(201).json({
+      message: "Arma registrada com sucesso.",
+      weapon: populatedWeapon,
+    });
   } catch (error) {
     console.error("❌ Erro ao forjar arma:", error);
     res
@@ -65,12 +64,28 @@ export const updateWeapon = async (req: Request, res: Response) => {
     const { id } = req.params;
     const updates = req.body;
 
+    const target = await Weapon.findById(id);
+    if (!target)
+      return res.status(404).json({ message: "Arma não localizada." });
+
+    // AJUSTE: Proteção de Núcleo (isSystem)
+    // Impede alterar 'key' ou 'isSystem' em registros de sistema
+    if (target.isSystem && (updates.key || updates.isSystem !== undefined)) {
+      return res.status(403).json({
+        message:
+          "Proteção de Núcleo: Proibido alterar chaves de sistema do arsenal.",
+      });
+    }
+
+    // SEGURANÇA: Impede que armas comuns virem "isSystem" via API
+    if (!target.isSystem) delete updates.isSystem;
+
     const updated = await Weapon.findByIdAndUpdate(id, updates, {
       new: true,
       runValidators: true,
     }).populate({
       path: "essenceId",
-      populate: { path: "baseStatusId" },
+      populate: { path: "statusId" },
     });
 
     if (!updated) {
@@ -94,17 +109,29 @@ export const deleteWeapon = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
+    const target = await Weapon.findById(id);
+    if (!target)
+      return res.status(404).json({ message: "Alvo não detectado." });
+
+    // AJUSTE: Bloqueio direto pela flag isSystem
+    // Isso já protege o 'no_weapon' e qualquer outra arma de sistema que você criar
+    if (target.isSystem) {
+      return res
+        .status(403)
+        .json({ message: "Operação Negada: Registro de sistema protegido." });
+    }
+
     // 1. Localizar Arma Baseline
-    const defaultWeapon = await Weapon.findOne({ key: "fists" });
+    const defaultWeapon = await Weapon.findOne({ key: "no_weapon" });
     if (!defaultWeapon)
       return res
         .status(500)
-        .json({ message: "Erro: Arma 'fists' não encontrada no arsenal." });
+        .json({ message: "Erro: Arma 'no_weapon' não encontrada no arsenal." });
 
     if (id === defaultWeapon._id.toString()) {
       return res
         .status(403)
-        .json({ message: "Protocolo Negado: O registro 'fists' é vital." });
+        .json({ message: "Protocolo Negado: O registro 'no_weapon' é vital." });
     }
 
     // 2. Desarmar personagens (Equipar punhos)

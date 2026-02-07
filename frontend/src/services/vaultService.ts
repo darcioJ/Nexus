@@ -1,12 +1,94 @@
 import { api } from "../api";
 
+// --- SUB-INTERFACES PARA PRECISÃO NEURAL ---
+export interface IAttribute {
+  _id: string;
+  key: string;
+  name: string;
+  iconName: string;
+  colorVar: string;
+  modLabel: string;
+  modDiv: number;
+  isSystem: boolean;
+}
+
+export interface IStatusEffect {
+  _id: string;
+  key: string;
+  name: string;
+  description?: string;
+  mechanic: string;
+  resistance: string;
+  category: string;
+  iconName: string;
+  colorVar: string;
+  isSystem: boolean;
+}
+
+export interface IEssence {
+  _id: string;
+  key: string;
+  name: string;
+  category: string;
+  advantageAgainst: string;
+  iconName: string;
+  colorVar: string;
+  statusId: IStatusEffect; // Já populado pelo ForgeController
+  isSystem: boolean;
+}
+
+export interface IWeapon {
+  _id: string;
+  key: string;
+  name: string;
+  typeLabel: string;
+  essenceId: IEssence; // Já populado pelo ForgeController
+  range: "Curto" | "Médio" | "Longo";
+  description?: string;
+  specialNotes: Array<{
+    name: string;
+    category: string;
+    description?: string;
+    quantity: number;
+  }>;
+  isSystem: boolean;
+}
+
+export interface IClub {
+  _id: string;
+  key: string;
+  name: string;
+  iconName: string;
+  bonus: {
+    attributeId: IAttribute;
+    value: number;
+  };
+  isSystem: boolean;
+}
+
+export interface IArchetype {
+  _id: string;
+  key: string;
+  name: string;
+  description?: string;
+  iconName: string;
+  items: Array<{
+    name: string;
+    category: string;
+    description?: string;
+    quantity: number;
+  }>;
+  isSystem: boolean;
+}
+
+// --- INTERFACE PRINCIPAL ---
 export interface VaultData {
-  attributes: any[];
-  essences: any[];
-  archetypes: any[];
-  weapons: any[];
-  clubs: any[];
-  statusEffects: any[];
+  attributes: IAttribute[];
+  essences: IEssence[];
+  archetypes: IArchetype[];
+  weapons: IWeapon[];
+  clubs: IClub[];
+  statusEffects: IStatusEffect[];
 }
 
 export const vaultService = {

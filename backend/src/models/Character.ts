@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { syncCharacterStats } from "../middleware/characterMiddleware.js";
+import { ItemSchema, type IItem } from "./common/ItemSchema.js";
 
 export interface ICharacter {
   userId?: Schema.Types.ObjectId;
@@ -16,6 +17,7 @@ export interface ICharacter {
   weapons: {
     primary: Schema.Types.ObjectId;
   };
+  inventory: IItem[];
   stats: {
     hp: number;
     maxHp: number;
@@ -27,43 +29,56 @@ export interface ICharacter {
   updatedAt: Date;
 }
 
-const characterSchema = new Schema<ICharacter>({
-  userId: { type: Schema.Types.ObjectId, ref: "User", required: false },
+const characterSchema = new Schema<ICharacter>(
+  {
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: false },
 
-  identity: {
-    name: { type: String, required: true },
-    age: { type: Number, required: true },
-  },
+    identity: {
+      name: { type: String, required: true },
+      age: { type: Number, required: true },
+    },
 
-  background: {
-    club: { type: Schema.Types.ObjectId, ref: "Club", required: true },
-    biography: { type: String, required: false, default: "-SEM_REGISTRO_DE_BIO-"},
-    archetype: { type: Schema.Types.ObjectId, ref: "Archetype", required: true, },
-  },
+    background: {
+      club: { type: Schema.Types.ObjectId, ref: "Club", required: true },
+      biography: {
+        type: String,
+        required: false,
+        default: "-SEM_REGISTRO_DE_BIO-",
+      },
+      archetype: {
+        type: Schema.Types.ObjectId,
+        ref: "Archetype",
+        required: true,
+      },
+    },
 
-  attributes: {
-    type: Map,
-    of: Number,
-    default: {},
-  },
+    attributes: {
+      type: Map,
+      of: Number,
+      default: {},
+    },
 
-  weapons: {
-    primary: { type: Schema.Types.ObjectId, ref: "Weapon", required: true },
-  },
+    weapons: {
+      primary: { type: Schema.Types.ObjectId, ref: "Weapon", required: true },
+    },
 
-  // --- O NOVO NÚCLEO DE BIO-TELEMETRIA ---
-  stats: {
-    hp: { type: Number, default: 100 },
-    maxHp: { type: Number, default: 100 },
-    san: { type: Number, default: 100 },
-    maxSan: { type: Number, default: 100 },
-    status: {
-      type: Schema.Types.ObjectId,
-      ref: "StatusEffect",
-      required: true,
+    inventory: [ItemSchema],
+
+    // --- O NOVO NÚCLEO DE BIO-TELEMETRIA ---
+    stats: {
+      hp: { type: Number, default: 100 },
+      maxHp: { type: Number, default: 100 },
+      san: { type: Number, default: 100 },
+      maxSan: { type: Number, default: 100 },
+      status: {
+        type: Schema.Types.ObjectId,
+        ref: "StatusEffect",
+        required: true,
+      },
     },
   },
-}, { timestamps: true } );
+  { timestamps: true },
+);
 
 characterSchema.pre("validate", syncCharacterStats);
 

@@ -22,17 +22,16 @@ export const createArchetype = async (req: Request, res: Response) => {
       description,
       items,
       iconName,
+      isSystem: false,
     });
 
     await newArchetype.save();
 
     console.log(`✨ Nexus_Forge: Novo Arquétipo [${name}] catalogado.`);
-    res
-      .status(201)
-      .json({
-        message: "Arquétipo criado com sucesso.",
-        archetype: newArchetype,
-      });
+    res.status(201).json({
+      message: "Arquétipo criado com sucesso.",
+      archetype: newArchetype,
+    });
   } catch (error) {
     console.error("❌ Erro ao criar arquétipo:", error);
     res.status(500).json({ message: "Falha ao gravar arquétipo no Core." });
@@ -44,6 +43,22 @@ export const updateArchetype = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const updates = req.body;
+
+    const target = await Archetype.findById(id);
+    if (!target)
+      return res.status(404).json({ message: "Arquétipo não localizado." });
+
+    // AJUSTE: Impede que qualquer um altere isSystem ou a Key de um sistema
+    if (target.isSystem && (updates.key || updates.isSystem !== undefined)) {
+      return res.status(403).json({
+        message: "Proteção de Núcleo: Proibido alterar metadados de sistema.",
+      });
+    }
+
+    // SEGURANÇA EXTRA: Impede que um arquétipo comum vire isSystem: true
+    if (!target.isSystem) {
+      delete updates.isSystem;
+    }
 
     const updated = await Archetype.findByIdAndUpdate(id, updates, {
       new: true,
@@ -69,49 +84,37 @@ export const updateArchetype = async (req: Request, res: Response) => {
   }
 };
 
-// 3. DELETAR ARQUÉTIPO
 export const deleteArchetype = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const targetId = id as string;
 
-    // 1. Localizar o Arquétipo Baseline (no_archetype)
-    const defaultArchetype = await Archetype.findOne({ key: "no_archetype" });
+    const target = await Archetype.findById(id);
+    if (!target)
+      return res.status(404).json({ message: "Alvo não detectado." });
 
-    if (!defaultArchetype) {
-      return res.status(500).json({
-        message:
-          "Falha Crítica: Arquétipo 'no_archetype' não localizado. Abortando para evitar órfãos.",
-      });
-    }
-
-    if (targetId === defaultArchetype._id.toString()) {
-      return res.status(403).json({
-        message:
-          "Operação Negada: O arquétipo de baseline é vital para a integridade do Core.",
-      });
-    }
-
-    await Character.updateMany({ "background.archetype": targetId } as any, {
-      $set: { "background.archetype": defaultArchetype._id },
-    });
-
-    const deleted = await Archetype.findByIdAndDelete(id);
-
-    if (!deleted) {
+    // Se for isSystem, já bloqueia (isso já protege o no_archetype automaticamente)
+    if (target.isSystem) {
       return res
-        .status(404)
-        .json({ message: "Alvo não detectado para remoção." });
+        .status(403)
+        .json({ message: "Operação Negada: Matriz de sistema protegida." });
     }
 
-    console.warn(
-      `🗑️ Nexus_Purge: Arquétipo [${deleted.name}] removido permanentemente.`,
+    const defaultArchetype = await Archetype.findOne({ key: "no_archetype" });
+    if (!defaultArchetype) {
+      return res
+        .status(500)
+        .json({ message: "Falha Crítica: Baseline não encontrada." });
+    }
+
+    // Migração de personagens órfãos
+    await Character.updateMany(
+      { "background.archetype": target._id },
+      { $set: { "background.archetype": defaultArchetype._id } },
     );
-    res.json({ message: "Registro de arquétipo eliminado do Vault." });
+
+    await Archetype.findByIdAndDelete(id);
+    res.json({ message: "Registro eliminado do Vault." });
   } catch (error) {
-    console.error("❌ Erro ao deletar arquétipo:", error);
-    res
-      .status(500)
-      .json({ message: "Falha crítica na purgação do arquétipo." });
+    res.status(500).json({ message: "Falha na purgação do arquétipo." });
   }
 };

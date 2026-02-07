@@ -89,21 +89,38 @@ export const updateCharacter = async (req: Request, res: Response) => {
     delete updates.stats;
     delete updates.userId;
 
-    const updatedChar = await Character.findByIdAndUpdate(
-      id,
-      { $set: updates },
-      { new: true, runValidators: true }
-    ).populate("background.club background.archetype weapons.primary stats.status");
+    const char = await Character.findById(id);
+    if (!char) return res.status(404).json({ error: "Sinal não localizado." });
+
+    // Injetamos as atualizações no documento
+    // O Mongoose lida bem com Object.assign para Maps e arrays
+    Object.assign(char, updates);
+
+    // .save() dispara o middleware syncCharacterStats (pre-validate)
+    await char.save();
+
+    const updatedChar = await Character.findById(id).populate(
+      "background.club background.archetype weapons.primary stats.status",
+    );
 
     if (!updatedChar) {
-      return res.status(404).json({ error: "Sinal não localizado para recalibragem." });
+      return res
+        .status(404)
+        .json({ error: "Sinal não localizado para recalibragem." });
     }
 
-    console.log(`🔄 Nexus_Sync: Ficha [${updatedChar.identity.name}] recalibrada.`);
-    res.json({ message: "Sinal sincronizado com sucesso.", character: updatedChar });
+    console.log(
+      `🔄 Nexus_Sync: Ficha [${updatedChar.identity.name}] recalibrada.`,
+    );
+    res.json({
+      message: "Sinal sincronizado com sucesso.",
+      character: updatedChar,
+    });
   } catch (error: any) {
     console.error("❌ ERRO NA ATUALIZAÇÃO:", error);
-    res.status(400).json({ error: "Falha na sincronia neural.", details: error.message });
+    res
+      .status(400)
+      .json({ error: "Falha na sincronia neural.", details: error.message });
   }
 };
 
@@ -127,15 +144,20 @@ export const deleteCharacter = async (req: Request, res: Response) => {
     // 3. Purgação em Cascata: Se houver um usuário associado, ele também é deletado
     if (linkedUserId) {
       await User.findByIdAndDelete(linkedUserId);
-      console.warn(`🗑️ Nexus_Purge: Usuário associado [${linkedUserId}] removido.`);
+      console.warn(
+        `🗑️ Nexus_Purge: Usuário associado [${linkedUserId}] removido.`,
+      );
     }
 
-    console.warn(`🗑️ Vault_Purge: Personagem [${character.identity.name}] apagado permanentemente.`);
+    console.warn(
+      `🗑️ Vault_Purge: Personagem [${character.identity.name}] apagado permanentemente.`,
+    );
 
-    res.json({ 
-      message: "Purgação concluída. Personagem e conta associada removidos do Core.",
+    res.json({
+      message:
+        "Purgação concluída. Personagem e conta associada removidos do Core.",
       deletedCharId: id,
-      userPurged: !!linkedUserId
+      userPurged: !!linkedUserId,
     });
   } catch (error) {
     console.error("❌ ERRO NA PURGAÇÃO:", error);
