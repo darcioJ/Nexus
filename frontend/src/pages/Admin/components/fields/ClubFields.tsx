@@ -8,7 +8,19 @@ export const ClubFields = ({ register, attributes, setValue, watch }: any) => {
 
   return (
     <>
-      {/* 1. MECÂNICA DE BÔNUS (Módulo Esquerdo) */}
+      {/* 1. IDENTIDADE VISUAL: SELETOR DE ÍCONE (Prisma Lux) */}
+      <div className="col-span-2">
+        <InputGroup label="Ícone Representativo (Lucide)">
+          <IconInput
+            register={register}
+            watch={watch}
+            setValue={setValue}
+            name="iconName"
+          />
+        </InputGroup>
+      </div>
+
+      {/* 2. MECÂNICA DE BÔNUS (Módulo Esquerdo) */}
       <InputGroup label="Atributo de Vínculo">
         <div className="relative">
           <select {...register('bonus.attributeKey')} className={selectBaseClass}>
@@ -38,16 +50,6 @@ export const ClubFields = ({ register, attributes, setValue, watch }: any) => {
             PTS
           </div>
         </div>
-      </InputGroup>
-
-      {/* 2. IDENTIDADE VISUAL: SELETOR DE ÍCONE (Prisma Lux) */}
-      <InputGroup label="Ícone Representativo (Lucide)">
-        <IconInput
-          register={register}
-          watch={watch}
-          setValue={setValue}
-          name="iconName"
-        />
       </InputGroup>
     </>
   );

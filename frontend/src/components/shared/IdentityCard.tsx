@@ -23,14 +23,14 @@ export const IdentityCard = memo(({ data, character }: IdentityCardProps) => {
     const birthYear = CURRENT_YEAR - age;
 
     const clubInfo = useMemo(() => {
-        const originRef = background.origin;
-        return vault?.clubs.find(c => c._id === originRef || c.key === originRef || c.id === originRef);
-    }, [vault, background.origin]);
+        const clubRef = background.club;
+        return vault?.clubs.find(c => c._id === clubRef || c.key === clubRef || c.id === clubRef);
+    }, [vault, background.club]);
 
-    const kitInfo = useMemo(() => {
-        const kitRef = background.starterKit;
-        return vault?.archetypes.find(a => a._id === kitRef || a.key === kitRef || a.id === kitRef);
-    }, [vault, background.starterKit]);
+    const archetypeInfo = useMemo(() => {
+        const archetypeRef = background.archetype;
+        return vault?.archetypes.find(a => a._id === archetypeRef || a.key === archetypeRef || a.id === archetypeRef);
+    }, [vault, background.archetype]);
 
     return (
         <div className="relative bg-white/40 backdrop-blur-2xl border border-white rounded-[2.5rem] md:rounded-[3rem] p-5 md:p-8 shadow-xl overflow-hidden group">
@@ -73,7 +73,7 @@ export const IdentityCard = memo(({ data, character }: IdentityCardProps) => {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
                         <InfoChip label="Idade" value={`${age} anos`} icon={<Activity size={12} />} />
                         <InfoChip label="Clube" value={clubInfo?.name || "N/A"} accent="var(--color-step-background)" />
-                        <InfoChip label="Arquétipo" value={kitInfo?.name || "N/A"} accent="var(--color-step-kits)" />
+                        <InfoChip label="Arquétipo" value={archetypeInfo?.name || "N/A"} accent="var(--color-step-kits)" />
                     </div>
                 </div>
             </div>

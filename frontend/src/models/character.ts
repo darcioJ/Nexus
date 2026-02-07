@@ -8,9 +8,9 @@ export const characterSchema = z.object({
   }),
 
   background: z.object({
-    origin: z.string().min(1, "Selecione sua origem"), // Agora recebe o _id do DB
+    club: z.string().min(1, "Selecione sua origem"), // Agora recebe o _id do DB
     biography: z.string().max(500, "Máximo 500 caracteres"),
-    starterKit: z.string().min(1, "Escolha um kit inicial"),
+    archetype: z.string().min(1, "Escolha um kit inicial"),
   }),
 
   // MUDANÇA AQUI: Atributos agora é um Record (Mapa de Chaves)
@@ -42,7 +42,7 @@ export type StepId = CharacterKeys | "review";
 export const DEFAULT_VALUES: CharacterData = {
   identity: { name: "", age: 14 },
   weapons: { primary: "" },
-  background: { origin: "", biography: "", starterKit: "" },
+  background: { club: "", biography: "", archetype: "" },
   attributes: {
     strength: 6,
     agility: 6,

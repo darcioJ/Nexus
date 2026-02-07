@@ -93,7 +93,7 @@ export const updateCharacter = async (req: Request, res: Response) => {
       id,
       { $set: updates },
       { new: true, runValidators: true }
-    ).populate("background.origin weapons.primary stats.status");
+    ).populate("background.club background.archetype weapons.primary stats.status");
 
     if (!updatedChar) {
       return res.status(404).json({ error: "Sinal não localizado para recalibragem." });

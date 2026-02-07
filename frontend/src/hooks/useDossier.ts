@@ -43,9 +43,9 @@ export const useDossier = () => {
   }, []);
 
   const getBonusKey = useCallback(
-    (originId: string) => {
+    (clubId: string) => {
       if (!vault?.clubs) return null;
-      const club = (vault.clubs as Club[]).find((c) => c._id === originId);
+      const club = (vault.clubs as Club[]).find((c) => c._id === clubId);
       return club?.bonus?.attributeKey || null;
     },
     [vault?.clubs],
@@ -53,13 +53,13 @@ export const useDossier = () => {
 
   const modifyBonus = useCallback(
     (amount: number) => {
-      const attrKey = getBonusKey(values.background.origin);
+      const attrKey = getBonusKey(values.background.club);
       if (attrKey) {
         const currentVal = values.attributes[attrKey] || 0;
         setValue(`attributes.${attrKey}`, currentVal + amount);
       }
     },
-    [getBonusKey, values.background.origin, values.attributes, setValue],
+    [getBonusKey, values.background.club, values.attributes, setValue],
   );
 
   // --- VALIDAÇÃO DINÂMICA ---

@@ -1,6 +1,33 @@
 import { Schema, model } from "mongoose";
+import { syncCharacterStats } from "../middleware/characterMiddleware.js";
 
-const characterSchema = new Schema({
+export interface ICharacter {
+  userId?: Schema.Types.ObjectId;
+  identity: {
+    name: string;
+    age: number;
+  };
+  background: {
+    club: Schema.Types.ObjectId;
+    biography?: string;
+    archetype: Schema.Types.ObjectId;
+  };
+  attributes: Map<string, number>;
+  weapons: {
+    primary: Schema.Types.ObjectId;
+  };
+  stats: {
+    hp: number;
+    maxHp: number;
+    san: number;
+    maxSan: number;
+    status: Schema.Types.ObjectId;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const characterSchema = new Schema<ICharacter>({
   userId: { type: Schema.Types.ObjectId, ref: "User", required: false },
 
   identity: {
@@ -9,9 +36,9 @@ const characterSchema = new Schema({
   },
 
   background: {
-    origin: { type: Schema.Types.ObjectId, ref: "Club", required: true },
-    biography: { type: String },
-    starterKit: { type: String, required: true },
+    club: { type: Schema.Types.ObjectId, ref: "Club", required: true },
+    biography: { type: String, required: false, default: "-SEM_REGISTRO_DE_BIO-"},
+    archetype: { type: Schema.Types.ObjectId, ref: "Archetype", required: true, },
   },
 
   attributes: {
@@ -34,46 +61,10 @@ const characterSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "StatusEffect",
       required: true,
-      default: "6983b9a594b223b8c7d9f51c", // Estabilizado
     },
   },
+}, { timestamps: true } );
 
-  version: { type: String },
-  createdAt: { type: Date, default: Date.now },
-});
+characterSchema.pre("validate", syncCharacterStats);
 
-// --- MIDDLEWARE NEXUS: SINCRONIA DE ATRIBUTOS (ASYNC VERSION) ---
-characterSchema.pre("save", async function () {
-  const char = this;
-  
-  // 1. EXTRAÇÃO DE ATRIBUTOS
-  const attributes = char.attributes;
-  if (!attributes) return;
-
-  const values = attributes instanceof Map
-      ? Array.from(attributes.values())
-      : Object.values(attributes);
-
-  const totalNX = values.reduce((acc, curr) => acc + (Number(curr) || 0), 0);
-
-  // 2. VALIDAÇÃO DE OVERLOAD
-  if (totalNX > 43) throw new Error(`[NEXUS_OVERLOAD]: Soma ${totalNX} excede o limite.`);
-  if (totalNX < 30) throw new Error(`[NEXUS_LOW_SIGNAL]: Soma ${totalNX} insuficiente.`);
-
-  // 3. CÁLCULO DE INTEGRIDADE (Stats Sub-document)
-  const vit = Number(char.get("attributes.vitality")) || 0;
-  const int = Number(char.get("attributes.intelligence")) || 0;
-  const ess = Number(char.get("attributes.essence")) || 0;
-
-  // Atualiza as propriedades dentro do objeto stats
-  char.stats.maxHp = 90 + vit * 2;
-  char.stats.maxSan = 30 + (int + ess);
-
-  // Inicializa valores atuais se for um novo sinal
-  if (char.isNew) {
-    char.stats.hp = char.stats.maxHp;
-    char.stats.san = char.stats.maxSan;
-  }
-});
-
-export const Character = model("Character", characterSchema);
+export const Character = model<ICharacter>("Character", characterSchema);

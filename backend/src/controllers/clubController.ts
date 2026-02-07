@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { Club } from "../models/Club.js";
+import { Character } from "../models/Character.js";
 
 // 1. CRIAR NOVO CLUBE
 export const createClub = async (req: Request, res: Response) => {
@@ -59,6 +60,21 @@ export const updateClub = async (req: Request, res: Response) => {
 export const deleteClub = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+
+    // 1. Localizar o Clube Baseline
+    const defaultClub = await Club.findOne({ key: "no_club" });
+    if (!defaultClub) return res.status(500).json({ message: "Erro: Clube 'no_club' não encontrado." });
+
+    if (id === defaultClub._id.toString()) {
+      return res.status(403).json({ message: "Protocolo Negado: Impossível deletar o clube de baseline." });
+    }
+
+    // 2. Migrar personagens para o baseline
+    await Character.updateMany(
+      { "background.club": id } as any,
+      { $set: { "background.club": defaultClub._id } }
+    );
+
 
     const deletedClub = await Club.findByIdAndDelete(id);
 

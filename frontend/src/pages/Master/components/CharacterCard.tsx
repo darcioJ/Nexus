@@ -19,9 +19,9 @@ export const CharacterCard = ({ character, vault, index, onModulate, onStatusCha
   const [isExpanded, setIsExpanded] = useState(false);
   const { sendPulse } = useMasterNexus();
 
-  const origin = useMemo(() => {
-    return vault?.clubs?.find(c => c._id === character.background?.origin);
-  }, [vault, character.background?.origin]);
+  const club = useMemo(() => {
+    return vault?.clubs?.find(c => c._id === character.background?.club);
+  }, [vault, character.background?.club]);
 
   return (
     <motion.div
@@ -57,10 +57,10 @@ export const CharacterCard = ({ character, vault, index, onModulate, onStatusCha
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {origin && (
+              {club && (
                 <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 border border-white rounded-lg">
-                  <NexusIcon name={origin.iconName} size={10} className="text-amber-600" />
-                  <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{origin.name}</span>
+                  <NexusIcon name={club.iconName} size={10} className="text-amber-600" />
+                  <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{club.name}</span>
                 </div>
               )}
               <span className="text-[7px] text-slate-300 font-mono font-bold italic tracking-tighter">

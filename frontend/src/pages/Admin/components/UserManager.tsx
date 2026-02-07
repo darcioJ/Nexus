@@ -1,9 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
-    Users, ShieldCheck, UserMinus, Search,
-    Activity, Fingerprint, Mail, Calendar,
-    UserCog, Loader2
+    Users, ShieldCheck, Search,
+    Activity, Fingerprint, Loader2
 } from 'lucide-react';
 
 // --- INFRAESTRUTURA NEXUS ---
@@ -14,6 +13,7 @@ import { useNotification } from '../../../hooks/useNotification';
 import { useConfirm } from '../../../hooks/useConfirm';
 
 import { StatCard } from './StatCard';
+import { UserCard } from './UserCard';
 
 export const UserManager = () => {
     const [users, setUsers] = useState<any[]>([]);
@@ -135,76 +135,5 @@ export const UserManager = () => {
                 </AnimatePresence>
             </div>
         </div>
-    );
-};
-
-// --- COMPONENTE: USER CARD (Refração Nexus) ---
-
-const UserCard = ({ user, onToggleRole, onDelete }: any) => {
-    const isMaster = user.role === 'MASTER';
-
-    return (
-        <motion.div
-            layout
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="group relative bg-white/60 backdrop-blur-2xl border border-white p-6 rounded-[3rem] flex items-center justify-between transition-all hover:bg-white hover:shadow-[0_30px_60px_-20px_rgba(0,0,0,0.05)] overflow-hidden"
-        >
-            {/* Prisma Aura (Somente para Mestres) */}
-            {isMaster && (
-                <div className="absolute left-0 top-0 w-1.5 h-full bg-admin-panel shadow-[0_0_20px_var(--color-admin-panel)]" />
-            )}
-
-            <div className="flex items-center gap-8 relative z-10">
-                {/* Avatar / Bio-Icon */}
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center border transition-all duration-500 ${isMaster ? 'bg-indigo-50 border-indigo-100 text-admin-panel rotate-3' : 'bg-slate-50 border-slate-100 text-slate-300'
-                    }`}>
-                    {isMaster ? <ShieldCheck size={32} /> : <Fingerprint size={32} />}
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-3">
-                        <h4 className="font-black text-slate-900 text-xl italic tracking-tighter uppercase leading-none">
-                            {user.name}
-                        </h4>
-                        <span className={`px-2.5 py-0.5 text-[7px] font-black uppercase rounded-md tracking-[0.2em] ${isMaster ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-400'
-                            }`}>
-                            {user.role}
-                        </span>
-                    </div>
-
-                    <div className="flex items-center gap-4 text-[9px] font-bold uppercase tracking-widest text-slate-400">
-                        <div className="flex items-center gap-1.5">
-                            <Mail size={10} className="text-slate-300" />
-                            <span>{user.email}</span>
-                        </div>
-                        <span className="w-1 h-1 rounded-full bg-slate-200" />
-                        <div className="flex items-center gap-1.5">
-                            <Calendar size={10} className="text-slate-300" />
-                            <span>Desde {new Date(user.createdAt).toLocaleDateString()}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Comandos de Moderação */}
-            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                <button
-                    onClick={onToggleRole}
-                    title={isMaster ? "Rebaixar para Player" : "Promover a Mestre"}
-                    className="w-12 h-12 flex items-center justify-center bg-white border border-slate-100 text-slate-300 rounded-2xl hover:text-admin-panel hover:border-admin-panel/30 transition-all shadow-sm"
-                >
-                    <UserCog size={20} />
-                </button>
-                <button
-                    onClick={onDelete}
-                    title="Remover Acesso"
-                    className="w-12 h-12 flex items-center justify-center bg-white border border-slate-100 text-slate-300 rounded-2xl hover:text-rose-500 hover:border-rose-100 transition-all shadow-sm"
-                >
-                    <UserMinus size={20} />
-                </button>
-            </div>
-        </motion.div>
     );
 };

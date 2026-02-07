@@ -13,15 +13,15 @@ export const BackgroundCard = ({ data, character }) => {
     const { vault, isLoading } = useVault();
     const background = data?.background || character?.background || {};
 
-    const selectedKitData = useMemo(() => {
-        const kitRef = background.starterKit;
-        return vault?.archetypes.find(a => a._id === kitRef || a.key === kitRef || a.id === kitRef);
-    }, [vault, background.starterKit]);
+    const selectedArchetypeData = useMemo(() => {
+        const archetypeRef = background.archetype;
+        return vault?.archetypes.find(a => a._id === archetypeRef || a.key === archetypeRef || a.id === archetypeRef);
+    }, [vault, background.archetype]);
 
-    const selectedOriginData = useMemo(() => {
-        const originRef = background.origin;
-        return vault?.clubs.find(c => c._id === originRef || c.key === originRef || c.id === originRef);
-    }, [vault, background.origin]);
+    const selectedClubData = useMemo(() => {
+        const clubRef = background.club;
+        return vault?.clubs.find(c => c._id === clubRef || c.key === clubRef || c.id === clubRef);
+    }, [vault, background.club]);
 
     if (isLoading || !vault?.archetypes) {
         return <LoadingScreen message="Calibrando Matriz..." />;
@@ -43,15 +43,15 @@ export const BackgroundCard = ({ data, character }) => {
                         <div className="lg:col-span-4 flex flex-col items-center lg:items-start space-y-4">
                             <div className="flex items-center gap-4">
                                 <div className="relative w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg z-10 transition-transform duration-500 group-hover:scale-105">
-                                    <NexusIcon name={selectedKitData?.iconName || 'Package'} size={24} />
+                                    <NexusIcon name={selectedArchetypeData?.iconName || 'Package'} size={24} />
                                     <div className="absolute inset-0 bg-step-kits opacity-20 blur-lg rounded-full animate-pulse" />
                                 </div>
                                 <h4 className="text-lg font-black text-slate-800 uppercase tracking-tight">
-                                    {selectedKitData?.name || "Kit Padrão"}
+                                    {selectedArchetypeData?.name || "Kit Padrão"}
                                 </h4>
                             </div>
                             <p className="text-[11px] font-bold text-slate-400 italic leading-snug text-center lg:text-left">
-                                {selectedKitData?.description}
+                                {selectedArchetypeData?.description}
                             </p>
                         </div>
 
@@ -63,11 +63,11 @@ export const BackgroundCard = ({ data, character }) => {
                                     <div className="w-1 h-1 bg-step-kits rounded-full animate-pulse" />
                                     Inventory
                                 </span>
-                                <span className="text-[7px] font-mono text-slate-300">QTY: {selectedKitData?.items.split(' • ').length || 0}</span>
+                                <span className="text-[7px] font-mono text-slate-300">QTY: {selectedArchetypeData?.items.split(' • ').length || 0}</span>
                             </div>
 
                             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2">
-                                {selectedKitData?.items.split(' • ').map((item, idx) => (
+                                {selectedArchetypeData?.items.split(' • ').map((item, idx) => (
                                     <motion.div
                                         key={idx}
                                         whileHover={{ y: -2, scale: 1.02 }}
@@ -121,12 +121,12 @@ export const BackgroundCard = ({ data, character }) => {
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div className="flex items-center gap-5">
                                 <div className="w-14 h-14 bg-white rounded-3xl shadow-md border border-slate-100 flex items-center justify-center text-step-background">
-                                    <NexusIcon name={selectedOriginData?.iconName || 'Terminal'} size={24} />
+                                    <NexusIcon name={selectedClubData?.iconName || 'Terminal'} size={24} />
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-[9px] font-black text-step-background uppercase tracking-[0.4em]">Neural_Entry</span>
                                     <h2 className="text-xl font-black text-slate-900 uppercase tracking-tighter">
-                                        {selectedOriginData?.name || 'Desconhecido'}
+                                        {selectedClubData?.name || 'Desconhecido'}
                                     </h2>
                                 </div>
                             </div>

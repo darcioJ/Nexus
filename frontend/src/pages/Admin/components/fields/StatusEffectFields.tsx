@@ -21,7 +21,7 @@ export const StatusEffectFields = ({ register }: any) => {
 
           <select {...register('type')} className={`${selectBaseClass} pl-12`}>
             {categories.map(cat => (
-              <option key={cat} value={cat.toUpperCase()}>{cat}</option>
+              <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
 

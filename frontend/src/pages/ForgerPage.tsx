@@ -78,8 +78,8 @@ export function ForgerPage() {
                 if (errors.identity?.age) return "Frequência Etária fora dos parâmetros permitidos.";
                 break;
             case 1:
-                if (errors.background?.origin) return "Clube não detectado. Selecione um Clube.";
-                if (errors.background?.starterKit) return "Arsenal inicial não definido.";
+                if (errors.background?.club) return "Clube não detectado. Selecione um Clube.";
+                if (errors.background?.archetype) return "Arsenal inicial não definido.";
                 break;
             case 2:
                 if (!canProceed) return "Sincronia Energética insuficiente. Aloque 30 pontos NX.";

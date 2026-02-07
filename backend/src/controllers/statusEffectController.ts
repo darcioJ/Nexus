@@ -1,5 +1,7 @@
 import type { Request, Response } from "express";
 import { StatusEffect } from "../models/StatusEffect.js";
+import { Essence } from "src/models/Essence.js";
+import { Types } from "mongoose";
 
 // 1. REGISTRAR NOVO EFEITO DE STATUS
 export const createStatusEffect = async (req: Request, res: Response) => {
@@ -60,6 +62,25 @@ export const updateStatusEffect = async (req: Request, res: Response) => {
 export const deleteStatusEffect = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+
+    const statusId = id as string;
+
+    const stableStatus = await StatusEffect.findOne({ key: "stable" });
+    
+    if (!stableStatus) {
+       return res.status(500).json({ 
+         message: "Falha Crítica: Status 'stable' não encontrado no Core. Impossível desvincular dependências." 
+       });
+    }
+
+    if (id === stableStatus._id.toString()) {
+      return res.status(403).json({ message: "Ação Negada: O protocolo 'stable' é um baseline do sistema e não pode ser removido." });
+    }
+
+    await Essence.updateMany(
+      { baseStatusId: statusId } as any,
+      { baseStatusId: stableStatus._id }
+    );
 
     const deleted = await StatusEffect.findByIdAndDelete(id);
 

@@ -24,7 +24,7 @@ export const VaultCard = React.memo(({ item, type, onEdit, onDelete }: VaultCard
       clubs: { tag: 'Clube', primary: `+${item.bonus?.value} ${item.bonus?.attributeKey}`, secondary: item.key },
       status: { tag: item.type, primary: item.resistance, secondary: item.key },
       attributes: { tag: item.label, primary: item.description, secondary: item.modLabel },
-      archetypes: { tag: 'Kit_Classe', primary: item.items },
+      archetypes: { tag: 'Arquétipo', primary: item.items },
     }[type] || { tag: 'Nexus', primary: '', secondary: '' };
 
     return { LucideIcon: IconComponent, accentColor: color, metadata: meta };

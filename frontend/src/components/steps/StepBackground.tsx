@@ -18,8 +18,8 @@ export const StepBackground = () => {
     const { vault, isLoading } = useVault(); // Puxa os dados do DB
     const { register, watch, setValue } = useFormContext<CharacterData>();
 
-    const selectedOrigin = watch('background.origin');
-    const selectedKit = watch('background.starterKit');
+    const selectedClub = watch('background.club');
+    const selectedArchetype = watch('background.archetype');
 
     if (isLoading || !vault) return <LoadingScreen message="Sincronizando Vault..." />;
 
@@ -44,7 +44,7 @@ export const StepBackground = () => {
                         <div className="p-1.5 bg-step-background-soft rounded-lg border border-step-background-soft">
                             <Users size={14} className="text-step-background" />
                         </div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Origin_Clubs</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Clubs</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="w-1 h-1 bg-step-background rounded-full animate-pulse shadow-[0_0_5px_#f59e0b]" />
@@ -54,13 +54,13 @@ export const StepBackground = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                     {vault.clubs.map((occ) => {
-                        const isSelected = selectedOrigin === occ._id;
+                        const isSelected = selectedClub === occ._id;
                         return (
                             <button
                                 key={occ._id}
                                 type="button"
                                 onClick={() => {
-                                    setValue('background.origin', occ._id);
+                                    setValue('background.club', occ._id);
                                     triggerHaptic('LIGHT');
                                 }}
                                 className={`group/chip relative p-4 md:p-5 rounded-4xl border-2 transition-all duration-500 text-left overflow-hidden backdrop-blur-md
@@ -136,20 +136,20 @@ export const StepBackground = () => {
                     </div>
                     <div className="flex gap-1.5">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className={`w-2.5 h-1 rounded-full transition-all duration-500 ${selectedKit ? 'bg-step-kits shadow-[0_0_8px_var(--color-step-kits)]/50' : 'bg-slate-100'}`} />
+                            <div key={i} className={`w-2.5 h-1 rounded-full transition-all duration-500 ${selectedArchetype ? 'bg-step-kits shadow-[0_0_8px_var(--color-step-kits)]/50' : 'bg-slate-100'}`} />
                         ))}
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                     {vault.archetypes.map((kit) => {
-                        const isSelected = selectedKit === kit._id;
+                        const isSelected = selectedArchetype === kit._id;
                         return (
                             <button
                                 key={kit._id}
                                 type="button"
                                 onClick={() => {
-                                    setValue('background.starterKit', kit._id);
+                                    setValue('background.archetype', kit._id);
                                     if (triggerHaptic) triggerHaptic('LIGHT');
                                 }}
                                 className={`

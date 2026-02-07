@@ -14,15 +14,15 @@ export const AttributesCard = ({ data, character }) => {
     // 2. SINCRONIA DE ORIGEM (CLUBE)
     const selectedOcc = React.useMemo(() => {
         if (!vault?.clubs) return null;
-        const originRef = background.origin;
+        const clubRef = background.club;
 
         // Busca flexível por ID ou Nome no Vault
-        return vault.clubs.find(o =>
-            o._id === originRef ||
-            o.id === originRef ||
-            o.key === originRef
+        return vault.clubs.find(c =>
+            c._id === clubRef ||
+            c.id === clubRef ||
+            c.key === clubRef
         );
-    }, [vault, background.origin]);
+    }, [vault, background.club]);
 
     // Identifica qual atributo recebe o bônus do Clube
     const bonusAttrKey = selectedOcc?.bonus?.attributeKey || null;

@@ -13,7 +13,7 @@ export const textareaBaseClass =
 export const selectBaseClass =
   "w-full bg-stone-50/40 border-2 border-stone-200/50 rounded-2xl px-6 py-4 text-sm font-bold text-slate-800 cursor-pointer shadow-inner hover:border-stone-300 focus:bg-white focus:border-indigo-500 focus:shadow-[0_0_20px_-5px_rgba(99,102,241,0.15)] transition-all duration-300 outline-none appearance-none ring-0";
 
-export const categories = ["Elemental", "Corruptora", "Espiritual"];
+export const categories = ["Elemental", "Corruptora", "Espiritual", "Universal"];
 
 export const VAULT_CONFIG = {
   weapons: {
@@ -41,7 +41,7 @@ export const VAULT_CONFIG = {
     delete: vaultService.deleteEssence,
   },
   archetypes: {
-    label: "Kits",
+    label: "Arquétipos",
     icon: BookOpen,
     save: vaultService.saveArchetype,
     delete: vaultService.deleteArchetype,

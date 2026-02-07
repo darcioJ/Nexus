@@ -24,7 +24,7 @@ export const STEPS_DATA: Step[] = [
   },
   {
     id: 'background',
-    fields: ["background.origin", "background.starterKit"],
+    fields: ["background.club", "background.archetype"],
     error: "Clube ou Arsenal não detectados.",
     title: 'Histórico',
     icon: <BookOpen size={20} />,

@@ -19,9 +19,9 @@ export const DetailedScan = ({ character, vault }) => {
     }, [equippedWeapon, vault]);
 
     // 2. SINCRONIA DE KIT (ARQUÉTIPO)
-    const kitDetails = useMemo(() => {
-        return vault?.archetypes?.find((c: { _id: unknown; }) => c._id === character.background?.starterKit);
-    }, [vault, character.background?.starterKit]);
+    const archetypeDetails = useMemo(() => {
+        return vault?.archetypes?.find((c: { _id: unknown; }) => c._id === character.background?.archetype);
+    }, [vault, character.background?.archetype]);
 
     return (
         <div className="pt-6 mt-6 border-t border-slate-100/50 grid grid-cols-1 lg:grid-cols-2 gap-6 relative">
@@ -178,12 +178,12 @@ export const DetailedScan = ({ character, vault }) => {
                     <div className="relative z-10 space-y-6">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-400 border border-white transition-transform group-hover:rotate-6">
-                                <NexusIcon name={kitDetails?.iconName || 'Box'} size={24} />
+                                <NexusIcon name={archetypeDetails?.iconName || 'Box'} size={24} />
                             </div>
                             <div>
                                 <span className="text-[7px] font-black text-slate-300 uppercase tracking-widest block">Arquétipo</span>
                                 <h4 className="text-sm font-black text-slate-900 uppercase italic tracking-tighter leading-none">
-                                    {kitDetails?.name || "NEXUS_GHOST"}
+                                    {archetypeDetails?.name || "NEXUS_GHOST"}
                                 </h4>
                             </div>
                         </div>
@@ -191,7 +191,7 @@ export const DetailedScan = ({ character, vault }) => {
                         <div className="space-y-4">
                             <div className="space-y-1">
                                 <p className="text-[9px] text-slate-500 font-bold italic leading-relaxed px-1">
-                                    {kitDetails?.description || "Descrição de kit não indexada."}
+                                    {archetypeDetails?.description || "Descrição de kit não indexada."}
                                 </p>
                             </div>
 
@@ -201,7 +201,7 @@ export const DetailedScan = ({ character, vault }) => {
                                     <Box size={8} /> Inventário_Base
                                 </label>
                                 <div className="flex flex-wrap gap-1.5">
-                                    {kitDetails?.items?.split('•').map((item: string, idx: Key | null | undefined) => (
+                                    {archetypeDetails?.items?.split('•').map((item: string, idx: Key | null | undefined) => (
                                         <span key={idx} className="px-2.5 py-1 bg-white border border-slate-100 rounded-lg text-[7px] font-black text-slate-400 uppercase tracking-widest shadow-xs">
                                             {item.trim()}
                                         </span>

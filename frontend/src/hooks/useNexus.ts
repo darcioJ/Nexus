@@ -22,10 +22,10 @@ export const useNexus = () => {
 
     // 2. Mapeamento de Background
     const club = vault.clubs?.find(
-      (c: any) => c._id === char.background?.origin,
+      (c: any) => c._id === char.background?.club,
     );
     const archetype = vault.archetypes?.find(
-      (a: any) => a._id === char.background?.starterKit,
+      (a: any) => a._id === char.background?.archetype,
     );
 
     // 3. Mapeamento de Status Ativo (Agora acessando char.stats.status)
@@ -70,8 +70,8 @@ export const useNexus = () => {
     currentStatus: populatedCharacter?.stats?.statusDetail || null,
 
     equippedWeapon: populatedCharacter?.weaponDetail || null,
-    originClub: populatedCharacter?.clubDetail || null,
-    starterKit: populatedCharacter?.archetypeDetail || null,
+    club: populatedCharacter?.clubDetail || null,
+    archetype: populatedCharacter?.archetypeDetail || null,
 
     // Retorna o objeto stats completo (contendo hp, maxHp, san, maxSan, soul, etc)
     stats: populatedCharacter?.stats || {},

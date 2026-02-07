@@ -24,10 +24,10 @@ export const StepAttributes = () => {
     const { vault, isLoading } = useVault();
     const { watch, setValue } = useFormContext<CharacterData>();
     const attributes = watch('attributes');
-    const selectedOrigin = watch('background.origin');
+    const selectedClub = watch('background.club');
 
     // Busca o Clube e a chave do bônus direto do DB
-    const clubData = vault?.clubs.find(o => o._id === selectedOrigin);
+    const clubData = vault?.clubs.find(o => o._id === selectedClub);
     const bonusAttrKey = clubData?.bonus?.attributeKey || null; // ex: 'strength'
 
     const TOTAL_ALLOWED = CHAR_LIMITS.TOTAL_POINTS;
