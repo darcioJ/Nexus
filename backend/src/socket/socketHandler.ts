@@ -25,7 +25,7 @@ export const setupSocket = (io) => {
       if (role !== "MASTER") {
         socket.to("nexus_table").emit("nexus:alert", {
           title: "Sinal Sincronizado",
-          message: `Operativo ${name} estabeleceu conexão com o Vault.`,
+          message: `${name} estabeleceu conexão com o Nexus.`,
           type: "SUCCESS",
         });
         console.log(`👤 Operativo Conectado: ${name} [Sala: ${charId}]`);
@@ -73,7 +73,7 @@ export const setupSocket = (io) => {
         if (player.role !== "MASTER") {
           socket.to("nexus_table").emit("nexus:alert", {
             title: "Sinal Perdido",
-            message: `O operativo ${player.name || "Desconhecido"} desconectou do Vault.`,
+            message: `${player.name || "Desconhecido"} se desconectou do Nexus.`,
             type: "ERROR",
           });
         }
