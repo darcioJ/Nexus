@@ -8,6 +8,7 @@ import { api } from '../api';
 import { triggerHaptic } from '../utils/triggerHaptic';
 import { useAuth } from '../hooks/useAuth';
 import { useNotification } from '../hooks/useNotification';
+import { useVault } from '../hooks/useVault';
 
 // --- Componentes Refatorados ---
 import { AuthBackground } from './Auth/components/AuthBackground';
@@ -21,6 +22,7 @@ export const AuthPage = () => {
     const navigate = useNavigate();
     const { login } = useAuth();
     const { notifyError, notifySuccess } = useNotification();
+    const { refreshVault } = useVault();
 
     // --- RECUPERAÇÃO DE SINAL ---
     const charId = localStorage.getItem("@Nexus:PendingCharId");
@@ -64,6 +66,8 @@ export const AuthPage = () => {
         try {
             const response = await api.post("/auth/login", { email, password: pass });
             executeSuccessProtocol(response.data);
+            notifySuccess(response.data.message, "Usuário conectado com sucesso.")
+            refreshVault();
         } catch (error: any) {
             notifyError(error, "As credenciais não coincidem com o Vault.");
         } finally {
@@ -82,6 +86,8 @@ export const AuthPage = () => {
                 password
             });
             executeSuccessProtocol(response.data);
+            notifySuccess(response.data.message, "Usuário registrado com sucesso.")
+            refreshVault();
         } catch (error) {
             notifyError(error, "Erro ao imortalizar sinal no banco de dados.");
         } finally {

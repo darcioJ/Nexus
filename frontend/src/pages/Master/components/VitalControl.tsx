@@ -34,11 +34,7 @@ export const VitalControl = ({ character, vault, onModulate, onStatusChange }: V
     return vault?.essences?.find(e => e.statusId === currentStatus._id);
   }, [vault, currentStatus]);
 
-  const getStatusKey = (name: string) =>
-    name ? name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "") : 'estabilizado';
-
-  const statusKey = getStatusKey(currentStatus?.name);
-  const statusColor = `var(--status-${statusKey})`;
+  const statusColor = currentStatus.colorVar;
 
   return (
     <section className="p-5 rounded-[2.5rem] bg-white border border-slate-50 shadow-xs space-y-5 relative overflow-hidden group/vital">
@@ -114,7 +110,7 @@ export const VitalControl = ({ character, vault, onModulate, onStatusChange }: V
                 {activeEssence ? (
                   <NexusIcon name={activeEssence.iconName} size={20} />
                 ) : (
-                  <ShieldCheck size={20} />
+                  <NexusIcon name={currentStatus.iconName} size={20} />
                 )}
               </div>
             </div>
@@ -138,7 +134,7 @@ export const VitalControl = ({ character, vault, onModulate, onStatusChange }: V
                   className="text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-slate-100/50"
                   style={{ color: `color-mix(in srgb, ${statusColor}, black 40%)` }}
                 >
-                  {currentStatus ? currentStatus.type : "Nominal"}
+                  {currentStatus ? currentStatus.category : "Nominal"}
                 </span>
               </div>
             </div>
@@ -233,8 +229,7 @@ export const VitalControl = ({ character, vault, onModulate, onStatusChange }: V
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                     {vault?.statusEffects?.filter(s => s.key !== 'stable').map((s) => {
-                      const itemKey = getStatusKey(s.name);
-                      const itemColor = `var(--status-${itemKey})`;
+                      const itemColor = s.colorVar;
                       const isActive = character.stats.status === s._id;
 
                       return (
@@ -262,7 +257,7 @@ export const VitalControl = ({ character, vault, onModulate, onStatusChange }: V
                                   {s.name}
                                 </span>
                                 <span className="text-[7px] font-bold uppercase tracking-widest text-slate-400">
-                                  {s.type}
+                                  {s.category}
                                 </span>
                               </div>
                               {isActive && (

@@ -5,8 +5,8 @@ import { Search, Database, Zap, Info, Quote, Sparkles, Crosshair, X, ShieldAlert
 import { useVault } from '../hooks/useVault';
 import { LoadingScreen } from '../components/common/LoadingScreen';
 import { NexusIcon } from '../components/common/NexusIcon';
-import { WeaponCardTrigger } from '../components/shared/WeaponCardTrigger';
-import { WeaponDetailModal } from '../components/shared/WeaponDetailModal';
+import { WeaponCardTrigger } from './Nexuspedia/WeaponCardTrigger';
+import { WeaponDetailModal } from './Nexuspedia/WeaponDetailModal';
 
 export const Nexuspedia: React.FC = () => {
   const { vault, isLoading } = useVault();

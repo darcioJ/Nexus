@@ -55,6 +55,7 @@ export const StepBackground = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                     {vault.clubs.map((occ) => {
                         const isSelected = selectedClub === occ._id;
+                        const attribute = vault.attributes.find(a => a._id === occ.bonus.attributeId._id);
                         return (
                             <button
                                 key={occ._id}
@@ -96,11 +97,11 @@ export const StepBackground = () => {
                                             </h4>
                                             {/* Bonus Chip: Nexus Pattern */}
                                             <span className={`shrink-0 text-[8px] font-black px-2 py-0.5 rounded-lg border-2 transition-all duration-500
-                                    ${isSelected
+    ${isSelected
                                                     ? 'bg-step-background-soft border-step-background-soft text-step-background shadow-sm'
                                                     : 'bg-slate-50 border-slate-100 text-slate-400 opacity-60'
                                                 }`}>
-                                                +{occ.bonus.value} {occ.bonus.attributeKey.substring(0, 3).toUpperCase()}
+                                                +{occ.bonus.value} {attribute?.name.slice(0, 3).toUpperCase() || '???'}
                                             </span>
                                         </div>
                                         <p className={`text-[9px] md:text-[10px] font-bold leading-tight line-clamp-2 transition-colors duration-500
@@ -142,14 +143,14 @@ export const StepBackground = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                    {vault.archetypes.map((kit) => {
-                        const isSelected = selectedArchetype === kit._id;
+                    {vault.archetypes.map((archetype) => {
+                        const isSelected = selectedArchetype === archetype._id;
                         return (
                             <button
-                                key={kit._id}
+                                key={archetype._id}
                                 type="button"
                                 onClick={() => {
-                                    setValue('background.archetype', kit._id);
+                                    setValue('background.archetype', archetype._id);
                                     if (triggerHaptic) triggerHaptic('LIGHT');
                                 }}
                                 className={`
@@ -175,7 +176,7 @@ export const StepBackground = () => {
                                             }
                     `}>
                                             <div className={`transition-all duration-700 ${isSelected ? 'scale-110 rotate-0' : 'scale-90 -rotate-6'}`}>
-                                                <NexusIcon name={kit.iconName} />
+                                                <NexusIcon name={archetype.iconName} />
                                             </div>
                                         </div>
 
@@ -190,7 +191,7 @@ export const StepBackground = () => {
                                                 )}
                                             </div>
                                             <h4 className={`text-sm md:text-base font-black uppercase tracking-tight truncate ${isSelected ? 'text-step-kits' : 'text-step-kits/50'}`}>
-                                                {kit.name}
+                                                {archetype.name}
                                             </h4>
                                         </div>
                                     </div>
@@ -202,7 +203,7 @@ export const StepBackground = () => {
                 `}>
                                         <div className={`absolute left-0 top-2 bottom-2 w-0.5 rounded-full transition-colors ${isSelected ? 'bg-step-kits' : 'bg-slate-200'}`} />
                                         <p className={`text-[10px] md:text-[11px] leading-relaxed font-medium italic pl-4 ${isSelected ? 'text-slate-700' : 'text-slate-400'}`}>
-                                            "{kit.description}"
+                                            "{archetype.description}"
                                         </p>
                                     </div>
 
@@ -210,17 +211,18 @@ export const StepBackground = () => {
                                     <div className="space-y-2">
                                         <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest pl-1">Carga_Inicial</span>
                                         <div className="flex flex-wrap gap-1.5">
-                                            {kit.items?.split(' • ').map((item, i) => (
+                                            {archetype.items?.map((item: any, i: number) => (
                                                 <div key={i} className={`
-                flex items-center gap-2 px-2.5 py-1 rounded-lg border transition-all duration-500
-                ${isSelected
+                                                flex items-center gap-2 px-2.5 py-1 rounded-lg border transition-all duration-500
+                                                    ${isSelected
                                                         ? 'bg-white border-step-kits/20 text-slate-700 shadow-sm'
                                                         : 'bg-white/40 border-slate-100 text-slate-400 opacity-60'
                                                     }
-            `}>
+                                                `}>
                                                     <div className={`w-1 h-1 rounded-full ${isSelected ? 'bg-step-kits' : 'bg-slate-300'}`} />
                                                     <span className="text-[8px] font-black uppercase tracking-tighter text-nowrap">
-                                                        {item}
+                                                        {/* Acessamos a propriedade .name do objeto IItem */}
+                                                        {item.name} {item.quantity > 1 ? `x${item.quantity}` : ''}
                                                     </span>
                                                 </div>
                                             ))}

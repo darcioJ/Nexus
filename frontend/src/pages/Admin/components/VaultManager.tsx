@@ -29,13 +29,27 @@ export const VaultManager = () => {
     const [editingItem, setEditingItem] = useState<any>(null);
 
     // 🎯 FILTRAGEM DINÂMICA (Baseada no mapeamento central)
+    // 🎯 FILTRAGEM E ORDENAÇÃO DINÂMICA
     const currentData = useMemo(() => {
         const dataMap = { weapons, clubs, essences, archetypes, attributes, status: statusEffects };
-        const data = (dataMap as any)[activeTab] || [];
-        return data.filter((item: any) =>
+        const rawData = (dataMap as any)[activeTab] || [];
+
+        // 1. Primeiro filtramos pelo termo de busca
+        const filtered = rawData.filter((item: any) =>
             item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.key?.toLowerCase().includes(searchTerm.toLowerCase())
         );
+
+        // 2. Aplicamos a Ordenação de Prioridade (Kernel First)
+        return [...filtered].sort((a, b) => {
+            // Se ambos forem sistema ou ambos forem usuário, mantemos a ordem alfabética (desempate)
+            if (a.isSystem === b.isSystem) {
+                return (a.name || '').localeCompare(b.name || '');
+            }
+
+            // Se 'a' for sistema, ele sobe (-1). Se 'b' for sistema, 'a' desce (1).
+            return a.isSystem ? -1 : 1;
+        });
     }, [activeTab, searchTerm, weapons, clubs, statusEffects, essences, archetypes, attributes]);
 
     // 📊 TELEMETRIA

@@ -27,8 +27,31 @@ export const VaultFormModal = ({ type, initialData, onClose, onSuccess }: any) =
   const { notifySuccess, notifyError } = useNotification();
   const config = VAULT_CONFIG[type as VaultTab];
 
+  const getNormalizedDefaultValues = () => {
+    if (!initialData) return {};
+
+    const data = { ...initialData };
+
+    // Se statusId for um objeto (populado), pegamos apenas o string ID
+    if (data.statusId && typeof data.statusId === 'object') {
+      data.statusId = data.statusId._id;
+    }
+
+    // Se for uma arma, fazemos o mesmo para essenceId
+    if (data.essenceId && typeof data.essenceId === 'object') {
+      data.essenceId = data.essenceId._id;
+    }
+
+    // Para Clubes (bonus.attributeId)
+    if (data.bonus?.attributeId && typeof data.bonus.attributeId === 'object') {
+      data.bonus.attributeId = data.bonus.attributeId._id;
+    }
+
+    return data;
+  };
+
   const { register, handleSubmit, watch, setValue, formState: { isSubmitting, errors } } = useForm({
-    defaultValues: initialData || {}
+    defaultValues: getNormalizedDefaultValues()
   });
 
   const onSubmit = async (data: any) => {

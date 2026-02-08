@@ -16,22 +16,42 @@ import { NotificationProvider } from './contexts/notification/NotificationProvid
 import { SocketProvider } from './contexts/socket/SocketProvider';
 import { ConfirmProvider } from './contexts/confirm/ConfirmProvider';
 
-const GuestGuard = ({ children }: { children: React.ReactNode }) => {
-  const token = localStorage.getItem("@Nexus:Token");
+import { LoadingScreen } from './components/common/LoadingScreen';
 
-  // Se o sinal for detectado, redireciona direto para o Dashboard
-  if (token) {
-    return <Navigate to="/dashboard" replace />;
-  }
+import { useAuth } from './hooks/useAuth';
+import { useNotification } from './hooks/useNotification';
+
+const GuestGuard = ({ children }: { children: React.ReactNode }) => {
+  const { signed, loading } = useAuth();
+
+  // 📡 Enquanto o link neural não estabiliza, mostramos o loading
+  if (loading) return <LoadingScreen message="Autenticando Sinal..." />;
+
+  // Se já está logado, não faz sentido estar no Login/Forger
+  if (signed) return <Navigate to="/dashboard" replace />;
+
+  return <>{children}</>;
+};
+
+const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+  const { signed, loading } = useAuth();
+
+  if (loading) return <LoadingScreen message="Verificando Credenciais..." />;
+
+  // 🚫 Se o sinal cair (logout), expulsa imediatamente
+  if (!signed) return <Navigate to="/auth" replace />;
 
   return <>{children}</>;
 };
 
 const MasterGuard = ({ children }: { children: React.ReactNode }) => {
-  const user = JSON.parse(localStorage.getItem("@Nexus:User") || "{}");
+  const { user, loading } = useAuth();
+  const { notifyError } = useNotification(); // Opcional
 
-  // Se o usuário não for Mestre, ele é "expulso" para o dashboard comum
-  if (user.role !== 'MASTER') {
+  if (loading) return <LoadingScreen message="Acessando Nível Master..." />;
+
+  if (user?.role !== 'MASTER') {
+    notifyError(null, "Acesso Negado: Nível de autorização insuficiente.");
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -48,30 +68,26 @@ export default function App() {
               <VaultProvider>
                 <NexusProvider>
                   <Routes>
-                    {/* 🚫 ACESSO APENAS DESLOGADO */}
+                    {/* 🚫 ZONA PÚBLICA (Apenas deslogados) */}
                     <Route path="/" element={<GuestGuard><ForgerPage /></GuestGuard>} />
                     <Route path="/auth" element={<GuestGuard><AuthPage /></GuestGuard>} />
 
-                    {/* 🔐 DASHBOARD E SUB-PÁGINAS */}
-                    <Route path="/dashboard" element={<DashboardLayout />}>
+                    {/* 🔐 ZONA PROTEGIDA (Apenas logados) */}
+                    <Route
+                      path="/dashboard"
+                      element={
+                        <AuthGuard>
+                          <DashboardLayout />
+                        </AuthGuard>
+                      }
+                    >
                       <Route index element={<WelcomePage />} />
-
-                      {/* Acesso Público Logado */}
                       <Route path="wiki" element={<Nexuspedia />} />
                       <Route path="profile" element={<ProfilePage />} />
 
-                      {/* 👑 ACESSO EXCLUSIVO: ARQUITETO (MASTER) */}
-                      <Route path="master-panel" element={
-                        <MasterGuard>
-                          <MasterPanelPage />
-                        </MasterGuard>
-                      } />
-
-                      <Route path='admin-panel' element={
-                        <MasterGuard>
-                          <AdminPanelPage />
-                        </MasterGuard>
-                      } />
+                      {/* 👑 SUBSSETOR MASTER */}
+                      <Route path="master-panel" element={<MasterGuard><MasterPanelPage /></MasterGuard>} />
+                      <Route path='admin-panel' element={<MasterGuard><AdminPanelPage /></MasterGuard>} />
                     </Route>
 
                     <Route path="*" element={<Navigate to="/" replace />} />

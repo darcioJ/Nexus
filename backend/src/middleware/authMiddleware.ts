@@ -1,13 +1,41 @@
 import jwt from "jsonwebtoken";
 
-export const applyVaultFilter = (req: any, res: any, next: any) => {
-  // 1. Se o usuário estiver logado (tem userId) e NÃO for guest:
-  // Ele tem visão total (filtro vazio).
-  if (req.user && req.user.userId && !req.user.isGuest) {
-    req.vaultFilter = {}; 
+export const extractUser = (req, res, next) => {
+  req.user = null; // 🛡️ Reset obrigatório para garantir sinal limpo
+
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return next();
+
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || "nexus_omega_7",
+    );
+    req.user = decoded;
+  } catch (err) {
+    // Se o token expirou ou é lixo, req.user continua null
+  }
+  next();
+};
+
+// 2. Trava de Segurança: Se estiver logado (Real User), não entra no Forger
+export const blockAuthenticated = (req, res, next) => {
+  if (req.user && !req.user.isGuest && req.user.role !== "MASTER") {
+    return res.status(403).json({
+      error:
+        "Protocolo Negado: Operativos registrados devem usar o Dashboard principal.",
+    });
+  }
+  next();
+};
+
+// 3. Define o que será visível no Banco
+export const applyVaultFilter = (req, res, next) => {
+  // Se existe um userId no token, ele é um usuário registrado (Logado)
+  if (req.user && req.user.userId) {
+    req.vaultFilter = {};
   } else {
-    // 2. Se for Guest ou Público:
-    // Filtramos para NÃO mostrar o que é isSystem: true
+    // Se não tem userId (é anônimo ou guest), aplicamos o filtro
     req.vaultFilter = { isSystem: { $ne: true } };
   }
   next();

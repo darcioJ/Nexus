@@ -5,33 +5,52 @@ import { Archetype } from "../models/Archetype.js";
 import { Weapon } from "../models/Weapon.js";
 import { Club } from "../models/Club.js";
 import { StatusEffect } from "../models/StatusEffect.js";
+import { applyVaultFilter } from "../middleware/authMiddleware.js";
 
-export const getForgeData = async (req: Request, res: Response) => {
+interface VaultRequest extends Request {
+  vaultFilter?: Record<string, any>;
+  user?: {
+    userId?: string;
+    isGuest?: boolean;
+    role?: string;
+  };
+}
+
+export const getForgeData = async (req: VaultRequest, res: Response) => {
   try {
+    // Pegamos o filtro injetado pelo middleware (ou um objeto vazio como fallback)
+    const filter = req.vaultFilter || {};
+
     console.log(
-      "📡 Vault_Pulse: Iniciando sincronia de metadados dimensionais...",
+      `📡 Vault_Pulse: Sincronizando com filtro: ${JSON.stringify(filter)}`,
     );
 
-    // Execução paralela de todas as coleções do Core
     const [attributes, essences, archetypes, weapons, clubs, statusEffects] =
       await Promise.all([
-        Attribute.find().sort({ name: 1 }),
+        // 1. Atributos (Já ordenado)
+        Attribute.find(filter).sort({ name: 1 }),
 
-        Essence.find().populate("statusId"),
+        // 2. Essências (Adicionado Sort)
+        Essence.find(filter).populate("statusId").sort({ name: 1 }),
 
-        Archetype.find().sort({ name: 1 }),
+        // 3. Arquétipos (Já ordenado)
+        Archetype.find(filter).sort({ name: 1 }),
 
-        Weapon.find().populate({
-          path: "essenceId",
-          populate: { path: "statusId" },
-        }),
+        // 4. Armas (Adicionado Sort)
+        Weapon.find(filter)
+          .populate({
+            path: "essenceId",
+            populate: { path: "statusId" },
+          })
+          .sort({ name: 1 }),
 
-        Club.find().populate("bonus.attributeId").sort({ name: 1 }),
+        // 5. Clubes (Já ordenado)
+        Club.find(filter).populate("bonus.attributeId").sort({ name: 1 }),
 
-        StatusEffect.find().sort({ name: 1 }),
+        // 6. Efeitos de Status (Já ordenado)
+        StatusEffect.find(filter).sort({ name: 1 }),
       ]);
 
-    // Retornamos um objeto de resposta estruturado e com metadados de sincronia
     res.json({
       version: "2.1.0-STABLE",
       timestamp: new Date().toISOString(),
@@ -44,15 +63,8 @@ export const getForgeData = async (req: Request, res: Response) => {
         statusEffects,
       },
     });
-
-    console.log(
-      `💎 Vault_Sync: ${weapons.length} armas e ${essences.length} essências sincronizadas.`,
-    );
   } catch (error) {
     console.error("❌ Falha Crítica na Varredura do Vault:", error);
-    res.status(500).json({
-      error: "O sinal do Vault está instável. Falha na sincronia de dados.",
-      details: process.env.NODE_ENV === "development" ? error : undefined,
-    });
+    res.status(500).json({ error: "Erro na sincronia de dados." });
   }
 };

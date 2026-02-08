@@ -28,7 +28,7 @@ export const StepAttributes = () => {
 
     // Busca o Clube e a chave do bônus direto do DB
     const clubData = vault?.clubs.find(o => o._id === selectedClub);
-    const bonusAttrKey = clubData?.bonus?.attributeKey || null; // ex: 'strength'
+    const bonusAttrId = clubData?.bonus?.attributeId || null; // ex: 'strength'
 
     const TOTAL_ALLOWED = CHAR_LIMITS.TOTAL_POINTS;
     const MIN_REQUIRED = CHAR_LIMITS.MIN_POINTS_REQUIRED; // Mínimo para liberar o protocolo
@@ -37,34 +37,31 @@ export const StepAttributes = () => {
 
     const isSystemReady = currentTotal >= MIN_REQUIRED;
 
-    const adjustValue = (attrKey: string, delta: number) => {
-        const current = attributes[attrKey] || 1;
-        const isBonusAttr = attrKey === bonusAttrKey;
+    const adjustValue = (attrId: string, delta: number) => {
+        const current = attributes[attrId] || 1;
+        const isBonusAttr = attrId === bonusAttrId;
         const maxValue = isBonusAttr ? CHAR_LIMITS.ATTR_MAX_BONUS : CHAR_LIMITS.ATTR_MAX;
 
         if (delta < 0 && current <= 1) return;
         if (delta > 0 && (current >= maxValue || pointsRemaining <= 0)) return;
 
-        setValue(`attributes.${attrKey}`, current + delta, { shouldValidate: true });
+        setValue(`attributes.${attrId}`, current + delta, { shouldValidate: true });
     };
 
     // 1. PROTOCOLO DE SANITIZAÇÃO (Auto-ajuste de Sincronia)
     React.useEffect(() => {
-        if (!bonusAttrKey) return;
-
-        const currentValue = attributes[bonusAttrKey] || 0;
+        if (!bonusAttrId) return;
+        const currentValue = attributes[bonusAttrId] || 0;
         const maxManualAllowed = CHAR_LIMITS.ATTR_MAX_BONUS; // Geralmente 11
 
         // Se o valor manual atual excede o teto permitido para atributos com bônus
         if (currentValue > maxManualAllowed) {
             // Reduzimos o valor para o máximo permitido (11)
-            setValue(`attributes.${bonusAttrKey}`, maxManualAllowed, { shouldValidate: true });
+            setValue(`attributes.${bonusAttrId}`, maxManualAllowed, { shouldValidate: true });
 
-            // O ponto removido volta automaticamente para o 'pointsRemaining'
-            // pois o 'currentTotal' é recalculado com base nos valores do watch('attributes')
-            triggerHaptic([50, 100, 50]); // Alerta de recalibração de hardware
+            triggerHaptic("SUCCESS"); // Alerta de recalibração de hardware
         }
-    }, [bonusAttrKey, setValue, attributes]);
+    }, [bonusAttrId, setValue, attributes]);
 
     if (isLoading || !vault) return <LoadingScreen message="Sincronizando Vault..." />;
 
@@ -191,9 +188,9 @@ export const StepAttributes = () => {
             {/* GRID RESPONSIVA: 1 (sm) -> 2 (md) -> 3 (lg) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 p-1">
                 {vault.attributes.map((attr) => {
-                    const val = attributes[attr.key] || 1;
+                    const val = attributes[attr._id] || 1;
                     const modifier = Math.floor(val / (attr.modDiv || 5));
-                    const hasHobbyBonus = attr.key === bonusAttrKey;
+                    const hasHobbyBonus = attr._id === bonusAttrId;
                     const maxValue = hasHobbyBonus ? CHAR_LIMITS.ATTR_MAX_BONUS : CHAR_LIMITS.ATTR_MAX;
                     const isMax = val >= maxValue;
                     const attrColor = attr.colorVar;
@@ -230,7 +227,7 @@ export const StepAttributes = () => {
 
                                     <div className="flex flex-col">
                                         <h4 className="text-sm md:text-base font-black uppercase tracking-tighter text-slate-800 leading-none">
-                                            {attr.label}
+                                            {attr.name.slice(0, 3)}
                                         </h4>
                                         <span className="text-[6px] md:text-[7px] font-black text-slate-400 uppercase tracking-[0.3em] mt-1">
                                             {attr.name}
@@ -250,7 +247,7 @@ export const StepAttributes = () => {
                             <div className={`p-3 rounded-2xl border backdrop-blur-sm transition-all duration-500 ${isMax ? 'bg-amber-50/70 border-amber-200/40 text-amber-900' : 'bg-white/80 border-white/60 text-slate-500 shadow-inner'
                                 }`}>
                                 <p className="text-[10px] font-semibold leading-relaxed italic line-clamp-2 md:line-clamp-none">
-                                    "{attr.details}"
+                                    "{attr.description}"
                                 </p>
                             </div>
 
@@ -258,7 +255,7 @@ export const StepAttributes = () => {
                             <div className="flex items-center justify-between bg-slate-50/50 rounded-2xl p-1.5 mb-5 border border-white/50 shadow-inner">
                                 <button
                                     type="button"
-                                    onClick={() => adjustValue(attr.key, -1)}
+                                    onClick={() => adjustValue(attr._id, -1)}
                                     disabled={val <= 1}
                                     className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-400 shadow-sm active:scale-90 disabled:opacity-30"
                                 >
@@ -273,7 +270,7 @@ export const StepAttributes = () => {
 
                                 <button
                                     type="button"
-                                    onClick={() => adjustValue(attr.key, 1)}
+                                    onClick={() => adjustValue(attr._id, 1)}
                                     disabled={val >= maxValue || pointsRemaining <= 0}
                                     className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-xl bg-white border border-slate-100 shadow-sm active:scale-90 disabled:opacity-30"
                                     style={{ color: val < maxValue ? attrColor : 'inherit' }}

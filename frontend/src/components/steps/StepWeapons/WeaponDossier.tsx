@@ -10,10 +10,15 @@ import { AfflictionMonitor } from './AfflictionMonitor';
 
 export const WeaponDossier = ({ weapon, colorToken, status, essenceInfo }) => {
 
-    // 1. SINCRONIA DE DADOS (DB vs FRONT)
-    // O banco usa 'description' e 'specialNotes', o rascunho usa 'obs'
-    const loreContent = weapon.specialNotes?.split('SINERGIA:')[0] || "Sem registros.";
-    const synergyContent = weapon.specialNotes?.split('SINERGIA:')[1] || null;
+    const synergyNote = weapon.specialNotes?.find((n: any) =>
+        n.name?.toUpperCase().includes('SINERGIA')
+    );
+    const synergyContent = synergyNote?.description || null;
+
+    const loreNote = weapon.specialNotes?.find((n: any) =>
+        !n.name?.toUpperCase().includes('SINERGIA')
+    );
+    const loreContent = loreNote?.description || "Sem registros adicionais.";
 
     return (
         <motion.div

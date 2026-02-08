@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { NexusIcon } from '../common/NexusIcon';
+import { NexusIcon } from '../../components/common/NexusIcon';
 import { Target, Zap, ChevronRight, Radio } from 'lucide-react';
 
 interface WeaponCardTriggerProps {

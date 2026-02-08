@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from "framer-motion";
-import { AlertTriangle, Activity, Zap, ShieldCheck } from "lucide-react";
+import { Activity, Zap, ShieldCheck } from "lucide-react";
+
+import { NexusIcon } from '../../common/NexusIcon';
 
 export const AfflictionMonitor = ({ status, colorToken, vs }) => (
     <div className={`
@@ -35,7 +37,7 @@ export const AfflictionMonitor = ({ status, colorToken, vs }) => (
                     <div className="relative w-16 h-16 rounded-4xl md:rounded-[3rem] flex items-center justify-center bg-white border border-slate-50 shadow-xl group-hover:rotate-6 transition-transform duration-700 overflow-hidden">
                         <div className="absolute inset-0 opacity-10 rounded-inherit" style={{ backgroundColor: colorToken }} />
                         <div className="relative z-10" style={{ color: colorToken }}>
-                            <AlertTriangle size={24} strokeWidth={2.5} className="drop-shadow-[0_0_8px_currentColor]" />
+                            <NexusIcon name={status.iconName} size={40} />
                         </div>
                     </div>
 

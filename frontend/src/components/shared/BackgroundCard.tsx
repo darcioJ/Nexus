@@ -63,23 +63,24 @@ export const BackgroundCard = ({ data, character }) => {
                                     <div className="w-1 h-1 bg-step-kits rounded-full animate-pulse" />
                                     Inventory
                                 </span>
-                                <span className="text-[7px] font-mono text-slate-300">QTY: {selectedArchetypeData?.items.split(' • ').length || 0}</span>
+                                {/* CORREÇÃO 1: Contagem direta do array */}
+                                <span className="text-[7px] font-mono text-slate-300">QTY: {selectedArchetypeData?.items?.length || 0}</span>
                             </div>
 
                             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2">
-                                {selectedArchetypeData?.items.split(' • ').map((item, idx) => (
+                                {/* CORREÇÃO 2: Mapeamento direto do array de objetos */}
+                                {selectedArchetypeData?.items?.map((item: any, idx: number) => (
                                     <motion.div
-                                        key={idx}
+                                        key={item._id || idx}
                                         whileHover={{ y: -2, scale: 1.02 }}
                                         className="group/item relative p-2.5 bg-white/50 backdrop-blur-md border border-white/80 rounded-xl shadow-sm hover:shadow-md hover:bg-white transition-all duration-300 overflow-hidden"
                                     >
-                                        {/* Indicador de Slot (Fundo) */}
+                                        {/* Indicador de Slot */}
                                         <div className="absolute top-0 right-0 p-1 opacity-[0.05] group-hover/item:opacity-10 transition-opacity">
                                             <span className="text-[12px] font-black text-slate-900 italic">#{idx + 1}</span>
                                         </div>
 
                                         <div className="flex items-start gap-2 relative z-10">
-                                            {/* Marcador Técnico Lateral */}
                                             <div className="flex flex-col gap-0.5 mt-1">
                                                 <div className="w-1.5 h-1.5 rounded-[0.2rem] bg-step-kits/20 group-hover/item:bg-step-kits transition-colors" />
                                                 <div className="w-1.5 h-3 rounded-full bg-slate-100 group-hover/item:bg-step-kits/10 transition-colors" />
@@ -87,15 +88,15 @@ export const BackgroundCard = ({ data, character }) => {
 
                                             <div className="flex flex-col min-w-0">
                                                 <span className="text-[7px] font-mono font-black text-slate-300 uppercase tracking-tighter mb-0.5">
-                                                    Slot_0{idx + 1}
+                                                    {item.category || `Slot_0${idx + 1}`}
                                                 </span>
+                                                {/* CORREÇÃO 3: Acesso à propriedade .name do objeto */}
                                                 <span className="text-[10px] font-black text-slate-700 uppercase tracking-tight leading-tight wrap-break-word pr-2">
-                                                    {item}
+                                                    {item.name}
                                                 </span>
                                             </div>
                                         </div>
 
-                                        {/* Efeito de Reflexo no Hover */}
                                         <div className="absolute inset-0 bg-linear-to-tr from-step-kits/5 to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity" />
                                     </motion.div>
                                 ))}

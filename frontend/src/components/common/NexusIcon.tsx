@@ -9,7 +9,7 @@ interface NexusIconProps {
 }
 
 export const NexusIcon = ({ name, size = 16, className, fill, strokeWidth = 2 }: NexusIconProps) => {
-  const IconComponent = (LucideIcons as any)[name];
+  const IconComponent = (LucideIcons as unknown)[name];
 
   // Agrupamos as props básicas
   const iconProps = {

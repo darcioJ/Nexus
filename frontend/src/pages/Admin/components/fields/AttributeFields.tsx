@@ -67,36 +67,25 @@ export const AttributeFields = ({ register, watch, setValue, errors }: unknown) 
         </p>
       </div>
 
-      {/* --- SEÇÃO VISUAL: LADO A LADO --- */}
-      <div className="col-span-2 mt-4">
-        <div className="flex items-center gap-2 mb-6">
-          <Zap size={14} className="text-indigo-500" />
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-            Assinatura e Estética
-          </span>
-          <div className="h-px flex-1 bg-linear-to-r from-slate-100 to-transparent" />
-        </div>
-
-        <div className="grid grid-cols-2 gap-6 z-50">
-          <InputGroup label="Ícone Representativo" >
-            <IconInput
-              register={register}
-              watch={watch}
-              setValue={setValue}
-              name="iconName"
-            />
-          </InputGroup>
-
-          <InputGroup label="Aura Cromática">
-            <ColorInput
-              register={register}
-              watch={watch}
-              setValue={setValue}
-              name="colorVar"
-            />
-          </InputGroup>
-        </div>
+      <div className="z-50">
+        <InputGroup label="Ícone Representativo" >
+          <IconInput
+            register={register}
+            watch={watch}
+            setValue={setValue}
+            name="iconName"
+          />
+        </InputGroup>
       </div>
+
+      <InputGroup label="Aura Cromática">
+        <ColorInput
+          register={register}
+          watch={watch}
+          setValue={setValue}
+          name="colorVar"
+        />
+      </InputGroup>
 
     </>
   );

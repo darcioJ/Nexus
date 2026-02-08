@@ -29,24 +29,58 @@ export const register = async (req, res) => {
 };
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    
+    const { email: rawEmail, password } = req.body;
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!rawEmail || !password) {
+      return res
+        .status(400)
+        .json({ error: "E-mail e senha são obrigatórios." });
+    }
+
+    const email = rawEmail.toLowerCase();
+
+    // ✅ CORREÇÃO: Adicionamos o .select('+password') para trazer o hash
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) {
+      console.log("❌ Usuário não encontrado no banco.");
       return res.status(401).json({ error: "Credenciais inválidas." });
     }
 
-    const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      console.log("❌ Senha incorreta.");
+      return res.status(401).json({ error: "Credenciais inválidas." });
+    }
+
+    // Se chegar aqui, o problema pode ser no JWT_SECRET
+    if (!JWT_SECRET) {
+      throw new Error("JWT_SECRET não definido no ambiente!");
+    }
+
+    const token = jwt.sign(
+      { userId: user._id, role: user.role, isGuest: false },
+      JWT_SECRET,
+      { expiresIn: "7d" },
+    );
+
     res.json({
       token,
       user: { name: user.name, role: user.role, id: user._id },
     });
   } catch (error) {
-    res.status(500).json({ error: "Erro no processamento de login." });
+    // ESSA LINHA É A MAIS IMPORTANTE AGORA:
+    console.error("🔥 ERRO DETECTADO NO LOGIN:", error.message);
+    console.error(error.stack);
+
+    res.status(500).json({
+      error: "Erro no processamento de login.",
+      details: error.message, // Isso vai aparecer no seu Insomnia/Postman/Console
+    });
   }
 };
+
 export const finalize = async (req, res) => {
   try {
     const { characterId, name, password } = req.body;
@@ -73,7 +107,11 @@ export const finalize = async (req, res) => {
 
     // 5. Gerar o Token Real (Nível 7)
     const token = jwt.sign(
-      { userId: newUser._id, role: newUser.role },
+      {
+        userId: newUser._id,
+        role: newUser.role,
+        isGuest: false, // Define explicitamente que não é convidado
+      },
       JWT_SECRET,
       { expiresIn: "7d" },
     );

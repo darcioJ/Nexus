@@ -1,16 +1,23 @@
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { X, Activity, Zap, Maximize, AlertTriangle, Crosshair, Target, Shield, Quote } from 'lucide-react';
-import { NexusIcon } from '../common/NexusIcon';
-import { NodeCard } from './NodeCardWeapon';
+import { NexusIcon } from '../../components/common/NexusIcon';
+import { NodeCard } from '../../components/shared/NodeCardWeapon';
 
 export const WeaponDetailModal = ({ weapon, onClose }) => {
     const essence = weapon.essenceId;
     const status = essence?.statusId;
     const colorToken = essence?.colorVar || 'var(--color-neutro)';
 
-    const hasSynergy = weapon?.specialNotes?.includes('SINERGIA:');
-    const synergyText = hasSynergy ? weapon.specialNotes.split('SINERGIA:')[1] : null;
+    const synergyNote = weapon.specialNotes?.find((note: any) =>
+        note.name?.toUpperCase().includes('SINERGIA')
+    );
+    const synergyText = synergyNote?.description || null;
+
+    // 2. Localiza o Efeito Principal (o primeiro item que NÃO seja Sinergia, ou o primeiro do array)
+    const mainEffect = weapon.specialNotes?.find((note: any) =>
+        !note.name?.toUpperCase().includes('SINERGIA')
+    )?.description || weapon.specialNotes?.[0]?.description || 'Protocolo de Combate Padrão';
 
     const modalJSX = (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-8 lg:p-12 overflow-hidden">
@@ -150,20 +157,20 @@ export const WeaponDetailModal = ({ weapon, onClose }) => {
                                 value={status?.mechanic || "Dano_Puro"}
                                 colorToken={colorToken}
                             />
+
                             <NodeCard
                                 icon={<Shield size={18} />}
                                 label="Efeito_Principal"
-                                value={weapon.specialNotes.split('.')[0]}
+                                value={mainEffect} // Exibe a descrição da nota principal
                                 colorToken={colorToken}
                             />
 
-                            {/* SINERGIA NEURAL (INTEGRADA AO GRID) */}
                             {synergyText && (
                                 <div className="md:col-span-2">
                                     <NodeCard
                                         icon={<Maximize size={18} />}
                                         label="Sinergia_Neural"
-                                        value={synergyText}
+                                        value={synergyText} // Exibe a descrição da sinergia
                                         colorToken={colorToken}
                                     />
                                 </div>
