@@ -48,7 +48,7 @@ export const VaultFormModal = ({ type, initialData, onClose, onSuccess }: any) =
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         onClick={onClose}
-        className="absolute inset-0 bg-slate-950/80 backdrop-blur-xl"
+        className="absolute inset-0 bg-slate-950/50 backdrop-blur-xl"
       />
 
       {/* MODAL CERÂMICO */}
@@ -146,12 +146,12 @@ export const VaultFormModal = ({ type, initialData, onClose, onSuccess }: any) =
           {/* CONTEÚDO DINÂMICO (GRID INTERNO) */}
           <div className="relative p-8 bg-white/60 backdrop-blur-sm rounded-[3rem] border border-stone-200/50 shadow-inner space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {type === 'weapons' && <WeaponFields register={register} essences={essences} setValue={setValue} watch={watch} />}
-              {type === 'archetypes' && <ArchetypeFields register={register} attributes={attributes} watch={watch} setValue={setValue} />}
-              {type === 'clubs' && <ClubFields register={register} attributes={attributes} watch={watch} setValue={setValue} />}
-              {type === 'essences' && <EssenceFields register={register} statusEffects={statusEffects} watch={watch} setValue={setValue} />}
-              {type === 'attributes' && <AttributeFields register={register} watch={watch} setValue={setValue} />}
-              {type === 'status' && <StatusEffectFields register={register} />}
+              {type === 'weapons' && <WeaponFields register={register} essences={essences} setValue={setValue} watch={watch} errors={errors} />}
+              {type === 'archetypes' && <ArchetypeFields register={register} attributes={attributes} watch={watch} setValue={setValue} errors={errors} />}
+              {type === 'clubs' && <ClubFields register={register} attributes={attributes} watch={watch} setValue={setValue} errors={errors} />}
+              {type === 'essences' && <EssenceFields register={register} statusEffects={statusEffects} watch={watch} setValue={setValue} errors={errors} />}
+              {type === 'attributes' && <AttributeFields register={register} watch={watch} setValue={setValue} errors={errors} />}
+              {type === 'status' && <StatusEffectFields register={register} watch={watch} setValue={setValue} errors={errors} />}
             </div>
 
             <div className="pt-2">
@@ -168,9 +168,7 @@ export const VaultFormModal = ({ type, initialData, onClose, onSuccess }: any) =
                     // pl-16 para dar espaço confortável ao ícone
                     className={`${textareaBaseClass} pl-16 pr-10 bg-stone-100/30 group-focus-within:bg-white`}
                     placeholder={
-                      type === 'status'
-                        ? "Especifique modificadores numéricos e regras de sistema..."
-                        : "Descreva as propriedades técnicas ou a origem deste ativo no Nexus..."
+                      "Descreva as propriedades técnicas ou a origem deste ativo no Nexus..."
                     }
                   />
 

@@ -2,7 +2,7 @@ import { Schema } from "mongoose";
 
 export interface IItem {
   name: string;
-  category: string;
+  category?: string;
   description?: string;
   quantity: number;
 }
@@ -12,9 +12,9 @@ export const ItemSchema = new Schema<IItem>({
   name: { type: String, required: true },
   category: {
     type: String,
-    required: true,
+    required: false,
     uppercase: true,
-    default: "OBJETO",
+    default: "Objeto",
   },
   description: {
     type: String,

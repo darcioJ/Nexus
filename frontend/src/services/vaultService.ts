@@ -1,10 +1,19 @@
 import { api } from "../api";
 
 // --- SUB-INTERFACES PARA PRECISÃO NEURAL ---
+
+export interface IItem {
+  name: string;
+  category: string;
+  description?: string;
+  quantity: number;
+}
+
 export interface IAttribute {
   _id: string;
   key: string;
   name: string;
+  description?: string;
   iconName: string;
   colorVar: string;
   modLabel: string;
@@ -30,6 +39,7 @@ export interface IEssence {
   key: string;
   name: string;
   category: string;
+  description?: string;
   advantageAgainst: string;
   iconName: string;
   colorVar: string;
@@ -45,12 +55,7 @@ export interface IWeapon {
   essenceId: IEssence; // Já populado pelo ForgeController
   range: "Curto" | "Médio" | "Longo";
   description?: string;
-  specialNotes: Array<{
-    name: string;
-    category: string;
-    description?: string;
-    quantity: number;
-  }>;
+  specialNotes: IItem[];
   isSystem: boolean;
 }
 
@@ -58,6 +63,7 @@ export interface IClub {
   _id: string;
   key: string;
   name: string;
+  description?: string;
   iconName: string;
   bonus: {
     attributeId: IAttribute;
@@ -72,12 +78,7 @@ export interface IArchetype {
   name: string;
   description?: string;
   iconName: string;
-  items: Array<{
-    name: string;
-    category: string;
-    description?: string;
-    quantity: number;
-  }>;
+  items: IItem[];
   isSystem: boolean;
 }
 
@@ -99,7 +100,7 @@ export const vaultService = {
   },
 
   // --- ⚔️ ARSENAL (WEAPONS) ---
-  saveWeapon: async (weapon: any) => {
+  saveWeapon: async (weapon: Partial<IWeapon>) => {
     return weapon._id
       ? api.patch(`/weapons/${weapon._id}`, weapon)
       : api.post("/weapons", weapon);
@@ -107,7 +108,7 @@ export const vaultService = {
   deleteWeapon: async (id: string) => api.delete(`/weapons/${id}`),
 
   // --- 🛡️ CLUBES (CLUBS) ---
-  saveClub: async (club: any) => {
+  saveClub: async (club: Partial<IClub>) => {
     return club._id
       ? api.patch(`/clubs/${club._id}`, club)
       : api.post("/clubs", club);
@@ -115,7 +116,7 @@ export const vaultService = {
   deleteClub: async (id: string) => api.delete(`/clubs/${id}`),
 
   // --- ⚡ STATUS EFFECTS ---
-  saveStatusEffect: async (effect: any) => {
+  saveStatusEffect: async (effect: Partial<IStatusEffect>) => {
     return effect._id
       ? api.patch(`/status-effects/${effect._id}`, effect)
       : api.post("/status-effects", effect);
@@ -123,15 +124,15 @@ export const vaultService = {
   deleteStatusEffect: async (id: string) => api.delete(`/status-effects/${id}`),
 
   // --- ✨ ESSÊNCIAS (ESSENCES) ---
-  saveEssence: async (essence: any) => {
+  saveEssence: async (essence: Partial<IEssence>) => {
     return essence._id
       ? api.patch(`/essences/${essence._id}`, essence)
       : api.post("/essences", essence);
   },
   deleteEssence: async (id: string) => api.delete(`/essences/${id}`),
 
-  // --- 📖 ARQUÉTIPOS (ARCHETYPES / KITS) ---
-  saveArchetype: async (archetype: any) => {
+  // --- 📖 ARQUÉTIPOS (ARCHETYPES) ---
+  saveArchetype: async (archetype: Partial<IArchetype>) => {
     return archetype._id
       ? api.patch(`/archetypes/${archetype._id}`, archetype)
       : api.post("/archetypes", archetype);
@@ -139,7 +140,7 @@ export const vaultService = {
   deleteArchetype: async (id: string) => api.delete(`/archetypes/${id}`),
 
   // --- dna ATRIBUTOS (ATTRIBUTES) ---
-  saveAttribute: async (attr: any) => {
+  saveAttribute: async (attr: Partial<IAttribute>) => {
     return attr._id
       ? api.patch(`/attributes/${attr._id}`, attr)
       : api.post("/attributes", attr);

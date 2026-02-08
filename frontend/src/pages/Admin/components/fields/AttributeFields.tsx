@@ -1,98 +1,103 @@
-import { Hash, Type, Binary, AlignLeft } from 'lucide-react';
+import { Hash, Binary, Zap, Info } from 'lucide-react';
 import { InputGroup } from '../InputGroup';
 import { IconInput } from '../../../../components/common/IconInput';
 import { ColorInput } from '../../../../components/common/ColorInput';
-
-// Importação das classes globais do Prisma Nexus
 import { inputBaseClass } from '../../../../config/vault.config';
 
-export const AttributeFields = ({ register, watch, setValue }: any) => {
+export const AttributeFields = ({ register, watch, setValue, errors }: unknown) => {
   return (
     <>
-      {/* 1. CONFIGURAÇÃO TÉCNICA (Abreviação e Divisor) */}
-      <InputGroup label="Abreviação (Label)">
-        <div className="relative group">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-10">
-            <Type size={18} strokeWidth={2.5} />
-          </div>
-          <input
-            {...register('label', { required: true })}
-            className={`${inputBaseClass} pl-12`}
-            placeholder="ex: FOR, INT, DES"
-          />
-        </div>
-      </InputGroup>
 
-      <InputGroup label="Divisor de Modificador">
-        <div className="relative group">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-10">
-            <Binary size={18} strokeWidth={2.5} />
-          </div>
-          <input
-            {...register('modDiv', { valueAsNumber: true })}
-            type="number"
-            step="0.5"
-            className={`${inputBaseClass} pl-12`}
-            placeholder="ex: 2"
-          />
-        </div>
-      </InputGroup>
+      {/* --- HEADER TÉCNICO --- */}
+      <div className="col-span-2 flex items-center gap-3 opacity-60 mb-2">
+        <Info size={12} className="text-indigo-500" />
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+          Núcleo de Processamento
+        </span>
+        <div className="h-px flex-1 bg-linear-to-r from-slate-100 to-transparent" />
+      </div>
 
-      {/* 2. EXIBIÇÃO DE INTERFACE */}
+      {/* Título do Modificador: Agora ocupa a largura total para destaque */}
       <div className="col-span-2">
-        <InputGroup label="Título do Modificador (Display)">
+        <InputGroup
+          label="Título do Modificador (Interface)"
+          error={errors?.modLabel}
+        >
           <div className="relative group">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-10">
               <Hash size={18} strokeWidth={2.5} />
             </div>
             <input
-              {...register('modLabel')}
-              className={`${inputBaseClass} pl-12`}
-              placeholder="ex: Bônus de Força, Mod. Intelecto"
+              {...register('modLabel', { required: "Obrigatório" })}
+              className={`${inputBaseClass} pl-12 italic tracking-tight text-sm lg:text-base`}
+              placeholder="ex.: Dano Físico, Força, Agilidade..."
             />
           </div>
         </InputGroup>
       </div>
 
-      {/* 3. IDENTIDADE VISUAL (FULL WIDTH) */}
-      <div className="col-span-2">
-        <InputGroup label="Assinatura Visual (Ícone Lucide)">
-          <IconInput
-            register={register}
-            watch={watch}
-            setValue={setValue}
-            name="iconName"
-          />
-        </InputGroup>
-      </div>
-
-      <div className="col-span-2">
-        <InputGroup label="Assinatura Cromática (Refração)">
-          <ColorInput
-            register={register}
-            watch={watch}
-            setValue={setValue}
-            name="colorVar"
-          />
-        </InputGroup>
-      </div>
-
-      {/* 4. DETALHES ADICIONAIS */}
-      <div className="col-span-2">
-        <InputGroup label="Especificações do Atributo (Details)">
+      {/* Divisor: Ocupa apenas metade, permitindo expansão futura ou equilíbrio visual */}
+      <div className="col-span-1">
+        <InputGroup
+          label="Divisor de Bio-Mod"
+          error={errors?.modDiv}
+        >
           <div className="relative group">
-            <div className="absolute left-4 top-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-10">
-              <AlignLeft size={18} strokeWidth={2.5} />
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-10">
+              <Binary size={18} strokeWidth={2.5} />
             </div>
-            <textarea
-              {...register('details')}
-              rows={3}
-              className={`${inputBaseClass} pl-12 py-3 min-h-[100px] resize-none`}
-              placeholder="Descreva as perícias e capacidades afetadas por este atributo..."
+            <input
+              {...register('modDiv', { required: "Obrigatório", valueAsNumber: true })}
+              type="number"
+              step="0.5"
+              className={`${inputBaseClass} pl-12 font-mono text-center pr-16`}
+              placeholder="2.0"
             />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-slate-100 rounded text-[7px] font-black text-slate-400 uppercase">
+              DIV_NODE
+            </div>
           </div>
         </InputGroup>
       </div>
+
+      {/* Espaço vazio para manter o equilíbrio ou para uma futura descrição curta */}
+      <div className="col-span-1 flex items-end pb-3">
+        <p className="text-[9px] text-slate-400 font-bold leading-tight italic">
+          * Define a razão de cálculo para bônus derivados.
+        </p>
+      </div>
+
+      {/* --- SEÇÃO VISUAL: LADO A LADO --- */}
+      <div className="col-span-2 mt-4">
+        <div className="flex items-center gap-2 mb-6">
+          <Zap size={14} className="text-indigo-500" />
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+            Assinatura e Estética
+          </span>
+          <div className="h-px flex-1 bg-linear-to-r from-slate-100 to-transparent" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-6 z-50">
+          <InputGroup label="Ícone Representativo" >
+            <IconInput
+              register={register}
+              watch={watch}
+              setValue={setValue}
+              name="iconName"
+            />
+          </InputGroup>
+
+          <InputGroup label="Aura Cromática">
+            <ColorInput
+              register={register}
+              watch={watch}
+              setValue={setValue}
+              name="colorVar"
+            />
+          </InputGroup>
+        </div>
+      </div>
+
     </>
   );
 };

@@ -21,10 +21,16 @@ export const VaultCard = React.memo(({ item, type, onEdit, onDelete }: VaultCard
     const meta = {
       weapons: { tag: item.typeLabel, primary: item.essenceId?.name, secondary: item.range || 'Físico' },
       essences: { tag: item.category, primary: item.advantageAgainst, secondary: item.statusId?.name || 'Nenhum' },
-      clubs: { tag: 'Clube', primary: `+${item.bonus?.value} ${item.bonus?.attributeKey}`, secondary: item.key },
-      status: { tag: item.type, primary: item.resistance, secondary: item.key },
-      attributes: { tag: item.label, primary: item.description, secondary: item.modLabel },
-      archetypes: { tag: 'Arquétipo', primary: item.items },
+      clubs: { tag: 'Clube', primary: `+${item.bonus?.value} ${item.bonus?.attributeId?.name.slice(0, 3).toUpperCase()}`, secondary: item.key },
+      status: { tag: item.category, primary: item.resistance, secondary: item.key },
+      attributes: { tag: item.name.slice(0, 3).toUpperCase(), primary: item.key, secondary: item.modLabel },
+      archetypes: {
+        tag: 'Arquétipo',
+        primary: item.items?.length > 0
+          ? item.items.map((i: unknown) => i.name).join(' • ')
+          : 'Nenhum item inicial',
+        secondary: item.key
+      },
     }[type] || { tag: 'Nexus', primary: '', secondary: '' };
 
     return { LucideIcon: IconComponent, accentColor: color, metadata: meta };

@@ -71,7 +71,7 @@ export const IconInput = ({ register, watch, setValue, name }: IconInputProps) =
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 5, scale: 0.98 }}
-            className="absolute z-50 left-0 right-0 mt-3 p-2 bg-white/90 backdrop-blur-2xl border border-white rounded-4xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.15)] overflow-hidden"
+            className="absolute z-500 left-0 right-0 mt-3 p-2 bg-white/90 backdrop-blur-2xl border border-white rounded-4xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.15)] overflow-hidden"
           >
             <div className="grid grid-cols-2 gap-1">
               {suggestions.map((iconKey) => (
