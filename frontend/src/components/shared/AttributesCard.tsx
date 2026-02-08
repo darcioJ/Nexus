@@ -8,24 +8,18 @@ import { LoadingScreen } from '../common/LoadingScreen';
 export const AttributesCard = ({ data, character }) => {
     const { vault, isLoading } = useVault();
 
+    // 1. GARANTE O ACESSO AOS DADOS
     const attributes = character?.attributes || data?.attributes || {};
     const background = character?.background || data?.background || {};
 
-    // 2. SINCRONIA DE ORIGEM (CLUBE)
     const selectedOcc = React.useMemo(() => {
         if (!vault?.clubs) return null;
         const clubRef = background.club;
-
-        // Busca flexível por ID ou Nome no Vault
-        return vault.clubs.find(c =>
-            c._id === clubRef ||
-            c.id === clubRef ||
-            c.key === clubRef
-        );
+        return vault.clubs.find(c => c._id === clubRef || c.key === clubRef);
     }, [vault, background.club]);
 
-    // Identifica qual atributo recebe o bônus do Clube
-    const bonusAttrKey = selectedOcc?.bonus?.attributeKey || null;
+    // O bônus geralmente vem via ID no seu novo esquema
+    const bonusAttrId = selectedOcc?.bonus?.attributeId || null;
 
     if (isLoading || !vault?.attributes) {
         return <LoadingScreen message="Calibrando Matriz de Atributos..." />;
@@ -38,7 +32,7 @@ export const AttributesCard = ({ data, character }) => {
                 const value = baseValue || 0;
 
                 const modifier = Math.floor(value / (attr.modDiv || 5));
-                const hasBonus = attr.key === bonusAttrKey;
+                const hasBonus = attr.key === bonusAttrId;
                 const attrColor = attr.colorVar;
 
                 return (
