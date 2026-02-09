@@ -1,10 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, ShieldCheck } from 'lucide-react';
 import { NexusIcon } from '../common/NexusIcon';
-
+import { useVault } from '../../hooks/useVault';
 import { useNexus } from '../../hooks/useNexus';
-
 
 interface VitalTelemetryProps {
     attributes?: any;
@@ -12,20 +11,43 @@ interface VitalTelemetryProps {
 
 export const VitalTelemetry: React.FC<VitalTelemetryProps> = ({ attributes }) => {
 
+    // 1. Pegamos o vault para traduzir "Nomes" em "IDs"
+    const { vault } = useVault();
     const { character, stats, currentStatus, isSyncing } = useNexus();
 
-    const vit = attributes?.vitality ?? character?.attributes?.vitality ?? 0;
-    const int = attributes?.intelligence ?? character?.attributes?.intelligence ?? 0;
-    const ess = attributes?.essence ?? character?.attributes?.essence ?? 0;
+    // 2. HELPER: Encontra o valor do atributo pelo "Slug" ou "Key"
+    const getAttrValue = useCallback((key: string) => {
+        // Busca o ID do atributo no vault pelo nome/chave
+        const attrDefinition = vault?.attributes?.find(a =>
+            a.key === key || a.name.toLowerCase().includes(key)
+        );
+
+        if (!attrDefinition) return 0;
+
+        const attrId = String(attrDefinition._id);
+
+        // Busca o valor no objeto 'attributes' (do Forger) ou no character.attributes (Map do DB)
+        const source = attributes || character?.attributes;
+
+        // Se for um Map do Mongoose (Dashboard), usamos .get(), se for objeto (Forger), usamos chave direta
+        if (source instanceof Map) return source.get(attrId) || 0;
+        return (source as any)?.[attrId] || 0;
+    }, [vault, attributes, character]);
+
+    // 3. RESOLUÇÃO DE VALORES
+    const vit = getAttrValue('vitality'); // ou o slug que você usa no banco
+    const int = getAttrValue('intelligence');
+    const ess = getAttrValue('essence');
+    // ^ Ajuste os nomes acima para baterem com o seu 'name' ou 'key' no banco
 
     const charHp = stats?.hp;
     const charMaxHp = stats?.maxHp;
     const charSan = stats?.san;
     const charMaxSan = stats?.maxSan;
 
-    // 1. SINCRONIA DE VITAIS (HP / SAN)
     const statsData = useMemo(() => {
         const isDashboard = typeof charHp === 'number';
+
         const finalMaxHp = isDashboard ? charMaxHp! : (90 + (vit * 2));
         const finalMaxSan = isDashboard ? charMaxSan! : (30 + (int + ess));
 
@@ -38,7 +60,6 @@ export const VitalTelemetry: React.FC<VitalTelemetryProps> = ({ attributes }) =>
                 formula: "90 + (VIT * 2)",
                 iconName: "Heart",
                 color: "var(--nexus-hp)",
-                unit: "HP",
             },
             {
                 id: "san-module",
@@ -48,7 +69,6 @@ export const VitalTelemetry: React.FC<VitalTelemetryProps> = ({ attributes }) =>
                 formula: "30 + (INT + ESS)",
                 iconName: "Brain",
                 color: "var(--nexus-san)",
-                unit: "SAN",
             }
         ];
     }, [vit, int, ess, charHp, charMaxHp, charSan, charMaxSan]);

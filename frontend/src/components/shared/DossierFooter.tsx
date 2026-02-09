@@ -14,16 +14,21 @@ export const DossierFooter = ({
   steps,
   canProceed
 }) => {
+
   const totalSteps = steps.length;
+
+  if (totalSteps === 0) return null;
+
   const isLastStep = step === totalSteps - 1;
   const progress = ((step + 1) / totalSteps) * 100;
 
-  const currentStep = steps[step] || steps[0];
+  const currentStep = steps[step] || {};
+
+  const prevTitle = step > 0 ? steps[step - 1]?.title : null;
+  const nextTitle = !isLastStep ? steps[step + 1]?.title : "Finalizar Sincronia";
+
   const accentColor = currentStep.color; // Ex: #6366f1 (Indigo)
   const secondaryColor = currentStep.secondary; // Ex: #818cf8 (Soft Indigo)
-
-  const prevTitle = step > 0 ? steps[step - 1].title : null;
-  const nextTitle = !isLastStep ? steps[step + 1].title : "Finalizar Sincronia";
 
   return (
     <footer

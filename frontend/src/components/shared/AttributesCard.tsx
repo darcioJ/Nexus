@@ -21,16 +21,12 @@ export const AttributesCard = ({ data, character }) => {
         );
     }, [vault, background.club]);
 
-    console.log(selectedClub)
-
     // O bônus geralmente vem via ID no seu novo esquema
     const bonusAttrId = selectedClub?.bonus?.attributeId?._id
         ? String(selectedClub.bonus.attributeId._id)
         : selectedClub?.bonus?.attributeId
             ? String(selectedClub.bonus.attributeId)
             : null;
-
-    console.log(bonusAttrId)
 
     if (isLoading || !vault?.attributes) {
         return <LoadingScreen message="Calibrando Matriz de Atributos..." />;
@@ -50,8 +46,6 @@ export const AttributesCard = ({ data, character }) => {
 
                 const modifier = Math.floor(value / (attr.modDiv || 5));
                 const hasBonus = String(attr._id) === bonusAttrId;
-
-                console.log(hasBonus)
 
                 const attrColor = attr.colorVar;
 

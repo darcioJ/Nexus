@@ -25,7 +25,7 @@ export const WeaponCard = ({ weapon, isSelected, onSelect, register }) => {
                 }}
                 className={`
                     relative p-1 rounded-[3.8rem] md:rounded-[4.8rem] transition-all duration-700
-                    ${isSelected ? 'bg-white shadow-xl' : 'hover:bg-white/30'}
+                    ${isSelected ? 'bg-white/80 shadow-xl' : 'hover:bg-white/30'}
                 `}
                 style={{
                     boxShadow: isSelected ? `0 25px 50px -12px ${colorToken}40, inset 0 0 20px ${colorToken}10` : 'none'
@@ -47,7 +47,7 @@ export const WeaponCard = ({ weapon, isSelected, onSelect, register }) => {
                 <div className={`
                     relative p-6 md:p-10 backdrop-blur-3xl rounded-[3.5rem] md:rounded-[4.5rem] border-2 transition-all duration-500
                     ${isSelected
-                        ? 'bg-white/95 border-white shadow-[inset_0_0_40px_rgba(255,255,255,0.9)]'
+                        ? 'bg-white/75 border-white/85 shadow-[inset_0_0_40px_rgba(255,255,255,0.75)]'
                         : 'bg-white/50 border-white/60 shadow-sm'}
                 `}>
 

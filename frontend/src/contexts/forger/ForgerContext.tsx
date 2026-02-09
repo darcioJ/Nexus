@@ -1,11 +1,12 @@
 import { createContext } from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import { CharacterData } from '../models/character';
+import { type UseFormReturn } from 'react-hook-form';
+import { type CharacterData } from '../../models/character';
 
 interface ForgerContextData {
   methods: UseFormReturn<CharacterData>;
   step: number;
   hasError: boolean;
+  setHasError: (val: boolean) => void; // Adicione esta linha
   canProceed: boolean;
   isLastStep: boolean;
   nextStep: () => Promise<void>;

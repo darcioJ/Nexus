@@ -9,7 +9,6 @@ export const NodeCard = ({ icon, label, value, colorToken }) => {
             style={{ '--accent-color': colorToken } as React.CSSProperties}
             className={`
                 relative p-5 md:p-7 rounded-4xl md:rounded-[3rem] transition-all duration-1000
-                /* CHASSIS: Glassmorphism de Alta Pureza */
                 bg-white/5 backdrop-blur-[32px] border-2 border-white/40
                 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05),inset_0_0_30px_rgba(255,255,255,0.3)]
                 group overflow-hidden flex flex-col justify-between

@@ -2,17 +2,49 @@ import type { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { Character } from "../models/Character.js";
 import { User } from "../models/User.js";
+import { Attribute } from "../models/Attribute.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "nexus_omega_7";
 
 // --- 1. CRIAR PERSONAGEM (FORGER) ---
 export const createCharacter = async (req: Request, res: Response) => {
   try {
-    const characterData = req.body;
+    // 1. EXTRAÇÃO SEGURA (Evita Mass Assignment)
+    // Não damos spread no req.body inteiro para evitar que enviem 'stats' ou 'userId' falsos
+    const { identity, background, attributes, weapons } = req.body;
 
-    // Tenta criar o personagem
+    // 2. BUSCA ATRIBUTOS DE SISTEMA (Failsafe de Regra de Negócio)
+    const systemAttributes = await Attribute.find({ isSystem: true }).select(
+      "_id",
+    );
+    const systemIds = systemAttributes.map((attr) => String(attr._id));
+
+    const sanitizedAttributes: Record<string, number> = {};
+
+    if (attributes) {
+      Object.entries(attributes).forEach(([key, value]) => {
+        const isInvalidKey =
+          key.includes("[object") || key === "null" || key === "undefined";
+        const isSystem = systemIds.includes(key);
+
+        // Só permitimos se a chave for válida E não for um atributo de sistema
+        if (!isInvalidKey && !isSystem) {
+          sanitizedAttributes[key] = Number(value);
+        } else if (isSystem) {
+          console.warn(
+            `[SECURITY] Tentativa de injetar ponto em atributo de sistema: ${key}`,
+          );
+        }
+      });
+    }
+
+    // 3. CRIAÇÃO COM DADOS FILTRADOS
     const newCharacter = await Character.create({
-      ...characterData,
+      identity,
+      background,
+      weapons,
+      attributes: sanitizedAttributes,
+      // O userId será nulo ou vinculado depois, stats são gerados pelo pre-save do Schema
     });
 
     const tempToken = jwt.sign(
@@ -21,26 +53,16 @@ export const createCharacter = async (req: Request, res: Response) => {
       { expiresIn: "2h" },
     );
 
-    console.log(`📡 Nexus_Init: Sinal ${newCharacter._id} imortalizado.`);
-
     res.status(201).json({
-      message: "Ficha imortalizada. Iniciando sessão de convidado.",
+      message: "Ficha imortalizada com sucesso.",
       token: tempToken,
       character: newCharacter,
     });
   } catch (error: any) {
-    // 🚩 ESSENCIAL: Isso vai mostrar o erro real no terminal do VS Code
-    console.error("❌ ERRO NA CRIAÇÃO DO PERSONAGEM:", error);
-
-    // Se o erro for de validação do Mongoose, retornamos 400
-    if (error.name === "ValidationError" || error.message.includes("NEXUS")) {
-      return res.status(400).json({
-        error: "Falha na validação neural.",
-        details: error.message,
-      });
-    }
-
-    res.status(500).json({ error: "Erro interno no Vault." });
+    console.error("❌ ERRO NA CRIAÇÃO:", error);
+    res
+      .status(400)
+      .json({ error: "Falha na validação neural.", details: error.message });
   }
 };
 

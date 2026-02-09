@@ -12,7 +12,7 @@ import { VitalTelemetry } from '../shared/VitalTelemetry';
 import { CHAR_LIMITS } from '../../models/character';
 
 import { motion } from 'framer-motion';
-import { triggerHaptic } from '../../utils/triggerHaptic';
+import { useNotification } from '../../hooks/useNotification';
 
 import { HeaderStep } from '../shared/HeaderStep';
 
@@ -23,8 +23,12 @@ import { LoadingScreen } from '../common/LoadingScreen';
 export const StepAttributes = () => {
     const { vault, isLoading } = useVault();
     const { watch, setValue } = useFormContext<CharacterData>();
+    const { notifySuccess, notifyError } = useNotification();
+
     const attributes = watch('attributes');
+
     const selectedClub = watch('background.club');
+    const selectedClubData = vault?.clubs.find(o => String(o._id) === String(selectedClub));
 
     useEffect(() => {
         if (vault?.attributes && Object.keys(attributes).length === 0) {
@@ -38,14 +42,11 @@ export const StepAttributes = () => {
     }, [vault, attributes, setValue]);
 
     // 2. BUSCA DO BÔNUS: Blindagem de String
-    const clubData = vault?.clubs.find(o => String(o._id) === String(selectedClub));
-    const bonusAttrId = clubData?.bonus?.attributeId?._id
-        ? String(clubData.bonus.attributeId._id)
-        : clubData?.bonus?.attributeId
-            ? String(clubData.bonus.attributeId)
+    const bonusAttrId = selectedClubData?.bonus?.attributeId?._id
+        ? String(selectedClubData.bonus.attributeId._id)
+        : selectedClubData?.bonus?.attributeId
+            ? String(selectedClubData.bonus.attributeId)
             : null;
-
-    console.log(bonusAttrId)
 
     const TOTAL_ALLOWED = CHAR_LIMITS.TOTAL_POINTS;
     const MIN_REQUIRED = CHAR_LIMITS.MIN_POINTS_REQUIRED; // Mínimo para liberar o protocolo
@@ -76,9 +77,19 @@ export const StepAttributes = () => {
             // Reduzimos o valor para o máximo permitido (11)
             setValue(`attributes.${bonusAttrId}`, maxManualAllowed, { shouldValidate: true });
 
-            triggerHaptic("SUCCESS"); // Alerta de recalibração de hardware
+            notifySuccess("Sanitização de dados", `Devido a mudança do clube: ${selectedClubData.name}, os dados de ${currentValue} foram ajustados para ${maxManualAllowed}.`)
         }
-    }, [bonusAttrId, setValue, attributes]);
+    }, [bonusAttrId, setValue, attributes, notifySuccess, selectedClubData.name]);
+
+    useEffect(() => {
+        if (bonusAttrId) {
+            const bonusName = vault.attributes.find(a => String(a._id) === bonusAttrId)?.name;
+            console.info(`[NEXUS] Bônus de Clube: '${selectedClubData.name}' detectado para: '${bonusName.slice(0, 3).toUpperCase()}'.`);
+        } else {
+            notifyError("Sem bônus de clube vinculado.", "Selecione um clube no passo anterior (Obrigatório para prosseguir).")
+            console.warn("[NEXUS] Nenhum bônus de clube vinculado a este operativo.");
+        }
+    }, [bonusAttrId, notifyError, selectedClubData.name, vault.attributes]);
 
     if (isLoading || !vault) return <LoadingScreen message="Sincronizando Vault..." />;
 
@@ -208,8 +219,6 @@ export const StepAttributes = () => {
                     const attrId = String(attr._id); // Garante que o ID seja string
                     const val = attributes[attrId] || CHAR_LIMITS.DEFAULT; // Busca o valor real ou 6
                     const hasHobbyBonus = attrId === bonusAttrId; // Agora a comparação funciona
-
-                    console.log(hasHobbyBonus)
 
                     const modifier = Math.floor(val / (attr.modDiv || 5));
                     const maxValue = hasHobbyBonus ? CHAR_LIMITS.ATTR_MAX_BONUS : CHAR_LIMITS.ATTR_MAX;

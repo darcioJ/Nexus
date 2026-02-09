@@ -114,7 +114,7 @@ export const StepReview = () => {
                 {/* SEÇÃO 03: TELEMETRIA E ATRIBUTOS */}
                 <section className="relative">
                     <SectionHeader id="03" title="Sincronia de Atributos" />
-                    <div className="space-y-8">
+                    <div className="bg-white/30 rounded-[3rem] p-2 border border-white/50 backdrop-blur-sm space-y-8">
                         <VitalTelemetry attributes={data.attributes} />
                         <AttributesCard data={data} vault={vault} />
                     </div>

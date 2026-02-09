@@ -52,10 +52,20 @@ const characterSchema = new Schema<ICharacter>(
       },
     },
 
+    // No seu characterSchema (Backend)
     attributes: {
       type: Map,
       of: Number,
       default: {},
+      validate: {
+        validator: function (v: Map<string, number>) {
+          // Garante que nenhuma chave seja o erro de stringificação do JS
+          return !Array.from(v.keys()).some(
+            (key) => key.includes("[object") || key === "null",
+          );
+        },
+        message: "Matriz de atributos contém chaves de sincronia inválidas.",
+      },
     },
 
     weapons: {

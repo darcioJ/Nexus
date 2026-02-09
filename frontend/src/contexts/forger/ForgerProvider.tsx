@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ForgerContext } from "./ForgerContext";
-import { characterSchema, DEFAULT_VALUES, CHAR_LIMITS, CharacterData } from "../../models/character";
+import { characterSchema, DEFAULT_VALUES, CHAR_LIMITS, type CharacterData } from "../../models/character";
 import { STEPS_DATA as STEPS } from "../../config/steps.config";
 import { useVault } from "../../hooks/useVault";
 import { triggerHaptic } from "../../utils/triggerHaptic";
@@ -94,11 +94,18 @@ export const ForgerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     triggerHaptic("LIGHT");
   };
 
+  // No final do ForgerProvider.tsx:
   return (
-    <ForgerContext.Provider value={{ 
-      methods, step, hasError, canProceed, 
+    <ForgerContext.Provider value={{
+      methods,
+      step,
+      hasError,
+      setHasError, // Certifique-se de exportar isso aqui!
+      canProceed,
       isLastStep: step === STEPS.length - 1,
-      nextStep, prevStep, setStep 
+      nextStep,
+      prevStep,
+      setStep
     }}>
       {children}
     </ForgerContext.Provider>

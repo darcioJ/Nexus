@@ -13,6 +13,7 @@ import { VitalTelemetry } from '../components/shared/VitalTelemetry';
 import { IdentityCard } from '../components/shared/IdentityCard';
 import { AttributesCard } from '../components/shared/AttributesCard';
 import { BackgroundCard } from '../components/shared/BackgroundCard';
+import { InventoryDisplay } from '../components/shared/InventoryDisplay';
 
 import { useNexus } from '../hooks/useNexus';
 import { useVault } from '../hooks/useVault';
@@ -97,6 +98,9 @@ export const ProfilePage = () => {
                                 </div>
                                 <div className="lg:col-span-12">
                                     <BackgroundCard data={character} />
+                                </div>
+                                <div className="lg:col-span-12">
+                                    <InventoryDisplay items={character?.inventory} />
                                 </div>
                             </div>
 

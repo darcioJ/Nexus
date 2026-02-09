@@ -32,19 +32,29 @@ import { triggerHaptic } from '../utils/triggerHaptic';
  * CONTEÚDO LÓGICO DA PÁGINA
  */
 
+
 export function ForgerPage() {
     const navigate = useNavigate();
     const { vault, isLoading: vaultLoading } = useVault();
-    const { methods, step, nextStep, prevStep, hasError, setHasError, canProceed } = useForger();
+
+    // Consumindo tudo do nosso novo Cérebro (Provider)
+    const {
+        methods,
+        step,
+        nextStep,
+        prevStep,
+        hasError,
+        setHasError,
+        canProceed,
+        isLastStep
+    } = useForger();
+
     const { notifyError } = useNotification();
 
     const { scrollY } = useScroll();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
     const mainRef = useRef<HTMLElement>(null);
-
-    const totalSteps = STEPS_DATA.length;
-    const isLastStep = step === totalSteps - 1;
 
     // Sincronizar Scroll
     useEffect(() => {
@@ -145,6 +155,8 @@ export function ForgerPage() {
     return (
         <div className="h-dvh flex items-center justify-center p-0 md:p-8 overflow-hidden relative antialiased selection:bg-blue-500/30">
 
+            <DossierAtmosphere step={step} accentColor={STEPS_DATA[step].color} opacity={0.2} />
+
             {/* OVERLAY DE SINCRONIA FINAL - VERSÃO NEXUS */}
             <AnimatePresence>
                 {isSyncing && (
@@ -172,8 +184,6 @@ export function ForgerPage() {
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            <DossierAtmosphere step={step} />
 
             <div className={`
                 w-full max-w-7xl h-dvh md:h-[92vh] z-10 

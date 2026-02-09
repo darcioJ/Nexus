@@ -15,6 +15,7 @@ import { AuthProvider } from './contexts/auth/AuthProvider';
 import { NotificationProvider } from './contexts/notification/NotificationProvider';
 import { SocketProvider } from './contexts/socket/SocketProvider';
 import { ConfirmProvider } from './contexts/confirm/ConfirmProvider';
+import { ForgerProvider } from './contexts/forger/ForgerProvider';
 
 import { LoadingScreen } from './components/common/LoadingScreen';
 
@@ -67,31 +68,30 @@ export default function App() {
             <NotificationProvider>
               <VaultProvider>
                 <NexusProvider>
-                  <Routes>
-                    {/* 🚫 ZONA PÚBLICA (Apenas deslogados) */}
-                    <Route path="/" element={<GuestGuard><ForgerPage /></GuestGuard>} />
-                    <Route path="/auth" element={<GuestGuard><AuthPage /></GuestGuard>} />
-
-                    {/* 🔐 ZONA PROTEGIDA (Apenas logados) */}
-                    <Route
-                      path="/dashboard"
-                      element={
-                        <AuthGuard>
-                          <DashboardLayout />
-                        </AuthGuard>
-                      }
-                    >
-                      <Route index element={<WelcomePage />} />
-                      <Route path="wiki" element={<Nexuspedia />} />
-                      <Route path="profile" element={<ProfilePage />} />
-
-                      {/* 👑 SUBSSETOR MASTER */}
-                      <Route path="master-panel" element={<MasterGuard><MasterPanelPage /></MasterGuard>} />
-                      <Route path='admin-panel' element={<MasterGuard><AdminPanelPage /></MasterGuard>} />
-                    </Route>
-
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                  </Routes>
+                  <ForgerProvider>
+                    <Routes>
+                      {/* 🚫 ZONA PÚBLICA (Apenas deslogados) */}
+                      <Route path="/" element={<GuestGuard><ForgerPage /></GuestGuard>} />
+                      <Route path="/auth" element={<GuestGuard><AuthPage /></GuestGuard>} />
+                      {/* 🔐 ZONA PROTEGIDA (Apenas logados) */}
+                      <Route
+                        path="/dashboard"
+                        element={
+                          <AuthGuard>
+                            <DashboardLayout />
+                          </AuthGuard>
+                        }
+                      >
+                        <Route index element={<WelcomePage />} />
+                        <Route path="wiki" element={<Nexuspedia />} />
+                        <Route path="profile" element={<ProfilePage />} />
+                        {/* 👑 SUBSSETOR MASTER */}
+                        <Route path="master-panel" element={<MasterGuard><MasterPanelPage /></MasterGuard>} />
+                        <Route path='admin-panel' element={<MasterGuard><AdminPanelPage /></MasterGuard>} />
+                      </Route>
+                      <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                  </ForgerProvider>
                 </NexusProvider>
               </VaultProvider>
             </NotificationProvider>

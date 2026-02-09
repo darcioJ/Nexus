@@ -30,7 +30,7 @@ export const CrystalReactor = ({ iconName, isSelected, colorToken }) => (
                 relative w-32 h-32 md:w-40 md:h-40 rounded-[2.8rem] md:rounded-[3.8rem] 
                 flex items-center justify-center border-2 transition-all duration-500 overflow-hidden
                 ${isSelected 
-                    ? 'bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] border-white' 
+                    ? 'bg-white/80 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] border-white' 
                     : 'bg-white/40 backdrop-blur-md border-white/50 text-slate-300 shadow-sm'}
             `}
             style={{ 

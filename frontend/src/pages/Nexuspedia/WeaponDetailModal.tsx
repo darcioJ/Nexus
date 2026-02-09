@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
-import { X, Activity, Zap, Maximize, AlertTriangle, Crosshair, Target, Shield, Quote } from 'lucide-react';
+import { X, Activity, Maximize, AlertTriangle, Crosshair, Target, Shield, Quote } from 'lucide-react';
 import { NexusIcon } from '../../components/common/NexusIcon';
 import { NodeCard } from '../../components/shared/NodeCardWeapon';
 
@@ -77,8 +77,8 @@ export const WeaponDetailModal = ({ weapon, onClose }) => {
                         </motion.div>
 
                         {/* TAG DE CALIBRAGEM */}
-                        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-8 py-3 bg-white border border-slate-100 rounded-2xl shadow-xl flex items-center gap-3 z-20">
-                            <Zap size={14} style={{ color: 'var(--accent-color)' }} className="animate-pulse" />
+                        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-8 py-3 bg-white border border-slate-100 rounded-2xl shadow-xl flex items-center gap-3 z-20" style={{ color: 'var(--accent-color)' }}>
+                            <NexusIcon name={status?.iconName} size={14} className="animate-pulse" />
                             <span className="text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: 'var(--accent-color)' }}>
                                 {essence?.name || "Standard_Essence"}
                             </span>
