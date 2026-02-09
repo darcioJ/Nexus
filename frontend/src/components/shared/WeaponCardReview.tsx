@@ -8,6 +8,7 @@ import {
     Activity,
     Info,
     Maximize,
+    Wrench,
     AlertTriangle,
 } from 'lucide-react';
 
@@ -41,8 +42,12 @@ export const WeaponCardReview = ({ data }) => {
     const status = essence?.statusId;
     const colorToken = essence?.colorVar || 'var(--color-neutro)';
 
-    const hasSynergy = selectedWeapon?.specialNotes?.includes('SINERGIA:');
-    const synergyText = hasSynergy ? selectedWeapon.specialNotes.split('SINERGIA:')[1] : null;
+    // 2. BUSCA DE SINERGIA (Novo Formato: Array de Objetos)
+    const synergyNote = selectedWeapon.specialNotes?.find((n: any) => n.category === 'SINERGIA');
+    const synergyText = synergyNote?.content || null;
+
+    // 3. BUSCA DE NOTA TÁTICA (Opcional: Caso queira mostrar outras notas além da descrição)
+    const tacticalNote = selectedWeapon.specialNotes?.find((n: any) => n.category !== 'SINERGIA');
 
     return (
 
@@ -88,7 +93,7 @@ export const WeaponCardReview = ({ data }) => {
                     </div>
 
                     <span className="relative z-10 text-[10px] font-black uppercase tracking-widest text-white drop-shadow-md">
-                        {status.name || 'Sistema Estável'}
+                        {status?.name || 'Sistema Estável'} {/* Adicionado o ?. para segurança */}
                     </span>
                 </div>
 
@@ -200,26 +205,32 @@ export const WeaponCardReview = ({ data }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                             <NodeCard
                                 icon={<Activity />}
-                                label="Efeito_Primário"
+                                label="Descrição"
                                 value={selectedWeapon?.description || '--'}
                                 colorToken={colorToken}
                             />
                             <NodeCard
-                                icon={<NexusIcon name={essence?.iconName} />}
-                                label="Mecânica_Status"
+                                icon={<Wrench />}
+                                label="Mecânica"
                                 value={status?.mechanic || 'Estável'}
                                 colorToken={colorToken}
                             />
+
+                            {/* Se houver uma nota de CONTROLE ou TÁTICA (como nos Ganchos), você pode exibir aqui */}
                             {synergyText && (
-                                <div className="md:col-span-2">
-                                    <NodeCard
-                                        icon={<Maximize />}
-                                        label="Sinergia_Neural"
-                                        value={synergyText}
-                                        colorToken={colorToken}
-                                    />
-                                </div>
+                                <NodeCard
+                                    icon={<Maximize />}
+                                    label="Sinergia_Neural"
+                                    value={synergyText} // Agora pega o .content do objeto
+                                    colorToken={colorToken}
+                                />
                             )}
+                            <NodeCard
+                                icon={<NexusIcon name={status?.iconName} />}
+                                label={tacticalNote?.category}
+                                value={tacticalNote?.content}
+                                colorToken={colorToken}
+                            />
                         </div>
                     </div>
                 </div>

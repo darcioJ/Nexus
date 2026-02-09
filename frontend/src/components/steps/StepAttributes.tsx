@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     ChevronUp,
     ChevronDown,
@@ -26,9 +26,26 @@ export const StepAttributes = () => {
     const attributes = watch('attributes');
     const selectedClub = watch('background.club');
 
-    // Busca o Clube e a chave do bônus direto do DB
-    const clubData = vault?.clubs.find(o => o._id === selectedClub);
-    const bonusAttrId = clubData?.bonus?.attributeId || null; // ex: 'strength'
+    useEffect(() => {
+        if (vault?.attributes && Object.keys(attributes).length === 0) {
+            const defaultSchema = vault.attributes.reduce((acc, attr) => {
+                acc[attr._id] = 6;
+                return acc;
+            }, {} as Record<string, number>);
+
+            setValue('attributes', defaultSchema);
+        }
+    }, [vault, attributes, setValue]);
+
+    // 2. BUSCA DO BÔNUS: Blindagem de String
+    const clubData = vault?.clubs.find(o => String(o._id) === String(selectedClub));
+    const bonusAttrId = clubData?.bonus?.attributeId?._id
+        ? String(clubData.bonus.attributeId._id)
+        : clubData?.bonus?.attributeId
+            ? String(clubData.bonus.attributeId)
+            : null;
+
+    console.log(bonusAttrId)
 
     const TOTAL_ALLOWED = CHAR_LIMITS.TOTAL_POINTS;
     const MIN_REQUIRED = CHAR_LIMITS.MIN_POINTS_REQUIRED; // Mínimo para liberar o protocolo
@@ -38,7 +55,7 @@ export const StepAttributes = () => {
     const isSystemReady = currentTotal >= MIN_REQUIRED;
 
     const adjustValue = (attrId: string, delta: number) => {
-        const current = attributes[attrId] || 1;
+        const current = attributes[attrId] || CHAR_LIMITS.DEFAULT;
         const isBonusAttr = attrId === bonusAttrId;
         const maxValue = isBonusAttr ? CHAR_LIMITS.ATTR_MAX_BONUS : CHAR_LIMITS.ATTR_MAX;
 
@@ -49,7 +66,7 @@ export const StepAttributes = () => {
     };
 
     // 1. PROTOCOLO DE SANITIZAÇÃO (Auto-ajuste de Sincronia)
-    React.useEffect(() => {
+    useEffect(() => {
         if (!bonusAttrId) return;
         const currentValue = attributes[bonusAttrId] || 0;
         const maxManualAllowed = CHAR_LIMITS.ATTR_MAX_BONUS; // Geralmente 11
@@ -188,9 +205,13 @@ export const StepAttributes = () => {
             {/* GRID RESPONSIVA: 1 (sm) -> 2 (md) -> 3 (lg) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 p-1">
                 {vault.attributes.map((attr) => {
-                    const val = attributes[attr._id] || 1;
+                    const attrId = String(attr._id); // Garante que o ID seja string
+                    const val = attributes[attrId] || CHAR_LIMITS.DEFAULT; // Busca o valor real ou 6
+                    const hasHobbyBonus = attrId === bonusAttrId; // Agora a comparação funciona
+
+                    console.log(hasHobbyBonus)
+
                     const modifier = Math.floor(val / (attr.modDiv || 5));
-                    const hasHobbyBonus = attr._id === bonusAttrId;
                     const maxValue = hasHobbyBonus ? CHAR_LIMITS.ATTR_MAX_BONUS : CHAR_LIMITS.ATTR_MAX;
                     const isMax = val >= maxValue;
                     const attrColor = attr.colorVar;

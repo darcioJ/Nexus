@@ -5,6 +5,7 @@ export const CHAR_LIMITS = {
   MIN_POINTS_REQUIRED: 30,
   ATTR_MAX: 12,
   ATTR_MAX_BONUS: 11,
+  DEFAULT: 6,
 } as const;
 
 export const characterSchema = z.object({
@@ -23,12 +24,11 @@ export const characterSchema = z.object({
     archetype: z.string().min(1, "Escolha um kit inicial"),
   }),
 
-  // MUDANÇA AQUI: Atributos agora é um Record (Mapa de Chaves)
   attributes: z
-    .record(z.string(), z.coerce.number().min(1).max(CHAR_LIMITS.ATTR_MAX))
+    .record(z.string(), z.coerce.number().min(1)) // Removido o .max(12) fixo daqui
     .refine((attrs) => {
       const total = Object.values(attrs).reduce((acc, curr) => acc + curr, 0);
-      return total <= CHAR_LIMITS.TOTAL_POINTS; // Use a constante aqui!
+      return total <= CHAR_LIMITS.TOTAL_POINTS;
     }, `A soma excede o limite de ${CHAR_LIMITS.TOTAL_POINTS} pontos.`)
     .refine((attrs) => {
       const total = Object.values(attrs).reduce((acc, curr) => acc + curr, 0);

@@ -15,12 +15,12 @@ export const BackgroundCard = ({ data, character }) => {
 
     const selectedArchetypeData = useMemo(() => {
         const archetypeRef = background.archetype;
-        return vault?.archetypes.find(a => a._id === archetypeRef || a.key === archetypeRef || a.id === archetypeRef);
+        return vault?.archetypes.find(a => a._id === archetypeRef || a.key === archetypeRef || a._id === archetypeRef);
     }, [vault, background.archetype]);
 
     const selectedClubData = useMemo(() => {
         const clubRef = background.club;
-        return vault?.clubs.find(c => c._id === clubRef || c.key === clubRef || c.id === clubRef);
+        return vault?.clubs.find(c => c._id === clubRef || c.key === clubRef || c._id === clubRef);
     }, [vault, background.club]);
 
     if (isLoading || !vault?.archetypes) {

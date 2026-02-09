@@ -21,7 +21,7 @@ import { DossierAtmosphere } from '../components/shared/DossierAtmosphere';
 // Contexto e Hooks
 import { useVault } from '../hooks/useVault';
 import { LoadingScreen } from '../components/common/LoadingScreen';
-import { useDossier } from '../hooks/useDossier';
+import { useForger } from '../hooks/useForger';
 import { useNotification } from '../hooks/useNotification';
 import { api } from "../api";
 
@@ -35,8 +35,8 @@ import { triggerHaptic } from '../utils/triggerHaptic';
 export function ForgerPage() {
     const navigate = useNavigate();
     const { vault, isLoading: vaultLoading } = useVault();
-    const { methods, step, nextStep, prevStep, hasError, setHasError, canProceed } = useDossier();
-    const { notifySuccess, notifyError } = useNotification();
+    const { methods, step, nextStep, prevStep, hasError, setHasError, canProceed } = useForger();
+    const { notifyError } = useNotification();
 
     const { scrollY } = useScroll();
     const [isScrolled, setIsScrolled] = useState(false);

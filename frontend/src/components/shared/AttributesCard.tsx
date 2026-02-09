@@ -12,14 +12,25 @@ export const AttributesCard = ({ data, character }) => {
     const attributes = character?.attributes || data?.attributes || {};
     const background = character?.background || data?.background || {};
 
-    const selectedOcc = React.useMemo(() => {
-        if (!vault?.clubs) return null;
-        const clubRef = background.club;
-        return vault.clubs.find(c => c._id === clubRef || c.key === clubRef);
+    const selectedClub = React.useMemo(() => {
+        if (!vault?.clubs || !background.club) return null;
+        const clubRef = String(background.club);
+
+        return vault.clubs.find(c =>
+            String(c._id) === clubRef || c.key === clubRef
+        );
     }, [vault, background.club]);
 
+    console.log(selectedClub)
+
     // O bônus geralmente vem via ID no seu novo esquema
-    const bonusAttrId = selectedOcc?.bonus?.attributeId || null;
+    const bonusAttrId = selectedClub?.bonus?.attributeId?._id
+        ? String(selectedClub.bonus.attributeId._id)
+        : selectedClub?.bonus?.attributeId
+            ? String(selectedClub.bonus.attributeId)
+            : null;
+
+    console.log(bonusAttrId)
 
     if (isLoading || !vault?.attributes) {
         return <LoadingScreen message="Calibrando Matriz de Atributos..." />;
@@ -28,11 +39,20 @@ export const AttributesCard = ({ data, character }) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl mx-auto px-4">
             {vault.attributes.map((attr) => {
-                const baseValue = attributes instanceof Map ? attributes.get(attr.key) : attributes[attr.key];
+                const attrId = String(attr._id);
+
+                // Agora a busca é 100% segura, seja por ID (preferencial) ou por Key (fallback)
+                const baseValue = attributes instanceof Map
+                    ? (attributes.get(attrId) || attributes.get(attr.key))
+                    : (attributes[attrId] || attributes[attr.key]);
+
                 const value = baseValue || 0;
 
                 const modifier = Math.floor(value / (attr.modDiv || 5));
-                const hasBonus = attr.key === bonusAttrId;
+                const hasBonus = String(attr._id) === bonusAttrId;
+
+                console.log(hasBonus)
+
                 const attrColor = attr.colorVar;
 
                 return (
@@ -83,7 +103,7 @@ export const AttributesCard = ({ data, character }) => {
                             </div>
 
                             <h4 className="text-[12px] font-black text-slate-600 uppercase tracking-widest">
-                                {attr.label}
+                                {attr.name.slice(0, 3)}
                             </h4>
                         </div>
 
