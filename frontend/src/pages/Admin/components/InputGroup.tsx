@@ -52,7 +52,6 @@ export const InputGroup = ({ label, children, icon, error, className = "" }: Inp
       <div className="relative">
         <div className={`
           relative rounded-[1.5rem] transition-all duration-500
-          ${hasError ? 'scale-[1.01]' : 'group-hover:translate-x-0.5'}
         `}>
           {/* Refração de Erro (Bloom Lateral) */}
           <AnimatePresence>
@@ -93,7 +92,7 @@ export const InputGroup = ({ label, children, icon, error, className = "" }: Inp
       </div>
 
       {/* DETALHE TÉCNICO: DECORAÇÃO DE HARDWARE */}
-      <div className="absolute -left-1 top-8 bottom-8 w-[1px] bg-linear-to-b from-transparent via-slate-100 to-transparent group-focus-within:via-emerald-500/30 transition-all duration-700" />
+      <div className="absolute -left-1 top-8 bottom-8 w-[1px] bg-linear-to-b from-transparent via-slate-100 to-transparent transition-all duration-700" />
     </div>
   );
 };

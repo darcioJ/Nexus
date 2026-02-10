@@ -158,7 +158,7 @@ export const VaultFormModal = ({ type, initialData, onClose, onSuccess }: any) =
               {type === 'clubs' && <ClubFields register={register} attributes={attributes} watch={watch} setValue={setValue} errors={errors} />}
               {type === 'essences' && <EssenceFields register={register} statusEffects={statusEffects} watch={watch} setValue={setValue} errors={errors} />}
               {type === 'attributes' && <AttributeFields register={register} watch={watch} setValue={setValue} errors={errors} />}
-              {type === 'status' && <StatusEffectFields register={register} watch={watch} setValue={setValue} errors={errors} />}
+              {type === 'status' && <StatusEffectFields register={register} attributes={attributes} watch={watch} setValue={setValue} errors={errors} />}
             </div>
 
             <div>

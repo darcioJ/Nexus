@@ -1,60 +1,50 @@
-import { Zap, Activity, Settings, ChevronDown, Sparkles, Palette } from 'lucide-react';
+import { Zap, Settings, ShieldCheck } from 'lucide-react';
 import { InputGroup } from '../InputGroup';
 import { IconInput } from '../../../../components/common/IconInput';
 import { ColorInput } from '../../../../components/common/ColorInput';
 
 import {
-  inputBaseClass,
-  selectBaseClass,
-  textareaBaseClass,
-  categories
+  textareaBaseClass
 } from '../../../../config/vault.config';
+import { CategorySelector } from '../../../../components/common/CategorySelector';
+import { AttributeSelector } from '../../../../components/common/AttributeSelector';
 
-export const StatusEffectFields = ({ register, watch, setValue, errors }) => {
+export const StatusEffectFields = ({ register, watch, attributes, setValue, errors }) => {
   return (
     <>
-      {/* 1. CLASSIFICAÇÃO SISTÊMICA (Natureza) */}
-      <InputGroup label="Categoria do Status (Category)" error={errors?.category}>
-        <div className="relative group">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors duration-300 z-10">
-            <Zap size={18} strokeWidth={2.5} />
-          </div>
-
-          <select
-            {...register('category', { required: "Obrigatório" })}
-            className={`${selectBaseClass} pl-12`}
-          >
-            <option value="" disabled selected>Selecionar categoria...</option>
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 group-focus-within:opacity-100">
-            <ChevronDown size={16} />
-          </div>
-        </div>
-      </InputGroup>
-
-      {/* 2. PROTOCOLO DE DEFESA (Resistência) */}
-      <InputGroup label="Resistência (Resistance)" error={errors?.resistance}>
-        <div className="relative group">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors duration-300 z-10">
-            <Activity size={18} strokeWidth={2.5} />
-          </div>
-
-          <input
-            {...register('resistance', { required: "Obrigatório" })}
-            className={`${inputBaseClass} pl-12 italic`}
-            placeholder="ex.: Vitalidade, Força, Agilidade..."
+      {/* 1. CLASSIFICAÇÃO SISTÊMICA (Módulos de Frequência) */}
+      <div className="col-span-2">
+        <InputGroup
+          label="Natureza da Sincronia"
+          icon={<Zap size={14} className="text-blue-500" />}
+          error={errors?.category}
+        >
+          <CategorySelector
+            register={register}
+            watch={watch}
+            setValue={setValue}
           />
+        </InputGroup>
+      </div>
 
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-indigo-500/20 group-focus-within:bg-indigo-500 group-focus-within:shadow-[0_0_8px_#6366f1] transition-all" />
-        </div>
-      </InputGroup>
+      {/* 2. PROTOCOLO DE DEFESA (Módulos de Resistência Dinâmicos) */}
+      <div className="col-span-2">
+        <InputGroup
+          label="Módulos de Resistência"
+          icon={<ShieldCheck size={14} className="text-blue-500" />}
+          error={errors?.resistance}
+        >
+          <AttributeSelector
+            attributes={attributes}
+            watch={watch}
+            setValue={setValue}
+            register={register}
+          />
+        </InputGroup>
+      </div>
 
       {/* 3. ASSINATURA VISUAL (Ícone) */}
-      <div className="span-col-2 z-50">
+      <div className="z-50">
         <InputGroup label="Seletor de Ícone (Lucide)">
           <IconInput
             register={register}

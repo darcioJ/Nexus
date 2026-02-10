@@ -1,3 +1,5 @@
+import { Zap, Info } from 'lucide-react';
+
 import { InputGroup } from '../InputGroup';
 
 import { ItemInput } from '../../../../components/common/ItemInput';
@@ -6,8 +8,9 @@ import { IconInput } from '../../../../components/common/IconInput';
 import { type IItem } from '../../../../services/vaultService';
 
 interface ArchetypeFieldsProps {
-  watch: unknown;
-  setValue: unknown;
+  watch: any;
+  setValue: any;
+  register: any;
 }
 
 export const ArchetypeFields = ({ register, watch, setValue }: ArchetypeFieldsProps) => {
@@ -24,8 +27,8 @@ export const ArchetypeFields = ({ register, watch, setValue }: ArchetypeFieldsPr
 
   return (
     <>
-      <div className="col-span-2 pt-2">
-        <InputGroup label="Configuração de Arsenal Inicial">
+      <div className="col-span-2">
+        <InputGroup label="Configuração de Arsenal Inicial" icon={<Zap size={14} className="text-blue-500" />}>
           <ItemInput
             label="Kit de Iniciação (Equipamento)"
             items={items}
@@ -35,7 +38,7 @@ export const ArchetypeFields = ({ register, watch, setValue }: ArchetypeFieldsPr
       </div>
 
       <div className="col-span-2 z-50">
-        <InputGroup label="Assinatura Visual (Ícone Lucide)">
+        <InputGroup label="Assinatura Visual (Ícone Lucide)" icon={<Info size={14} className="text-blue-500" />}>
           <IconInput
             register={register}
             watch={watch}

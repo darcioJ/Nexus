@@ -1,4 +1,16 @@
-import { Sword, Shield, Zap, Sparkles, BookOpen, Dna } from "lucide-react";
+import {
+  Sword,
+  Shield,
+  Zap,
+  Sparkles,
+  BookOpen,
+  Dna,
+  Layers,
+  Biohazard,
+  Ghost,
+  Crosshair,
+  Target,
+} from "lucide-react";
 import { vaultService } from "../services/vaultService";
 
 // 1. INPUT: Cerâmica Líquida (Refração Esmeralda)
@@ -40,7 +52,24 @@ export const selectBaseClass = `
   transition-all duration-500 outline-none appearance-none ring-0
 `;
 
-export const categories = ["Elemental", "Corruptora", "Espiritual", "Universal"];
+export const CATEGORY_CONFIG: Record<
+  string,
+  { icon: any; color: string; label: string }
+> = {
+  Elemental: { icon: Zap, color: "#10b981", label: "FRQ_NATURAL" }, // Esmeralda
+  Corruptora: { icon: Biohazard, color: "#f43f5e", label: "ENT_DECAY" }, // Rose
+  Espiritual: { icon: Ghost, color: "#8b5cf6", label: "PSI_GHOST" }, // Violeta
+  Universal: { icon: Layers, color: "#3b82f6", label: "SYS_CORE" }, // Safira
+};
+
+export const RANGE_CONFIG: Record<
+  string,
+  { icon: any; color: string; label: string }
+> = {
+  Curto: { icon: Sword, color: "#10b981", label: "CQC_ENGAGE" }, // Esmeralda
+  Médio: { icon: Target, color: "#f59e0b", label: "MID_TACTICAL" }, // Âmbar
+  Longo: { icon: Crosshair, color: "#f43f5e", label: "LR_PRECISION" }, // Rose
+};
 
 export const VAULT_CONFIG = {
   weapons: {
