@@ -13,12 +13,12 @@ export const Nexuspedia: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'essences' | 'weapons'>('essences');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCat, setSelectedCat] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<unknown>(null); // ESTADO DO POP-UP
-  const [selectedWeapon, setSelectedWeapon] = useState<unknown>(null);
+  const [selectedItem, setSelectedItem] = useState(); // ESTADO DO POP-UP
+  const [selectedWeapon, setSelectedWeapon] = useState();
 
   const filteredEssences = useMemo(() => {
     if (!vault?.essences) return [];
-    return vault.essences.filter((ess: unknown) => {
+    return vault.essences.filter((ess) => {
       const matchesSearch = ess.name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCat = selectedCat ? ess.category === selectedCat : true;
       return matchesSearch && matchesCat;
@@ -27,7 +27,7 @@ export const Nexuspedia: React.FC = () => {
 
   const categories = useMemo(() => {
     if (!vault?.essences) return [];
-    return Array.from(new Set(vault.essences.map((e: unknown) => e.category)));
+    return Array.from(new Set(vault.essences.map((e) => e.category)));
   }, [vault]);
 
   if (isLoading) return <LoadingScreen message="Sincronizando Nexuspédia..." />;
@@ -95,10 +95,7 @@ export const Nexuspedia: React.FC = () => {
 
           <main className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {vault.weapons.filter((attr) => !attr.isSystem).map((weapon) => (
-              <div key={weapon._id} onClick={() => setSelectedWeapon(weapon)}>
-                {/* Aqui você pode usar uma versão simplificada do card como gatilho */}
-                <WeaponCardTrigger weapon={weapon}  />
-              </div>
+              <WeaponCardTrigger key={weapon._id} weapon={weapon} onClick={() => setSelectedWeapon(weapon)} />
             ))}
           </main>
         )}

@@ -74,6 +74,7 @@ export default function App() {
                       {/* 🚫 ZONA PÚBLICA (Apenas deslogados) */}
                       <Route path="/" element={<GuestGuard><ForgerPage /></GuestGuard>} />
                       <Route path="/auth" element={<GuestGuard><AuthPage /></GuestGuard>} />
+                      <Route path="/game-overview" element={<AuthGuard><GameOverviewPage /></AuthGuard>} />
 
                       {/* 🔐 ZONA PROTEGIDA (Apenas logados) */}
                       <Route
@@ -87,7 +88,6 @@ export default function App() {
                         <Route index element={<WelcomePage />} />
                         <Route path="wiki" element={<Nexuspedia />} />
                         <Route path="profile" element={<ProfilePage />} />
-                        <Route path="game-overview" element={<GameOverviewPage />} />
                         {/* 👑 SUBSSETOR MASTER */}
                         <Route path="master-panel" element={<MasterGuard><MasterPanelPage /></MasterGuard>} />
                         <Route path='admin-panel' element={<MasterGuard><AdminPanelPage /></MasterGuard>} />

@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
-import { X, Activity, Maximize, AlertTriangle, Crosshair, Target, Shield, Quote } from 'lucide-react';
+import { X, Activity, Maximize, Crosshair, Target, Shield, Quote } from 'lucide-react';
 import { NexusIcon } from '../../components/common/NexusIcon';
 import { NodeCard } from '../../components/shared/NodeCardWeapon';
 
@@ -78,7 +78,7 @@ export const WeaponDetailModal = ({ weapon, onClose }) => {
 
                         {/* TAG DE CALIBRAGEM */}
                         <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-8 py-3 bg-white border border-slate-100 rounded-2xl shadow-xl flex items-center gap-3 z-20" style={{ color: 'var(--accent-color)' }}>
-                            <NexusIcon name={status?.iconName} size={14} className="animate-pulse" />
+                            <NexusIcon name={essence?.iconName} size={14} className="animate-pulse" />
                             <span className="text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: 'var(--accent-color)' }}>
                                 {essence?.name || "Standard_Essence"}
                             </span>
@@ -106,7 +106,7 @@ export const WeaponDetailModal = ({ weapon, onClose }) => {
                             <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity" style={{ backgroundColor: 'var(--accent-color)' }} />
                             <div className="flex items-center gap-4 relative z-10">
                                 <div className="p-2 bg-slate-50 rounded-lg" style={{ color: 'var(--accent-color)' }}>
-                                    <AlertTriangle size={18} className="animate-pulse" />
+                                    <NexusIcon name={status?.iconName} size={18} className='animate-pulse' />
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-[7px] font-black uppercase tracking-widest text-slate-400">Critical_Affliction</span>
