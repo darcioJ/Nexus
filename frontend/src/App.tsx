@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import { ForgerPage } from './pages/ForgerPage';
-import { Nexuspedia } from './pages/Nexuspedia';
+import { Nexuspedia } from './pages/Nexuspedia/Nexuspedia';
 import { ProfilePage } from './pages/ProfilePage';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { AuthPage } from './pages/AuthPage';
