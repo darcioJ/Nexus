@@ -14,7 +14,7 @@ export const StatusEffectFields = ({ register, watch, setValue, errors }) => {
   return (
     <>
       {/* 1. CLASSIFICAÇÃO SISTÊMICA (Natureza) */}
-      <InputGroup label="Natureza do Efeito (Category)" error={errors?.category}>
+      <InputGroup label="Categoria do Status (Category)" error={errors?.category}>
         <div className="relative group">
           <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors duration-300 z-10">
             <Zap size={18} strokeWidth={2.5} />
@@ -37,7 +37,7 @@ export const StatusEffectFields = ({ register, watch, setValue, errors }) => {
       </InputGroup>
 
       {/* 2. PROTOCOLO DE DEFESA (Resistência) */}
-      <InputGroup label="Protocolo de Resistência" error={errors?.resistance}>
+      <InputGroup label="Resistência (Resistance)" error={errors?.resistance}>
         <div className="relative group">
           <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors duration-300 z-10">
             <Activity size={18} strokeWidth={2.5} />
@@ -55,7 +55,7 @@ export const StatusEffectFields = ({ register, watch, setValue, errors }) => {
 
       {/* 3. ASSINATURA VISUAL (Ícone) */}
       <div className="span-col-2 z-50">
-        <InputGroup label="Sinalizador Visual (Lucide Node)">
+        <InputGroup label="Seletor de Ícone (Lucide)">
           <IconInput
             register={register}
             watch={watch}
@@ -66,7 +66,7 @@ export const StatusEffectFields = ({ register, watch, setValue, errors }) => {
       </div>
 
       {/* 4. REFRAÇÃO CROMÁTICA (Cor) */}
-      <InputGroup label="Aura Cromática (Status Color)">
+      <InputGroup label="Seletor de Cor (Status)">
         <ColorInput
           register={register}
           watch={watch}

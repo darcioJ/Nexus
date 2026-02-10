@@ -1,9 +1,6 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { triggerHaptic } from "../utils/triggerHaptic";
-
-// 1. CENTRALIZAÇÃO DE CONFIGURAÇÃO
-// Use variáveis de ambiente (.env) para não precisar mudar o código no deploy
-const API_URL = import.meta.env.VITE_API_URL || "http://192.168.0.12:3001/api";
+import { API_URL } from "../config/api.config"; // Importando a detecção dinâmica
 
 export const api = axios.create({
   baseURL: API_URL,

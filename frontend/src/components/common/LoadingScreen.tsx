@@ -1,145 +1,133 @@
 import { motion } from 'framer-motion';
+import { Sparkles, Zap, ShieldCheck } from 'lucide-react';
 
 export const LoadingScreen = ({ message }: { message: string }) => {
     return (
-        <div className="h-dvh w-full bg-[#FDFDFD] flex flex-col items-center justify-center relative overflow-hidden font-sans">
+        <div className="h-dvh w-full bg-[#FAFAFA] flex flex-col items-center justify-center relative overflow-hidden font-sans">
             
-            {/* 1. MESH GRADIENT DINÂMICO (Ambiente Refrativo) */}
+            {/* 1. ENGINE DE REFRAÇÃO CROMÁTICA (Fundo Iridescente) */}
             <div className="absolute inset-0 pointer-events-none">
+                {/* Bloom Esmeralda/Ciano */}
                 <motion.div 
                     animate={{ 
-                        scale: [1, 1.2, 1],
-                        rotate: [0, 90, 0],
-                        opacity: [0.3, 0.5, 0.3]
+                        scale: [1, 1.3, 1],
+                        opacity: [0.2, 0.4, 0.2],
+                        x: [0, 50, 0]
                     }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className="absolute -top-[20%] -left-[10%] w-full h-full bg-[radial-gradient(circle,rgba(99,102,241,0.15)_0%,transparent_70%)] blur-[120px]" 
+                    transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute -top-1/4 -left-1/4 w-[80%] h-[80%] bg-[radial-gradient(circle,rgba(52,211,153,0.12)_0%,transparent_70%)] blur-[120px]" 
                 />
+                {/* Bloom Safira/Violeta */}
                 <motion.div 
                     animate={{ 
-                        scale: [1.2, 1, 1.2],
-                        rotate: [0, -90, 0],
-                        opacity: [0.2, 0.4, 0.2]
+                        scale: [1.3, 1, 1.3],
+                        opacity: [0.15, 0.3, 0.15],
+                        x: [0, -50, 0]
                     }}
-                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                    className="absolute -bottom-[20%] -right-[10%] w-full h-h-fullg-[radial-gradient(circle,rgba(244,63,94,0.1)_0%,transparent_70%)] blur-[120px]" 
+                    transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute -bottom-1/4 -right-1/4 w-[80%] h-[80%] bg-[radial-gradient(circle,rgba(99,102,241,0.12)_0%,transparent_70%)] blur-[120px]" 
                 />
             </div>
 
-            {/* 2. HUD DE COORDENADAS (Estética Técnica) */}
-            <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
-                <div className="absolute top-10 left-10 flex flex-col gap-1">
-                    <span className="text-[8px] font-mono font-black tracking-widest uppercase">LAT: 38.8951</span>
-                    <span className="text-[8px] font-mono font-black tracking-widest uppercase">LONG: -77.0364</span>
-                </div>
-                <div className="absolute bottom-10 right-10 flex flex-col items-end gap-1 text-right">
-                    <span className="text-[8px] font-mono font-black tracking-widest uppercase">Nexus_Core_Active</span>
-                    <div className="flex gap-0.5">
-                        {[...Array(12)].map((_, i) => (
-                            <div key={i} className="w-px h-2 bg-slate-900" />
-                        ))}
-                    </div>
-                </div>
-                {/* Grid de fundo */}
-                <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(#000 0.5px, transparent 0.5px)', backgroundSize: '40px 40px' }} />
-            </div>
+            {/* 2. GRID DE CALIBRAÇÃO (Sinal de Fundo) */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+                style={{ backgroundImage: 'radial-gradient(#000 0.5px, transparent 0.5px)', backgroundSize: '30px 30px' }} 
+            />
 
-            {/* 3. O MONÓLITO PRISMÁTICO (Visual Principal) */}
-            <div className="relative z-10 scale-75 md:scale-100">
-                <div className="relative w-48 h-64">
-                    {/* Camadas de Vidro Refratado */}
+            {/* 3. O PRISMA NEURAL (Visual Central) */}
+            <div className="relative z-10 flex flex-col items-center">
+                <div className="relative w-32 h-32 md:w-40 md:h-40">
+                    {/* Anéis de Cristal Rotativos */}
                     {[...Array(3)].map((_, i) => (
                         <motion.div
                             key={i}
-                            initial={{ opacity: 0, y: 20, rotateY: 45 }}
                             animate={{ 
-                                opacity: [0.4, 0.8, 0.4],
-                                y: [0, -15, 0],
-                                rotateY: [45, 55, 45],
-                                rotateZ: [i * 5, i * 5 + 2, i * 5]
+                                rotate: i % 2 === 0 ? 360 : -360,
+                                scale: [1, 1.05, 1],
+                                borderColor: ['rgba(226,232,240,0.8)', 'rgba(99,102,241,0.3)', 'rgba(226,232,240,0.8)']
                             }}
                             transition={{ 
-                                duration: 4, 
-                                repeat: Infinity, 
-                                delay: i * 0.4,
-                                ease: "easeInOut" 
+                                rotate: { duration: 10 + i * 5, repeat: Infinity, ease: "linear" },
+                                scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                                borderColor: { duration: 3, repeat: Infinity }
                             }}
-                            className="absolute inset-0 rounded-2xl border-2 border-white bg-white/10 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.05),inset_0_0_30px_white]"
+                            className="absolute inset-0 border-[1px] rounded-[2.5rem] bg-white/5 backdrop-blur-sm"
                             style={{ 
-                                zIndex: 10 - i,
-                                transformStyle: 'preserve-3d',
-                                left: `${i * 12}px`,
-                                top: `${i * 8}px`
+                                padding: `${i * 12}px`,
+                                margin: `${i * 4}px`,
+                                boxShadow: 'inset 0 0 20px rgba(255,255,255,0.5)'
                             }}
-                        >
-                            {/* Feixe de Luz Interno */}
-                            <div className="absolute inset-0 overflow-hidden rounded-inherit">
-                                <motion.div 
-                                    animate={{ x: ['-200%', '200%'] }}
-                                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                    className="absolute inset-0 bg-linear-to-r from-transparent via-white/40 to-transparent skew-x-[-30deg]"
-                                />
-                            </div>
-                        </motion.div>
+                        />
                     ))}
 
-                    {/* Núcleo Pulsante de Dados */}
-                    <motion.div 
-                        animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-indigo-500 rounded-full blur-[10px] z-20" 
-                    />
-                </div>
-            </div>
-
-            {/* 4. TIPOGRAFIA DE SINCRONIA (A Mensagem) */}
-            <div className="relative z-10 mt-16 flex flex-col items-center gap-6">
-                <div className="flex flex-col items-center">
-                    <motion.h2 
-                        initial={{ letterSpacing: "0.2em", opacity: 0 }}
-                        animate={{ letterSpacing: "0.8em", opacity: 1 }}
-                        className="text-[10px] md:text-[12px] font-black uppercase text-slate-900/80 mb-4 transition-all"
-                    >
-                        {message}
-                    </motion.h2>
-                    
-                    {/* Barra de Progresso "Bit-Stream" */}
-                    <div className="flex gap-1.5 h-1">
-                        {[...Array(24)].map((_, i) => (
-                            <motion.div
-                                key={i}
-                                animate={{ 
-                                    backgroundColor: ["#E2E8F0", "#6366F1", "#E2E8F0"],
-                                    scaleY: [1, 2, 1]
-                                }}
-                                transition={{ 
-                                    duration: 2, 
-                                    repeat: Infinity, 
-                                    delay: i * 0.05 
-                                }}
-                                className="w-0.5 rounded-full"
-                            />
-                        ))}
+                    {/* Núcleo de Luz Prisma */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <motion.div
+                            animate={{ 
+                                scale: [1, 1.2, 1],
+                                rotate: [0, 180, 360],
+                                filter: ["hue-rotate(0deg)", "hue-rotate(360deg)"]
+                            }}
+                            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                            className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-400 via-blue-500 to-purple-500 blur-[2px] shadow-[0_0_30px_rgba(99,102,241,0.4)]"
+                        />
+                        <div className="absolute w-6 h-6 bg-white rounded-lg shadow-inner flex items-center justify-center">
+                            <Sparkles size={12} className="text-slate-300 animate-pulse" />
+                        </div>
                     </div>
                 </div>
 
-                {/* Status de Carga */}
-                <div className="flex items-center gap-4 px-6 py-2 bg-white border border-slate-100 rounded-full shadow-sm">
-                    <div className="w-1 h-1 rounded-full bg-indigo-500 animate-ping" />
-                    <span className="text-[7px] font-mono font-black text-slate-400 uppercase tracking-[0.3em]">
-                        Sync_In_Progress // Sector_4_Stable
-                    </span>
+                {/* 4. MENSAGEM & TELEMETRIA (Sentence Case) */}
+                <div className="mt-12 text-center space-y-6">
+                    <div className="space-y-1">
+                        <motion.p 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300"
+                        >
+                            Iniciando Protocolo
+                        </motion.p>
+                        <h2 className="text-lg md:text-xl font-bold text-slate-800 tracking-tight">
+                            {message}...
+                        </h2>
+                    </div>
+
+                    {/* Barra de Espectro Iridescente */}
+                    <div className="w-48 h-1 bg-slate-100 rounded-full overflow-hidden relative border border-white">
+                        <motion.div 
+                            animate={{ x: ['-100%', '100%'] }}
+                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-500 opacity-60"
+                        />
+                    </div>
+
+                    {/* Status Chips */}
+                    <div className="flex gap-3 justify-center">
+                        <StatusTag icon={<Zap size={8} />} label="Energia Estável" />
+                        <StatusTag icon={<ShieldCheck size={8} />} label="Sinal Criptografado" />
+                    </div>
                 </div>
             </div>
 
-            {/* 5. FOOTER: ASSINATURA DE HARDWARE */}
-            <div className="absolute bottom-12 w-full px-12 flex justify-between items-center">
-                <div className="h-px flex-1 bg-slate-100 max-w-25" />
-                <span className="text-[6px] md:text-[8px] font-mono font-bold text-slate-300 tracking-[0.8em] uppercase mx-8">
-                    Prisma_Nexus_OS // Neural_Induction_Active
-                </span>
-                <div className="h-px flex-1 bg-slate-100 max-w-25" />
+            {/* 5. HUD LATERAIS (Labels de Sistema) */}
+            <div className="absolute inset-0 pointer-events-none p-10 hidden md:block">
+                <div className="h-full w-full border border-slate-900/[0.03] rounded-[4rem] relative">
+                    <div className="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-4">
+                        <span className="text-[6px] font-mono font-black text-slate-200 uppercase tracking-[1em]">Nexus_System_Loading</span>
+                    </div>
+                    <div className="absolute bottom-8 left-12 flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest">Sincronia: 100%</span>
+                    </div>
+                </div>
             </div>
         </div>
     );
 };
+
+const StatusTag = ({ icon, label }: { icon: React.ReactNode, label: string }) => (
+    <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-100 rounded-xl shadow-sm">
+        <span className="text-slate-400">{icon}</span>
+        <span className="text-[7px] font-black text-slate-400 uppercase tracking-wider">{label}</span>
+    </div>
+);

@@ -54,11 +54,6 @@ export const CharacterCard = ({ character, vault, index, onModulate, onStatusCha
 
               {/* Overlay de Varredura Nexus */}
               <div className="absolute inset-0 bg-linear-to-tr from-amber-500/20 to-transparent pointer-events-none" />
-              <motion.div
-                animate={{ y: [-20, 80] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-x-0 h-px bg-white/30 z-20"
-              />
             </div>
 
             {/* Status do Sinal (Dinâmico) */}

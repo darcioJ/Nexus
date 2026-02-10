@@ -66,7 +66,7 @@ export const VaultFormModal = ({ type, initialData, onClose, onSuccess }: any) =
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 sm:p-8">
+    <div className="fixed inset-0 z-999 flex items-center justify-center p-4 sm:p-8">
       {/* OVERLAY PRISMÁTICO */}
       <motion.div
         initial={{ opacity: 0 }} 
@@ -106,7 +106,7 @@ export const VaultFormModal = ({ type, initialData, onClose, onSuccess }: any) =
                 </span>
               </div>
               <h3 className="font-bold text-slate-800 text-3xl tracking-tight leading-none">
-                {initialData ? 'Sincronizar' : 'Forjar'} <span className="text-indigo-500/80">{config.label}</span>
+                {initialData ? 'Sincronizar' : 'Forjar'} <span className="text-indigo-500/80 font-black italic uppercase">{config.label}</span>
               </h3>
             </div>
           </div>
@@ -122,13 +122,13 @@ export const VaultFormModal = ({ type, initialData, onClose, onSuccess }: any) =
         <form
           id="vault-form"
           onSubmit={handleSubmit(onSubmit)}
-          className="flex-1 overflow-y-auto px-10 py-8 space-y-10 scrollbar-hide"
+          className="flex-1 overflow-y-auto px-10 py-8 scrollbar-hide"
         >
           {initialData?._id && <input type="hidden" {...register('_id')} />}
 
           {/* SEÇÃO: IDENTIDADE TÁTICA */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-            <InputGroup label="Key de identificação" icon={<Key size={14} className="text-indigo-400"/>}>
+            <InputGroup label="Chave de Identificação" icon={<Key size={14} className="text-indigo-400"/>}>
               <div className="relative">
                 <input
                   {...register('key', { required: true })}
@@ -139,12 +139,12 @@ export const VaultFormModal = ({ type, initialData, onClose, onSuccess }: any) =
               </div>
             </InputGroup>
 
-            <InputGroup label="Designação pública" icon={<Tag size={14} className="text-emerald-400"/>}>
+            <InputGroup label="Nome" icon={<Tag size={14} className="text-emerald-400"/>}>
               <div className="relative">
                 <input
                   {...register('name', { required: true })}
                   className={`${inputBaseClass} !bg-white/40`}
-                  placeholder="Nome do ativo no sistema"
+                  placeholder="Nome no sistema"
                 />
               </div>
             </InputGroup>
@@ -161,8 +161,8 @@ export const VaultFormModal = ({ type, initialData, onClose, onSuccess }: any) =
               {type === 'status' && <StatusEffectFields register={register} watch={watch} setValue={setValue} errors={errors} />}
             </div>
 
-            <div className="pt-4">
-              <InputGroup label="Dossiê narrativo" icon={<BookOpen size={14} className="text-slate-400"/>}>
+            <div>
+              <InputGroup label="Descrição" icon={<BookOpen size={14} className="text-slate-400"/>}>
                 <textarea
                   {...register('description')}
                   rows={4}
