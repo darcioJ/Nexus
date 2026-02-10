@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
     ChevronUp,
     ChevronDown,
@@ -32,10 +32,13 @@ export const StepAttributes = () => {
 
     useEffect(() => {
         if (vault?.attributes && Object.keys(attributes).length === 0) {
-            const defaultSchema = vault.attributes.reduce((acc, attr) => {
-                acc[attr._id] = 6;
-                return acc;
-            }, {} as Record<string, number>);
+            // 🛡️ Filtramos para inicializar apenas atributos distribuíveis
+            const defaultSchema = vault.attributes
+                .filter(attr => !attr.isSystem)
+                .reduce((acc, attr) => {
+                    acc[attr._id] = 6;
+                    return acc;
+                }, {} as Record<string, number>);
 
             setValue('attributes', defaultSchema);
         }
@@ -48,12 +51,20 @@ export const StepAttributes = () => {
             ? String(selectedClubData.bonus.attributeId)
             : null;
 
+    // 1. Pegamos apenas os IDs dos atributos distribuíveis
+    const playableAttrIds = useMemo(() =>
+        vault?.attributes?.filter(a => !a.isSystem).map(a => String(a._id)) || [],
+        [vault]);
+
+    // 2. Calculamos o total baseado apenas nesses IDs
+    const currentTotal = Object.entries(attributes)
+        .filter(([id]) => playableAttrIds.includes(id)) // 🛡️ Só conta o que não é sistema
+        .reduce((acc, [_, val]) => acc + (val || 0), 0);
+
     const TOTAL_ALLOWED = CHAR_LIMITS.TOTAL_POINTS;
-    const MIN_REQUIRED = CHAR_LIMITS.MIN_POINTS_REQUIRED; // Mínimo para liberar o protocolo
-    const currentTotal = Object.values(attributes).reduce((acc, val) => acc + (val || 0), 0);
     const pointsRemaining = TOTAL_ALLOWED - currentTotal;
 
-    const isSystemReady = currentTotal >= MIN_REQUIRED;
+    const isSystemReady = currentTotal >= CHAR_LIMITS.MIN_POINTS_REQUIRED;
 
     const adjustValue = (attrId: string, delta: number) => {
         const current = attributes[attrId] || CHAR_LIMITS.DEFAULT;
@@ -207,7 +218,7 @@ export const StepAttributes = () => {
                         {/* Marcador de Segurança Tático */}
                         <div
                             className="absolute top-0 h-full w-0.5 bg-slate-400/30 z-10 transition-all duration-300"
-                            style={{ left: `${(MIN_REQUIRED / TOTAL_ALLOWED) * 100}%` }}
+                            style={{ left: `${(CHAR_LIMITS.MIN_POINTS_REQUIRED / TOTAL_ALLOWED) * 100}%` }}
                         />
                     </div>
                 </div>
