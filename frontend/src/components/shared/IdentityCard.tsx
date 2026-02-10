@@ -45,7 +45,7 @@ export const IdentityCard = memo(({ data, character }: IdentityCardProps) => {
 
                 {/* 2. AVATAR MODULE (PRISMA VISOR) */}
                 <div className="relative shrink-0">
-                    <div className="w-20 h-20 md:w-28 md:h-28 bg-slate-900 rounded-4xl flex items-center justify-center text-white shadow-2xl relative overflow-hidden group/avatar border-2 border-white/10">
+                    <div className="w-21 h-28 md:w-30 md:h-40 rounded-4xl flex items-center justify-center text-white shadow-2xl relative overflow-hidden group/avatar border-2 border-white/10">
 
                         {avatar ? (
                             <>
@@ -56,13 +56,6 @@ export const IdentityCard = memo(({ data, character }: IdentityCardProps) => {
                                 />
                                 {/* Overlay de Sincronia Bio-métrica */}
                                 <div className="absolute inset-0 bg-linear-to-tr from-step-identity/40 to-transparent mix-blend-overlay" />
-
-                                {/* Scanline de Varredura Nexus */}
-                                <motion.div
-                                    animate={{ y: [-20, 120] }}
-                                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                    className="absolute inset-x-0 h-px bg-white/40 z-20 shadow-[0_0_10px_white]"
-                                />
                             </>
                         ) : (
                             <>
