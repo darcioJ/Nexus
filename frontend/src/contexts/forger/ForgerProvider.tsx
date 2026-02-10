@@ -3,14 +3,19 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ForgerContext } from "./ForgerContext";
 import { characterSchema, DEFAULT_VALUES, CHAR_LIMITS, type CharacterData } from "../../models/character";
+
 import { STEPS_DATA as STEPS } from "../../config/steps.config";
 import { useVault } from "../../hooks/useVault";
+
 import { triggerHaptic } from "../../utils/triggerHaptic";
 
 export const ForgerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { vault } = useVault();
   const [step, setStep] = useState(0);
   const [hasError, setHasError] = useState(false);
+
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [tempImageSrc, setTempImageSrc] = useState<string | null>(null);
 
   // 1. HIDRATAÇÃO INICIAL (Síncrona via useMemo para evitar flash de conteúdo)
   const savedData = useMemo(() => {
@@ -30,6 +35,42 @@ export const ForgerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const { trigger, setValue, getValues } = methods;
   const values = useWatch({ control: methods.control });
+
+  // Exemplo rápido de função para o seu StepIdentity
+  const handleAvatarChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        triggerHaptic("HEAVY");
+        alert("Arquivo muito grande.");
+        return;
+      }
+      // Cria uma URL temporária para o arquivo local
+      const objectUrl = URL.createObjectURL(file);
+      setTempImageSrc(objectUrl);
+      setIsCropperOpen(true); // Abre o modal
+      triggerHaptic("LIGHT");
+      // Limpa o input para permitir selecionar o mesmo arquivo novamente se cancelar
+      e.target.value = '';
+    }
+  }, []);
+
+  // 2. NOVO HANDLER: Fecha o modal
+  const closeCropper = useCallback(() => {
+    setIsCropperOpen(false);
+    if (tempImageSrc) {
+      URL.revokeObjectURL(tempImageSrc); // Limpa a memória
+    }
+    setTempImageSrc(null);
+    triggerHaptic("LIGHT");
+  }, [tempImageSrc]);
+
+  // 3. NOVO HANDLER: Recebe a imagem final do modal
+  const processCroppedImage = useCallback((base64: string) => {
+    setValue("identity.avatar", base64, { shouldValidate: true });
+    closeCropper();
+    triggerHaptic("SUCCESS");
+  }, [setValue, closeCropper]);
 
   // 2. HELPER: BUSCA DE BÔNUS (Mantendo sua correção de IDs populados)
   const getBonusId = useCallback((clubId: string) => {
@@ -75,7 +116,7 @@ export const ForgerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // 5. NAVEGAÇÃO
   const nextStep = async () => {
     const fields = STEPS[step]?.fields || [];
-    const isValid = await trigger(fields as any);
+    const isValid = await trigger(fields);
 
     if (isValid) {
       if (STEPS[step].id === "attributes") modifyBonus(1);
@@ -105,7 +146,12 @@ export const ForgerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       isLastStep: step === STEPS.length - 1,
       nextStep,
       prevStep,
-      setStep
+      setStep,
+      handleAvatarChange,
+      isCropperOpen,
+      tempImageSrc,
+      closeCropper,
+      processCroppedImage,
     }}>
       {children}
     </ForgerContext.Provider>

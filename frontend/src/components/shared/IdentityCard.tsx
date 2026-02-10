@@ -15,6 +15,8 @@ export const IdentityCard = memo(({ data, character }: IdentityCardProps) => {
     const { vault } = useVault();
     const CURRENT_YEAR = new Date().getFullYear();;
 
+    const avatar = data?.identity?.avatar || character?.identity?.avatar;
+
     const identity = data?.identity || character?.identity || {};
     const background = data?.background || character?.background || {};
 
@@ -43,15 +45,44 @@ export const IdentityCard = memo(({ data, character }: IdentityCardProps) => {
 
                 {/* 2. AVATAR MODULE (PRISMA VISOR) */}
                 <div className="relative shrink-0">
-                    <div className="w-20 h-20 md:w-28 md:h-28 bg-slate-900 rounded-4xl flex items-center justify-center text-white shadow-2xl relative overflow-hidden group/avatar">
-                        <div className="absolute inset-0 bg-linear-to-tr from-step-identity to-transparent opacity-70" />
-                        <NexusIcon name={clubInfo?.iconName || 'UserCircle2'} size={32} className="relative z-10 opacity-80 group-hover/avatar:scale-110 transition-transform duration-500" />
+                    <div className="w-20 h-20 md:w-28 md:h-28 bg-slate-900 rounded-4xl flex items-center justify-center text-white shadow-2xl relative overflow-hidden group/avatar border-2 border-white/10">
+
+                        {avatar ? (
+                            <>
+                                <img
+                                    src={avatar}
+                                    alt="Identidade Visual"
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover/avatar:scale-110"
+                                />
+                                {/* Overlay de Sincronia Bio-métrica */}
+                                <div className="absolute inset-0 bg-linear-to-tr from-step-identity/40 to-transparent mix-blend-overlay" />
+
+                                {/* Scanline de Varredura Nexus */}
+                                <motion.div
+                                    animate={{ y: [-20, 120] }}
+                                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                                    className="absolute inset-x-0 h-px bg-white/40 z-20 shadow-[0_0_10px_white]"
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <div className="absolute inset-0 bg-linear-to-tr from-step-identity to-transparent opacity-70" />
+                                <NexusIcon
+                                    name={clubInfo?.iconName || 'UserCircle2'}
+                                    size={32}
+                                    className="relative z-10 opacity-80 group-hover/avatar:scale-110 transition-transform duration-500"
+                                />
+                            </>
+                        )}
+
+                        {/* Reflexo de Lente (Lens Flare) */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-700 pointer-events-none" />
                     </div>
 
                     {/* Status Badge */}
-                    <div className="absolute -bottom-1 -right-1 bg-white px-2 py-0.5 rounded-full border border-slate-100 shadow-sm flex items-center gap-1.5">
+                    <div className="absolute -bottom-1 -right-1 bg-white px-2 py-0.5 rounded-full border border-slate-100 shadow-sm flex items-center gap-1.5 z-30">
                         <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse" />
-                        <span className="text-[6px] font-black text-slate-500 uppercase tracking-tighter">ID</span>
+                        <span className="text-[6px] font-black text-slate-500 uppercase tracking-tighter">SINAL_ATIVO</span>
                     </div>
                 </div>
 

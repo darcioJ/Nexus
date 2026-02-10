@@ -38,4 +38,23 @@ router.patch("/:id", protectUser, authorizeMaster, charCtrl.updateCharacter);
 // [NOVO] Purgação Total (Delete do Admin Panel)
 router.delete("/:id", protectUser, authorizeMaster, charCtrl.deleteCharacter);
 
+router.post(
+  "/:id/inventory",
+  protectUser,
+  authorizeMaster,
+  charCtrl.addInventoryItem,
+);
+router.patch(
+  "/:id/inventory/:itemId",
+  protectUser,
+  authorizeMaster,
+  charCtrl.updateInventoryItem,
+);
+router.delete(
+  "/:id/inventory/:itemId",
+  protectUser,
+  authorizeMaster,
+  charCtrl.removeInventoryItem,
+);
+
 export default router;

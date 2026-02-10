@@ -39,10 +39,29 @@ export const CharacterCard = ({ character, vault, index, onModulate, onStatusCha
       {/* --- HEADER COMPACTO --- */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
         <div className="flex items-center gap-5">
+          {/* --- AVATAR DO OPERATIVO --- */}
           <div className="relative group/avatar">
-            <div className="w-16 h-16 rounded-2xl bg-white border border-slate-50 shadow-lg flex items-center justify-center text-2xl font-black text-slate-900 italic relative z-10 transition-transform group-hover/avatar:rotate-2">
-              {character.identity.name.charAt(0).toUpperCase()}
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-900 rounded-2xl border-2 border-white shadow-xl flex items-center justify-center text-2xl font-black text-white italic relative z-10 overflow-hidden transition-transform group-hover/avatar:rotate-1">
+              {character.identity.avatar ? (
+                <img
+                  src={character.identity.avatar}
+                  alt={character.identity.name}
+                  className="w-full h-full object-cover opacity-90 group-hover/avatar:scale-110 transition-transform duration-700"
+                />
+              ) : (
+                <span>{character.identity.name.charAt(0).toUpperCase()}</span>
+              )}
+
+              {/* Overlay de Varredura Nexus */}
+              <div className="absolute inset-0 bg-linear-to-tr from-amber-500/20 to-transparent pointer-events-none" />
+              <motion.div
+                animate={{ y: [-20, 80] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-x-0 h-px bg-white/30 z-20"
+              />
             </div>
+
+            {/* Status do Sinal (Dinâmico) */}
             <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow-md z-20 animate-pulse" />
           </div>
 
@@ -51,9 +70,16 @@ export const CharacterCard = ({ character, vault, index, onModulate, onStatusCha
               <h3 className="font-black text-slate-900 uppercase tracking-tighter text-xl leading-none">
                 {character.identity.name}
               </h3>
-              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 border border-emerald-100 rounded-full">
-                <Radio size={8} className="text-emerald-500 animate-pulse" />
-                <span className="text-[7px] font-black text-emerald-600 uppercase tracking-widest">Ativo</span>
+
+              {/* Badge de Status Inteligente */}
+              <div className={`
+      flex items-center gap-1.5 px-2 py-0.5 border rounded-full
+      ${character.stats.hp <= 0 ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-emerald-50 border-emerald-100 text-emerald-600'}
+    `}>
+                <Radio size={8} className={character.stats.hp > 0 ? "animate-pulse" : ""} />
+                <span className="text-[7px] font-black uppercase tracking-widest">
+                  {character.stats.hp <= 0 ? 'Sinal_Perdido' : 'Ativo'}
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-2">

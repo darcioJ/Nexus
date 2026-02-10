@@ -260,3 +260,66 @@ export const updateCondition = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Falha na sincronia de estado." });
   }
 };
+
+// --- 6. GESTÃO DE INVENTÁRIO (SUB-DOCUMENTOS) ---
+
+// ADICIONAR ITEM
+export const addInventoryItem = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const newItem = req.body; // { name, category, description, quantity }
+
+    const char = await Character.findById(id);
+    if (!char) return res.status(404).json({ error: "Sinal não localizado." });
+
+    char.inventory.push(newItem);
+    await char.save();
+
+    res
+      .status(201)
+      .json({ message: "Item indexado.", inventory: char.inventory });
+  } catch (error) {
+    res.status(400).json({ error: "Falha na indexação do item." });
+  }
+};
+
+// EDITAR ITEM
+export const updateInventoryItem = async (req: Request, res: Response) => {
+  try {
+    const { id, itemId } = req.params;
+    const updates = req.body;
+
+    const char = await Character.findById(id);
+    if (!char) return res.status(404).json({ error: "Sinal não localizado." });
+
+    const item = char.inventory.id(itemId);
+    if (!item)
+      return res
+        .status(404)
+        .json({ error: "Item não encontrado no manifesto." });
+
+    Object.assign(item, updates);
+    await char.save();
+
+    res.json({ message: "Item recalibrado.", inventory: char.inventory });
+  } catch (error) {
+    res.status(400).json({ error: "Falha na recalibragem do item." });
+  }
+};
+
+// REMOVER ITEM
+export const removeInventoryItem = async (req: Request, res: Response) => {
+  try {
+    const { id, itemId } = req.params;
+
+    const char = await Character.findById(id);
+    if (!char) return res.status(404).json({ error: "Sinal não localizado." });
+
+    char.inventory.pull({ _id: itemId });
+    await char.save();
+
+    res.json({ message: "Item purgado.", inventory: char.inventory });
+  } catch (error) {
+    res.status(400).json({ error: "Falha na purgação do item." });
+  }
+};

@@ -34,7 +34,7 @@ export const AttributesCard = ({ data, character }) => {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl mx-auto px-4">
-            {vault.attributes.map((attr) => {
+            {vault.attributes.filter((attr) => !attr.isSystem).map((attr) => {
                 const attrId = String(attr._id);
 
                 // Agora a busca é 100% segura, seja por ID (preferencial) ou por Key (fallback)

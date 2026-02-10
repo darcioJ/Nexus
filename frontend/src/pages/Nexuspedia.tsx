@@ -82,7 +82,7 @@ export const Nexuspedia: React.FC = () => {
             </div>
 
             <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredEssences.map((essence: unknown) => (
+              {filteredEssences.filter((essence) => !essence.isSystem).map((essence) => (
                 <EssenceCrystalCard
                   key={essence._id}
                   essence={essence}
@@ -94,7 +94,7 @@ export const Nexuspedia: React.FC = () => {
         ) : (
 
           <main className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {vault.weapons.map((weapon) => (
+            {vault.weapons.filter((attr) => !attr.isSystem).map((weapon) => (
               <div key={weapon._id} onClick={() => setSelectedWeapon(weapon)}>
                 {/* Aqui você pode usar uma versão simplificada do card como gatilho */}
                 <WeaponCardTrigger weapon={weapon}  />

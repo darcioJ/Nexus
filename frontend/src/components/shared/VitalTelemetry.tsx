@@ -5,11 +5,7 @@ import { NexusIcon } from '../common/NexusIcon';
 import { useVault } from '../../hooks/useVault';
 import { useNexus } from '../../hooks/useNexus';
 
-interface VitalTelemetryProps {
-    attributes?: any;
-}
-
-export const VitalTelemetry: React.FC<VitalTelemetryProps> = ({ attributes }) => {
+export const VitalTelemetry = ({ attributes }) => {
 
     // 1. Pegamos o vault para traduzir "Nomes" em "IDs"
     const { vault } = useVault();
@@ -31,11 +27,11 @@ export const VitalTelemetry: React.FC<VitalTelemetryProps> = ({ attributes }) =>
 
         // Se for um Map do Mongoose (Dashboard), usamos .get(), se for objeto (Forger), usamos chave direta
         if (source instanceof Map) return source.get(attrId) || 0;
-        return (source as any)?.[attrId] || 0;
+        return source?.[attrId] || 0;
     }, [vault, attributes, character]);
 
     // 3. RESOLUÇÃO DE VALORES
-    const vit = getAttrValue('vitality'); // ou o slug que você usa no banco
+    const vit = getAttrValue('vitality');
     const int = getAttrValue('intelligence');
     const ess = getAttrValue('essence');
     // ^ Ajuste os nomes acima para baterem com o seu 'name' ou 'key' no banco
@@ -132,11 +128,7 @@ export const VitalTelemetry: React.FC<VitalTelemetryProps> = ({ attributes }) =>
         );
     };
 
-    const statusKey = currentStatus?.name
-        ? currentStatus.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")
-        : 'estabilizado';
-
-    const statusColor = `var(--status-${statusKey})`;
+    const statusColor = currentStatus?.colorVar;
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 w-full max-w-7xl mx-auto px-4">

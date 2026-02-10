@@ -5,10 +5,8 @@ import { Archetype } from "../models/Archetype.js";
 import { Weapon } from "../models/Weapon.js";
 import { Club } from "../models/Club.js";
 import { StatusEffect } from "../models/StatusEffect.js";
-import { applyVaultFilter } from "../middleware/authMiddleware.js";
 
 interface VaultRequest extends Request {
-  vaultFilter?: Record<string, any>;
   user?: {
     userId?: string;
     isGuest?: boolean;
@@ -18,26 +16,19 @@ interface VaultRequest extends Request {
 
 export const getForgeData = async (req: VaultRequest, res: Response) => {
   try {
-    // Pegamos o filtro injetado pelo middleware (ou um objeto vazio como fallback)
-    const filter = req.vaultFilter || {};
-
-    console.log(
-      `📡 Vault_Pulse: Sincronizando com filtro: ${JSON.stringify(filter)}`,
-    );
-
     const [attributes, essences, archetypes, weapons, clubs, statusEffects] =
       await Promise.all([
         // 1. Atributos (Já ordenado)
-        Attribute.find(filter).sort({ name: 1 }),
+        Attribute.find().sort({ name: 1 }),
 
         // 2. Essências (Adicionado Sort)
-        Essence.find(filter).populate("statusId").sort({ name: 1 }),
+        Essence.find().populate("statusId").sort({ name: 1 }),
 
         // 3. Arquétipos (Já ordenado)
-        Archetype.find(filter).sort({ name: 1 }),
+        Archetype.find().sort({ name: 1 }),
 
         // 4. Armas (Adicionado Sort)
-        Weapon.find(filter)
+        Weapon.find()
           .populate({
             path: "essenceId",
             populate: { path: "statusId" },
@@ -45,10 +36,10 @@ export const getForgeData = async (req: VaultRequest, res: Response) => {
           .sort({ name: 1 }),
 
         // 5. Clubes (Já ordenado)
-        Club.find(filter).populate("bonus.attributeId").sort({ name: 1 }),
+        Club.find().populate("bonus.attributeId").sort({ name: 1 }),
 
         // 6. Efeitos de Status (Já ordenado)
-        StatusEffect.find(filter).sort({ name: 1 }),
+        StatusEffect.find().sort({ name: 1 }),
       ]);
 
     res.json({

@@ -28,7 +28,7 @@ export const StepWeapons = () => {
                 secondaryColor="var(--color-step-weapons-soft)"
             />
 
-            {vault.weapons.map((weapon) => (
+            {vault.weapons.filter((weapon) => !weapon.isSystem).map((weapon) => (
                 <WeaponCard
                     key={weapon._id} // ID real do Banco
                     weapon={weapon}

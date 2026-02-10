@@ -7,6 +7,7 @@ export interface ICharacter {
   identity: {
     name: string;
     age: number;
+    avatar?: string;
   };
   background: {
     club: Schema.Types.ObjectId;
@@ -36,13 +37,13 @@ const characterSchema = new Schema<ICharacter>(
     identity: {
       name: { type: String, required: true },
       age: { type: Number, required: true },
+      avatar: { type: String },
     },
 
     background: {
       club: { type: Schema.Types.ObjectId, ref: "Club", required: true },
       biography: {
         type: String,
-        required: false,
         default: "-SEM_REGISTRO_DE_BIO-",
       },
       archetype: {

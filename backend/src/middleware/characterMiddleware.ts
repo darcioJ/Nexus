@@ -55,34 +55,29 @@ export const syncCharacterStats = async function (this: any) {
 
   // 2. EXTRAÇÃO E VALIDAÇÃO DE ATRIBUTOS
   const attributes = char.attributes;
-  if (attributes) {
-    const values =
-      attributes instanceof Map
-        ? Array.from(attributes.values())
-        : Object.values(attributes);
+  // 3. PONTE DE IDENTIDADE: Traduzindo Keys em IDs
+  const attrDefinitions = await model("Attribute").find({
+    key: { $in: ["vitality", "intelligence", "essence"] },
+  });
 
-    const totalNX = values.reduce(
-      (acc: number, curr: any) => acc + (Number(curr) || 0),
-      0,
-    );
+  const getAttrValue = (slug: string) => {
+    const attr = attrDefinitions.find((a) => a.key === slug);
+    if (!attr) return 0;
+    // Buscamos no Map usando o ID como string
+    return Number(char.attributes.get(attr._id.toString())) || 0;
+  };
 
-    if (totalNX > 43)
-      throw new Error(`[NEXUS_OVERLOAD]: Soma ${totalNX} excede o limite.`);
-    if (totalNX < 30)
-      throw new Error(`[NEXUS_LOW_SIGNAL]: Soma ${totalNX} insuficiente.`);
+  const vit = getAttrValue("vitality");
+  const int = getAttrValue("intelligence");
+  const ess = getAttrValue("essence");
 
-    // 3. CÁLCULO DE STATS (HP/SAN)
-    const vit = Number(char.get("attributes.vitality")) || 0;
-    const int = Number(char.get("attributes.intelligence")) || 0;
-    const ess = Number(char.get("attributes.essence")) || 0;
+  // 4. CÁLCULO DE BIO-TELEMETRIA
+  char.stats.maxHp = 90 + vit * 2;
+  char.stats.maxSan = 30 + (int + ess);
 
-    char.stats.maxHp = 90 + vit * 2;
-    char.stats.maxSan = 30 + (int + ess);
-
-    if (char.isNew) {
-      char.stats.hp = char.stats.maxHp;
-      char.stats.san = char.stats.maxSan;
-    }
+  if (char.isNew) {
+    char.stats.hp = char.stats.maxHp;
+    char.stats.san = char.stats.maxSan;
   }
 
   // Em funções async, NÃO chamamos next().

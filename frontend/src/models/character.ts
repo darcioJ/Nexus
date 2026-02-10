@@ -12,6 +12,7 @@ export const characterSchema = z.object({
   identity: z.object({
     name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres"),
     age: z.coerce.number().min(12, "Mínimo 12 anos").max(22, "Máximo 22 anos"), // Sincronizado com ACADEMIC_STAGES
+    avatar: z.string().optional(),
   }),
 
   background: z.object({

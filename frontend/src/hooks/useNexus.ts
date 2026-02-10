@@ -21,9 +21,7 @@ export const useNexus = () => {
     );
 
     // 2. Mapeamento de Background
-    const club = vault.clubs?.find(
-      (c: any) => c._id === char.background?.club,
-    );
+    const club = vault.clubs?.find((c: any) => c._id === char.background?.club);
     const archetype = vault.archetypes?.find(
       (a: any) => a._id === char.background?.archetype,
     );
@@ -75,5 +73,7 @@ export const useNexus = () => {
 
     // Retorna o objeto stats completo (contendo hp, maxHp, san, maxSan, soul, etc)
     stats: populatedCharacter?.stats || {},
+    inventorySave: context.handleInventorySave,
+    inventoryDelete: context.handleInventoryDelete,
   };
 };

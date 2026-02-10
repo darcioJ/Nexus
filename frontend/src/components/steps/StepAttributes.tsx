@@ -215,7 +215,7 @@ export const StepAttributes = () => {
 
             {/* GRID RESPONSIVA: 1 (sm) -> 2 (md) -> 3 (lg) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 p-1">
-                {vault.attributes.map((attr) => {
+                {vault.attributes.filter((attr) => !attr.isSystem).map((attr) => {
                     const attrId = String(attr._id); // Garante que o ID seja string
                     const val = attributes[attrId] || CHAR_LIMITS.DEFAULT; // Busca o valor real ou 6
                     const hasHobbyBonus = attrId === bonusAttrId; // Agora a comparação funciona

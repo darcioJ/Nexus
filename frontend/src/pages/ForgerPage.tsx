@@ -17,6 +17,7 @@ import { StepReview } from '../components/steps/StepReview';
 import { DossierHeader } from '../components/shared/DossierHeader';
 import { DossierFooter } from '../components/shared/DossierFooter';
 import { DossierAtmosphere } from '../components/shared/DossierAtmosphere';
+import { ImageCropperModal } from '../components/common/ImageCropperModal';
 
 // Contexto e Hooks
 import { useVault } from '../hooks/useVault';
@@ -46,7 +47,11 @@ export function ForgerPage() {
         hasError,
         setHasError,
         canProceed,
-        isLastStep
+        isLastStep,
+        isCropperOpen,
+        tempImageSrc,
+        closeCropper,
+        processCroppedImage
     } = useForger();
 
     const { notifyError } = useNotification();
@@ -68,7 +73,7 @@ export function ForgerPage() {
     // Debug Tools (Apenas Dev)
     useEffect(() => {
         if (import.meta.env.DEV) {
-            (window as any).nexus = {
+            (window).nexus = {
                 methods,
                 vault,
                 // AGORA DISPARA A NOTIFICAÇÃO TAMBÉM:
@@ -156,6 +161,16 @@ export function ForgerPage() {
         <div className="h-dvh flex items-center justify-center p-0 md:p-8 overflow-hidden relative antialiased selection:bg-blue-500/30">
 
             <DossierAtmosphere step={step} accentColor={STEPS_DATA[step].color} opacity={0.2} />
+
+            <AnimatePresence>
+                {isCropperOpen && tempImageSrc && (
+                    <ImageCropperModal
+                        imageSrc={tempImageSrc}
+                        onCancel={closeCropper}
+                        onComplete={processCroppedImage}
+                    />
+                )}
+            </AnimatePresence>
 
             {/* OVERLAY DE SINCRONIA FINAL - VERSÃO NEXUS */}
             <AnimatePresence>

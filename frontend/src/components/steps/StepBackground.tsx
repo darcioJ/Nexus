@@ -53,15 +53,15 @@ export const StepBackground = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                    {vault.clubs.map((occ) => {
-                        const isSelected = selectedClub === occ._id;
-                        const attribute = vault.attributes.find(a => a._id === occ.bonus.attributeId._id);
+                    {vault.clubs.filter((club) => !club.isSystem).map((club) => {
+                        const isSelected = selectedClub === club._id;
+                        const attribute = vault.attributes.find(a => a._id === club.bonus.attributeId._id);
                         return (
                             <button
-                                key={occ._id}
+                                key={club._id}
                                 type="button"
                                 onClick={() => {
-                                    setValue('background.club', occ._id);
+                                    setValue('background.club', club._id);
                                     triggerHaptic('LIGHT');
                                 }}
                                 className={`group/chip relative p-4 md:p-5 rounded-4xl border-2 transition-all duration-500 text-left overflow-hidden backdrop-blur-md
@@ -86,14 +86,14 @@ export const StepBackground = () => {
                                             : 'bg-white text-slate-400 border-slate-100 shadow-inner'
                                         }`}>
                                         <div className={`transition-transform duration-500 ${isSelected ? 'scale-110 rotate-3' : 'scale-100'}`}>
-                                            <NexusIcon name={occ.iconName} />
+                                            <NexusIcon name={club.iconName} />
                                         </div>
                                     </div>
 
                                     <div className="flex flex-col gap-1 flex-1 min-w-0">
                                         <div className="flex justify-between items-center gap-2">
                                             <h4 className={`text-xs md:text-sm font-black uppercase tracking-tighter truncate ${isSelected ? 'text-slate-900' : 'text-slate-600'}`}>
-                                                {occ.name}
+                                                {club.name}
                                             </h4>
                                             {/* Bonus Chip: Nexus Pattern */}
                                             <span className={`shrink-0 text-[8px] font-black px-2 py-0.5 rounded-lg border-2 transition-all duration-500
@@ -101,12 +101,12 @@ export const StepBackground = () => {
                                                     ? 'bg-step-background-soft border-step-background-soft text-step-background shadow-sm'
                                                     : 'bg-slate-50 border-slate-100 text-slate-400 opacity-60'
                                                 }`}>
-                                                +{occ.bonus.value} {attribute?.name.slice(0, 3).toUpperCase() || '???'}
+                                                +{club.bonus.value} {attribute?.name.slice(0, 3).toUpperCase() || '???'}
                                             </span>
                                         </div>
                                         <p className={`text-[9px] md:text-[10px] font-bold leading-tight line-clamp-2 transition-colors duration-500
                                 ${isSelected ? 'text-step-background' : 'text-slate-400'}`}>
-                                            {occ.description}
+                                            {club.description}
                                         </p>
                                     </div>
                                 </div>
@@ -143,7 +143,7 @@ export const StepBackground = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                    {vault.archetypes.map((archetype) => {
+                    {vault.archetypes.filter((archetype) => !archetype.isSystem).map((archetype) => {
                         const isSelected = selectedArchetype === archetype._id;
                         return (
                             <button

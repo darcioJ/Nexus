@@ -29,18 +29,6 @@ export const blockAuthenticated = (req, res, next) => {
   next();
 };
 
-// 3. Define o que será visível no Banco
-export const applyVaultFilter = (req, res, next) => {
-  // Se existe um userId no token, ele é um usuário registrado (Logado)
-  if (req.user && req.user.userId) {
-    req.vaultFilter = {};
-  } else {
-    // Se não tem userId (é anônimo ou guest), aplicamos o filtro
-    req.vaultFilter = { isSystem: { $ne: true } };
-  }
-  next();
-};
-
 export const protectUser = (req: any, res: any, next: any) => {
   const token = req.headers.authorization?.split(" ")[1];
 

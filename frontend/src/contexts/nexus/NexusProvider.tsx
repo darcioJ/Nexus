@@ -67,6 +67,42 @@ export const NexusProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     useEffect(() => { refreshCharacter(); }, [refreshCharacter]);
 
+    const handleInventorySave = useCallback(async (data: any, itemId?: string) => {
+        if (!character?._id) return;
+        setIsLoading(true);
+        triggerHaptic('MEDIUM');
+
+        try {
+            if (itemId) {
+                // EDITAR ITEM EXISTENTE
+                await api.patch(`/characters/${character._id}/inventory/${itemId}`, data);
+                notifySuccess("Sinal Recalibrado", `Item [${data.name}] atualizado.`);
+            } else {
+                // ADICIONAR NOVO ITEM
+                await api.post(`/characters/${character._id}/inventory`, data);
+                notifySuccess("Indexação Concluída", `[${data.name}] adicionado ao Vault.`);
+            }
+            await refreshCharacter(); // 🔄 Sincroniza a ficha após a mudança
+        } catch (err) {
+            notifyError("Falha na Sincronia", "Não foi possível persistir o item no Vault.");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [character?._id, refreshCharacter, notifySuccess, notifyError]);
+
+    const handleInventoryDelete = useCallback(async (itemId: string) => {
+        if (!character?._id) return;
+        triggerHaptic('HEAVY');
+
+        try {
+            await api.delete(`/characters/${character._id}/inventory/${itemId}`);
+            notifySuccess("Purgação Concluída", "Item removido do manifesto.");
+            await refreshCharacter();
+        } catch (err) {
+            notifyError("Erro de Purgação", "Falha ao remover item do sinal.");
+        }
+    }, [character?._id, refreshCharacter, notifySuccess, notifyError]);
+
     // --- 2. LÓGICA DE EVENTOS (SOCKET) ---
     useEffect(() => {
         if (!isConnected || !user?.id) {
@@ -138,7 +174,7 @@ export const NexusProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             socket.off("status_update", handleStatusUpdate);
             socket.off("master:receive_pulse", handlePulse);
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isConnected, user, character?._id, socket, notifySuccess, notifyError, emit]);
 
     // --- 3. INTERFACE DE DISPARO (AÇÕES) ---
@@ -154,7 +190,7 @@ export const NexusProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return (
         <NexusContext.Provider value={{
             character, isLoading, isConnected, lastPulse,
-            refreshCharacter, syncAction
+            refreshCharacter, syncAction, handleInventorySave, handleInventoryDelete
         }}>
             {children}
             <PulseOverlay effect={pulseEffect} />

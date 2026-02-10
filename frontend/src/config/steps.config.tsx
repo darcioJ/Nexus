@@ -34,7 +34,7 @@ export const STEPS_DATA: Step[] = [
   },
   {
     id: 'attributes',
-    fields: ["attributes.strength", "attributes.agility", "attributes.vitality", "attributes.intelligence", "attributes.perception", "attributes.essence"],
+    fields: ["attributes"],
     error: "Sincronia Energética insuficiente (Mínimo 30 NX).",
     title: 'Atributos',
     icon: <Shield size={20} />,

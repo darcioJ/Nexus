@@ -1,8 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Package } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ScanLine, Zap, Plus, Edit3, Trash2, Box, Layers } from 'lucide-react';
 import { CATEGORY_MAP } from '../../config/character.config';
 import { NexusIcon } from '../common/NexusIcon';
+import { InventoryModal } from './InventoryModal';
 
 interface Item {
     _id: string;
@@ -12,95 +13,127 @@ interface Item {
     quantity: number;
 }
 
-interface InventoryProps {
-    items: Item[];
-}
-
-export const InventoryDisplay: React.FC<InventoryProps> = ({ items }) => {
-
-    if (!items || items.length === 0) {
-        return (
-            <div className="p-12 text-center border-2 border-dashed border-slate-100 rounded-[3rem]">
-                <Package className="mx-auto text-slate-200 mb-4" size={40} />
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
-                    Inventário_Vazio // Vault_Sem_Registros
-                </p>
-            </div>
-        );
-    }
+export const InventoryDisplay = ({ items, onSave, onDelete }: {
+    items: Item[],
+    onSave: (data: any, itemId?: string) => Promise<void>,
+    onDelete: (itemId: string) => Promise<void>
+}) => {
+    const [modalData, setModalData] = useState<{ open: boolean, item?: Item }>({ open: false });
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-1">
-            {items.map((item, index) => {
-                const config = CATEGORY_MAP[item.category] || CATEGORY_MAP.DEFAULT;
+        <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-1">
+                
+                {/* BOTÃO ADICIONAR: PRISMA MINIMAL GHOST */}
+                <motion.button
+                    onClick={() => setModalData({ open: true })}
+                    whileHover={{ scale: 0.98, backgroundColor: 'rgba(255, 255, 255, 1)' }}
+                    className="relative h-full min-h-[140px] rounded-[2.5rem] border-2 border-dashed border-slate-100 bg-white/40 flex flex-col items-center justify-center gap-2 transition-all group overflow-hidden"
+                >
+                    <div className="w-10 h-10 rounded-2xl bg-white shadow-sm border border-slate-50 flex items-center justify-center text-slate-300 group-hover:text-emerald-500 group-hover:rotate-90 transition-all duration-500">
+                        <Plus size={20} />
+                    </div>
+                    <span className="text-[8px] font-black uppercase tracking-[0.4em] text-slate-400 group-hover:text-emerald-600 transition-colors">
+                        Add_Registry
+                    </span>
+                    <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] bg-[size:12px_12px]" />
+                </motion.button>
 
-                return (
-                    <motion.div
-                        key={item._id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="group relative bg-white/80 backdrop-blur-xl border-2 border-white rounded-[2.5rem] p-5 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.04)] hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.08)] transition-all duration-500 overflow-hidden"
-                    >
-                        {/* Indicador Lateral de Categoria */}
-                        <div
-                            className="absolute top-0 left-0 w-1.5 h-full opacity-50"
-                            style={{ backgroundColor: config.color }}
-                        />
+                {items.map((item, index) => {
+                    const config = CATEGORY_MAP[item.category] || CATEGORY_MAP.DEFAULT;
+                    const color = config.color;
 
-                        <div className="relative z-10 space-y-4">
-                            {/* Header do Item */}
-                            <div className="flex justify-between items-start">
-                                <div className="flex items-center gap-3">
-                                    <div
-                                        className="w-10 h-10 rounded-2xl flex items-center justify-center bg-slate-50 border border-slate-100 shadow-inner"
-                                        style={{ color: config.color }}
-                                    >
-                                        <NexusIcon name={config.icon} size={20} />
+                    return (
+                        <motion.div
+                            key={item._id}
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.04 }}
+                            className="group relative rounded-[2.5rem] p-4 bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.05)] hover:shadow-xl transition-all duration-500 overflow-hidden"
+                        >
+                            {/* ENGINE DE REFRAÇÃO (BLOOM SUTIL) */}
+                            <div className="absolute -top-10 -right-10 w-32 h-32 blur-[50px] opacity-10 pointer-events-none transition-colors" style={{ backgroundColor: color }} />
+
+                            {/* CONTROLES DE COMANDO (SEMPRE VISÍVEIS) */}
+                            <div className="absolute top-4 right-4 flex gap-1 z-20">
+                                <button 
+                                    onClick={() => setModalData({ open: true, item })} 
+                                    className="p-2 rounded-xl bg-white/50 border border-white shadow-sm text-slate-400 hover:text-blue-500 hover:bg-white transition-all active:scale-90"
+                                >
+                                    <Edit3 size={11} />
+                                </button>
+                                <button 
+                                    onClick={() => onDelete(item._id)} 
+                                    className="p-2 rounded-xl bg-white/50 border border-white shadow-sm text-slate-400 hover:text-rose-500 hover:bg-white transition-all active:scale-90"
+                                >
+                                    <Trash2 size={11} />
+                                </button>
+                            </div>
+
+                            <div className="relative z-10 space-y-3">
+                                {/* HEADER DO ITEM */}
+                                <div className="flex items-start gap-3 mr-16">
+                                    <div className="w-10 h-10 rounded-2xl bg-white shadow-inner flex items-center justify-center border border-slate-50 shrink-0" style={{ color }}>
+                                        <NexusIcon name={config.icon} size={18} />
                                     </div>
-                                    <div>
-                                        <span className="text-[7px] font-black uppercase tracking-[0.3em] text-slate-400 block">
-                                            {item.category}_Class
-                                        </span>
-                                        <h4 className="text-sm font-black text-slate-800 uppercase italic tracking-tighter">
+                                    <div className="flex flex-col min-w-0">
+                                        <div className="flex items-center gap-1">
+                                            <Layers size={7} className="text-slate-300" />
+                                            <span className="text-[6px] font-black text-slate-300 uppercase tracking-widest truncate">{item.category}</span>
+                                        </div>
+                                        <h4 className="text-xs font-black text-slate-800 uppercase italic tracking-tight leading-tight truncate">
                                             {item.name}
                                         </h4>
                                     </div>
                                 </div>
 
-                                {/* Badge de Quantidade */}
-                                <div className="bg-slate-900 px-3 py-1 rounded-full">
-                                    <span className="text-[9px] font-mono font-black text-white italic">
-                                        x{String(item.quantity).padStart(2, '0')}
-                                    </span>
+                                {/* BADGE QUANTIDADE & DESCRIÇÃO */}
+                                <div className="flex items-center justify-between gap-3">
+                                    <p className="text-[8px] leading-tight font-medium text-slate-500 italic line-clamp-2 flex-1">
+                                        "{item.description}"
+                                    </p>
+                                    
+                                    <div className="px-2 py-1 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center gap-1 shrink-0">
+                                        <Zap size={7} className="text-amber-400 fill-amber-400" />
+                                        <span className="text-[9px] font-mono font-black text-slate-900 italic">
+                                            {String(item.quantity).padStart(2, '0')}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* FOOTER TÉCNICO */}
+                                <div className="flex items-center justify-between pt-2 border-t border-slate-50/50">
+                                    <div className="flex items-center gap-1.5 opacity-30">
+                                        <ScanLine size={8} className="text-slate-400" />
+                                        <span className="text-[5px] font-black text-slate-400 uppercase tracking-[0.3em]">Registry_NX</span>
+                                    </div>
+                                    <span className="text-[5px] font-mono font-bold text-slate-300">ID:{item._id.slice(-4).toUpperCase()}</span>
                                 </div>
                             </div>
 
-                            {/* Descrição Técnica */}
-                            <div className="min-h-10">
-                                <p className="text-[10px] leading-relaxed font-medium text-slate-500 italic">
-                                    "{item.description}"
-                                </p>
-                            </div>
+                            {/* SCANLINE ANIMADO (HOVER) */}
+                            <motion.div 
+                                animate={{ y: [-100, 200] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                className="absolute inset-x-0 h-px bg-slate-900/5 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"
+                            />
+                        </motion.div>
+                    );
+                })}
+            </div>
 
-                            {/* Footer / Meta-dados */}
-                            <div className="flex items-center justify-between pt-3 border-t border-slate-50">
-                                <div className="flex gap-1">
-                                    <div className="w-1 h-1 rounded-full bg-slate-200" />
-                                    <div className="w-1 h-1 rounded-full bg-slate-200" />
-                                    <div className="w-4 h-1 rounded-full opacity-30" style={{ backgroundColor: config.color }} />
-                                </div>
-                                <span className="text-[6px] font-mono font-bold text-slate-300 uppercase tracking-widest">
-                                    UID: {item._id.slice(-6)}
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Efeito de Hover: Reflexo */}
-                        <div className="absolute inset-0 bg-linear-to-tr from-transparent via-white/5 to-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-                    </motion.div>
-                );
-            })}
+            <AnimatePresence>
+                {modalData.open && (
+                    <InventoryModal 
+                        item={modalData.item} 
+                        onClose={() => setModalData({ open: false })} 
+                        onSave={async (data) => {
+                            await onSave(data, modalData.item?._id);
+                            setModalData({ open: false });
+                        }}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 };

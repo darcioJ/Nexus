@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Shield, QrCode, UserCircle2,
-    CalendarDays, Barcode, History, AlertCircle, Zap,
+    CalendarDays, Barcode, History, AlertCircle, Zap, Upload
 } from 'lucide-react';
 import type { CharacterData } from '../../models/character';
 
@@ -11,11 +11,20 @@ import { HeaderStep } from '../shared/HeaderStep';
 import { getSchoolGrade } from '../../utils/getSchoolGrade';
 import { IdentityInput, MetadataChip } from './StepIdentity/IdentityInput';
 
+import { useForger } from '../../hooks/useForger';
+
 
 export const StepIdentity = () => {
     const { register, watch, setValue, formState: { errors } } = useFormContext<CharacterData>();
     const selectedAge = watch('identity.age') || 14;
     const nameValue = watch('identity.name') || "";
+
+    // 1. Pegamos a função de upload do nosso Contexto
+    const { handleAvatarChange } = useForger();
+
+    // 2. Monitoramos o campo do avatar para mostrar a preview
+    const avatarPreview = watch('identity.avatar');
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
 
     const [birthDate, setBirthDate] = React.useState({ day: '15', month: '05' });
 
@@ -134,18 +143,62 @@ export const StepIdentity = () => {
                             {/* MÓDULO FOTO-VITAL (LADO ESQUERDO) */}
                             <div className="flex flex-col items-center gap-5 shrink-0 group/photo">
                                 <div className="relative">
-                                    {/* Cantoneiras de Foco de Câmera */}
-                                    <div className="absolute -top-3 -left-3 w-6 h-6 border-t-2 border-l-2 border-step-identity rounded-tl-lg" />
-                                    <div className="absolute -bottom-3 -right-3 w-6 h-6 border-b-2 border-r-2 border-step-identity rounded-br-lg" />
+                                    <div className="absolute -top-3 -left-3 w-6 h-6 border-t-2 border-l-2 border-step-identity rounded-tl-lg z-30" />
+                                    <div className="absolute -bottom-3 -right-3 w-6 h-6 border-b-2 border-r-2 border-step-identity rounded-br-lg z-30" />
 
-                                    {/* Moldura da Foto com efeito de Profundidade */}
-                                    <div className="relative w-40 h-52 md:w-44 md:h-56 grid place-items-center bg-step-identity-soft rounded-[2.5rem] overflow-hidden border-4 border-white shadow-[0_20px_50px_-15px_var(--color-step-identity)]/50 transition-transform duration-500 group-hover/photo:scale-[1.02]">
-                                        {/* Grid de Fundo Biométrico */}
-                                        <div className="absolute inset-0 opacity-15 bg-[radial-gradient(var(--color-step-identity),1px,transparent_1px)] bg-size-[10px_10px]" />
+                                    {/* Input Escondido */}
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={handleAvatarChange}
+                                    />
 
-                                        <UserCircle2 size={160} strokeWidth={0.5} className="text-slate-200 group-hover/photo:text-step-identity/20 transition-colors" />
-                                    </div>
+                                    {/* Moldura da Foto Interativa */}
+                                    <button
+                                        type="button"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="relative w-40 h-52 md:w-44 md:h-56 grid place-items-center bg-step-identity-soft rounded-[2.5rem] overflow-hidden border-4 border-white shadow-xl transition-all duration-500 hover:scale-[1.02] active:scale-95 group/btn"
+                                    >
+                                        {avatarPreview ? (
+                                            <>
+                                                <img
+                                                    src={avatarPreview}
+                                                    className="w-full h-full object-cover"
+                                                    alt="Biometria"
+                                                />
+                                                {/* Overlay de Varredura */}
+                                                <div className="absolute inset-0 bg-linear-to-t from-step-identity/40 to-transparent" />
+                                                <motion.div
+                                                    animate={{ y: [-20, 220, -20] }}
+                                                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                                    className="absolute inset-x-0 h-0.5 bg-white/60 z-10 shadow-[0_0_10px_white]"
+                                                />
+                                            </>
+                                        ) : (
+                                            <div className="flex flex-col items-center gap-2">
+                                                <UserCircle2 size={80} strokeWidth={0.5} className="text-step-identity/40" />
+                                                <span className="text-[7px] font-black uppercase tracking-widest text-step-identity">Capturar_Sinal</span>
+                                            </div>
+                                        )}
+
+                                        {/* Hover Overlay */}
+                                        <div className="absolute rounded-3xl inset-0 bg-step-identity/20 opacity-0 group-hover/btn:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                            <Upload className="text-white animate-pulse" size={24} />
+                                        </div>
+                                    </button>
                                 </div>
+
+                                {/* Botão de Reset (Opcional) */}
+                                {avatarPreview && (
+                                    <button
+                                        onClick={() => setValue('identity.avatar', '')}
+                                        className="text-[7px] font-black uppercase tracking-widest text-red-400 hover:text-red-500 transition-colors"
+                                    >
+                                        [ Excluir_Registro ]
+                                    </button>
+                                )}
                             </div>
 
                             {/* TERMINAL DE DADOS NOMINAIS (LADO DIREITO) */}

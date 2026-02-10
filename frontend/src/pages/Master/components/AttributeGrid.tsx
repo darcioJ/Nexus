@@ -7,8 +7,15 @@ export const AttributeGrid = ({ character, vault }) => {
 
     return (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {vault.attributes.map((attr, index) => {
-                const value = character.attributes[attr.key] || 0;
+            {vault.attributes.filter((attr) => !attr.isSystem).map((attr, index) => {
+                const attrId = String(attr._id);
+
+                // 2. SUPORTE A MAP OU OBJETO:
+                // Se vier do Mongoose (Map), usamos .get(). Se for objeto simples, usamos [].
+                const value = character.attributes instanceof Map
+                    ? character.attributes.get(attrId)
+                    : (character.attributes as any)[attrId] || 0;
+
                 const attrColor = attr.colorVar || '#94a3b8';
 
                 return (
@@ -20,21 +27,21 @@ export const AttributeGrid = ({ character, vault }) => {
                         className="group relative p-2.5 rounded-3xl bg-white border border-slate-50 shadow-xs hover:shadow-md transition-all flex flex-col items-center justify-center overflow-hidden"
                     >
                         {/* GLOW DE REFRAÇÃO */}
-                        <div 
+                        <div
                             className="absolute inset-0 opacity-0 group-hover:opacity-[0.05] transition-opacity duration-500"
                             style={{ backgroundColor: attrColor }}
                         />
 
                         {/* ÍCONE E LABEL REDUZIDOS */}
                         <div className="flex items-center gap-1.5 mb-0.5 relative z-10">
-                            <div 
+                            <div
                                 className="p-1.5 rounded-lg bg-slate-50/50 group-hover:bg-white transition-colors"
                                 style={{ color: attrColor }}
                             >
                                 <NexusIcon name={attr.iconName} size={12} />
                             </div>
                             <span className="text-[6px] font-black text-slate-300 uppercase tracking-widest">
-                                {attr.label.slice(0, 3)}
+                                {attr.name.slice(0, 3).toUpperCase()}
                             </span>
                         </div>
 
@@ -46,7 +53,7 @@ export const AttributeGrid = ({ character, vault }) => {
                         </div>
 
                         {/* INDICADOR DE SINTONIA */}
-                        <div 
+                        <div
                             className="absolute bottom-0 inset-x-0 h-0.5 opacity-20"
                             style={{ backgroundColor: attrColor }}
                         />
