@@ -98,8 +98,15 @@ export const VaultCard = React.memo(({ item, type, onEdit, onDelete }: VaultCard
             <span style={{ color: accentColor }} className="truncate">
               {isSystem ? `PROT_VER_${item._id.slice(-4).toUpperCase()}` : metadata.primary}
             </span>
-            <span className="w-1 h-1 rounded-full bg-slate-200 shrink-0" />
+            <span className="w-1 h-1 rounded-full bg-slate-300 shrink-0" />
             <span className="text-slate-400 truncate">{isSystem ? "BLOCKED" : metadata.secondary}</span>
+            <span className="w-1 h-1 rounded-full bg-slate-300 shrink-0" />
+            <div className="flex items-center gap-1.5 text-slate-400 italic shrink-0">
+              <Icons.History size={10} strokeWidth={3} />
+              <span>
+                {new Date(item.updatedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+              </span>
+            </div>
           </div>
         </div>
       </div>

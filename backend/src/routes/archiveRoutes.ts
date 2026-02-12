@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import * as archiveController from '../controllers/archive.controller';
-import { extractUser, protectUser, authorizeMaster } from '../middleware/auth';
+import * as archiveController from '../controllers/archiveController.js';
+import { extractUser, protectUser, authorizeMaster } from '../middleware/authMiddleware.js';
 
 const router = Router();
 

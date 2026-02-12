@@ -1,6 +1,6 @@
 import { Zap, Info } from 'lucide-react';
 
-import { InputGroup } from '../InputGroup';
+import { InputGroup } from '../../../../components/common/InputGroup';
 
 import { ItemInput } from '../../../../components/common/ItemInput';
 import { IconInput } from '../../../../components/common/IconInput';

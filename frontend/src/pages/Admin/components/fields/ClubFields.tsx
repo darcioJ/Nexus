@@ -1,4 +1,4 @@
-import { InputGroup } from '../InputGroup';
+import { InputGroup } from '../../../../components/common/InputGroup';
 import { IconInput } from '../../../../components/common/IconInput';
 import { inputBaseClass } from '../../../../config/vault.config';
 import { AttributeSelector } from '../../../../components/common/AttributeSelector';

@@ -13,6 +13,7 @@ import userRoutes from "./routes/userRoutes.js";
 import forgeRoutes from "./routes/forgeRoutes.js";
 
 import archetypeRoutes from "./routes/archetypeRoutes.js";
+import archiveRoutes from "./routes/archiveRoutes.js"
 import attributeRoutes from "./routes/attributeRoutes.js";
 import clubRoutes from "./routes/clubRoutes.js";
 import essenceRoutes from "./routes/essenceRoutes.js";
@@ -49,6 +50,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/forge", forgeRoutes);
 
 app.use("/api/archetypes", archetypeRoutes);
+app.use("/api/archives", archiveRoutes);
 app.use("/api/attributes", attributeRoutes);
 app.use("/api/clubs", clubRoutes);
 app.use("/api/essences", essenceRoutes);

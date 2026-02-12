@@ -1,5 +1,5 @@
 import { Target, ChevronDown, Zap, Crosshair } from 'lucide-react';
-import { InputGroup } from '../InputGroup';
+import { InputGroup } from '../../../../components/common/InputGroup';
 import { ModuleInput } from '../../../../components/common/ModuleInput'
 
 import { inputBaseClass, selectBaseClass } from '../../../../config/vault.config';

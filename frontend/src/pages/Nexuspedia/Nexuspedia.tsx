@@ -1,13 +1,16 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Database, Sparkles, Crosshair, } from 'lucide-react';
+import { Search, Database, Sparkles, Crosshair, Book, FilePlus } from 'lucide-react';
 import { useVault } from '../../hooks/useVault';
 import { LoadingScreen } from '../../components/common/LoadingScreen';
-import { WeaponCardTrigger } from './WeaponCardTrigger';
-import { WeaponDetailModal } from './WeaponDetailModal';
-import { EssenceCrystalCard } from './EssenceCrystalCard';
-import { EssenceDetailModal } from './EssenceDetailModal';
-import { ArchiveCard } from './ArchiveCard';
+import { WeaponCardTrigger } from './Weapon/WeaponCardTrigger';
+import { WeaponDetailModal } from './Weapon/WeaponDetailModal';
+import { EssenceCrystalCard } from './Essence/EssenceCrystalCard';
+import { EssenceDetailModal } from './Essence/EssenceDetailModal';
+import { useArchive } from '../../hooks/useArchive'; // O hook que criamos
+import { ArchiveCard } from './Archive/ArchiveCard';
+import { ArchiveDetailModal } from './Archive/ArchiveDetailModal';
+import { ArchiveFormModal } from './Archive/ArchiveFormModal';
 
 /* --- BOTÕES AUXILIARES (SIMPLIFICADOS) --- */
 const TabButton = ({ label, isActive, onClick, icon }) => (
@@ -24,11 +27,38 @@ const FilterButton = ({ label, isActive, onClick }) => (
 
 export const Nexuspedia: React.FC = () => {
   const { vault, isLoading } = useVault();
+  const { archives, fetchAll, addArchive, editArchive, removeArchive } = useArchive();
+
   const [activeTab, setActiveTab] = useState<'essences' | 'weapons' | 'archives'>('essences');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCat, setSelectedCat] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState(); // ESTADO DO POP-UP
   const [selectedWeapon, setSelectedWeapon] = useState();
+  const [selectedArchive, setSelectedArchive] = useState<any>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  // Efeito para carregar os arquivos ao montar
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
+
+  // Lógica de filtragem para Arquivos
+  const filteredArchives = useMemo(() => {
+    if (!archives) return [];
+    return archives.filter((arc) => {
+      const matchesSearch = arc.title.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCat = selectedCat ? arc.category === selectedCat : true;
+      return matchesSearch && matchesCat;
+    });
+  }, [searchTerm, selectedCat, archives]);
+
+  // Categorias dinâmicas baseadas na aba ativa
+  const currentCategories = useMemo(() => {
+    if (activeTab === 'essences') return Array.from(new Set(vault?.essences?.map((e) => e.category) || []));
+    if (activeTab === 'archives') return ["LORE", "REGRAS", "LOGS", "SISTEMA"];
+    return [];
+  }, [activeTab, vault, archives]);
+
 
   const filteredEssences = useMemo(() => {
     if (!vault?.essences) return [];
@@ -81,38 +111,101 @@ export const Nexuspedia: React.FC = () => {
         <div className="bg-white/40 backdrop-blur-md p-1.5 rounded-full border-2 border-white shadow-sm flex gap-1">
           <TabButton label="Essências" isActive={activeTab === 'essences'} onClick={() => setActiveTab('essences')} icon={<Sparkles size={14} />} />
           <TabButton label="Arsenal" isActive={activeTab === 'weapons'} onClick={() => setActiveTab('weapons')} icon={<Crosshair size={14} />} />
+          <TabButton label="Códice" isActive={activeTab === 'archives'} onClick={() => { setActiveTab('archives'); setSelectedCat(null); }} icon={<Book size={14} />} />
         </div>
       </div>
 
-      {/* GRID DE ESSÊNCIAS */}
+      {/* GRID PRINCIPAL SINCROZINADO */}
       <AnimatePresence mode="wait">
-        {activeTab === 'essences' ? (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12">
-            <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
-              <FilterButton label="Omni_Link" isActive={!selectedCat} onClick={() => setSelectedCat(null)} />
-              {categories.map(cat => (
-                <FilterButton key={cat} label={cat} isActive={selectedCat === cat} onClick={() => setSelectedCat(cat)} />
-              ))}
-            </div>
+        {(() => {
+          switch (activeTab) {
+            case 'essences':
+              return (
+                <motion.div
+                  key="essences-tab"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-12"
+                >
+                  <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+                    <FilterButton label="Omni_Link" isActive={!selectedCat} onClick={() => setSelectedCat(null)} />
+                    {currentCategories.map(cat => (
+                      <FilterButton key={cat} label={cat} isActive={selectedCat === cat} onClick={() => setSelectedCat(cat)} />
+                    ))}
+                  </div>
 
-            <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredEssences.filter((essence) => !essence.isSystem).map((essence) => (
-                <EssenceCrystalCard
-                  key={essence._id}
-                  essence={essence}
-                  onClick={() => setSelectedItem(essence)}
-                />
-              ))}
-            </main>
-          </motion.div>
-        ) : (
+                  <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {filteredEssences.filter((essence) => !essence.isSystem).map((essence) => (
+                      <EssenceCrystalCard
+                        key={essence._id}
+                        essence={essence}
+                        onClick={() => setSelectedItem(essence)}
+                      />
+                    ))}
+                  </main>
+                </motion.div>
+              );
 
-          <main className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {vault.weapons.filter((attr) => !attr.isSystem).map((weapon) => (
-              <WeaponCardTrigger key={weapon._id} weapon={weapon} onClick={() => setSelectedWeapon(weapon)} />
-            ))}
-          </main>
-        )}
+            case 'weapons':
+              return (
+                <motion.main
+                  key="weapons-tab"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-8"
+                >
+                  {vault.weapons.filter((attr) => !attr.isSystem).map((weapon) => (
+                    <WeaponCardTrigger
+                      key={weapon._id}
+                      weapon={weapon}
+                      onClick={() => setSelectedWeapon(weapon)}
+                    />
+                  ))}
+                </motion.main>
+              );
+
+            case 'archives':
+              return (
+                <motion.div
+                  key="archives-tab"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-12"
+                >
+                  <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar items-center">
+                    <FilterButton label="Omni_Link" isActive={!selectedCat} onClick={() => setSelectedCat(null)} />
+                    {currentCategories.map(cat => (
+                      <FilterButton key={cat} label={cat} isActive={selectedCat === cat} onClick={() => setSelectedCat(cat)} />
+                    ))}
+
+                    {/* ACESSO RÁPIDO PARA INJEÇÃO (Mestre_Nexus) */}
+                    <button
+                      onClick={() => setIsFormOpen(true)}
+                      className="ml-auto shrink-0 px-6 py-3 rounded-2xl text-[10px] font-black uppercase bg-blue-600 text-white flex items-center gap-2 hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-200"
+                    >
+                      <FilePlus size={14} /> Injetar_Log
+                    </button>
+                  </div>
+
+                  <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {filteredArchives.map((archive) => (
+                      <ArchiveCard
+                        key={archive._id}
+                        archive={archive}
+                        onClick={() => setSelectedArchive(archive)}
+                      />
+                    ))}
+                  </main>
+                </motion.div>
+              );
+
+            default:
+              return null;
+          }
+        })()}
       </AnimatePresence>
 
       {/* --- MODAL DE DETALHES (O POP-UP) --- */}
@@ -133,6 +226,27 @@ export const Nexuspedia: React.FC = () => {
           />
         )}
       </AnimatePresence>
+
+      {/* --- MODAIS DO CÓDICE --- */}
+      <AnimatePresence>
+        {selectedArchive && (
+          <ArchiveDetailModal
+            archive={selectedArchive}
+            onClose={() => setSelectedArchive(null)}
+            isMaster={true} // Aqui você passaria a lógica do seu hook de Auth
+          />
+        )}
+      </AnimatePresence>
+
+      <ArchiveFormModal
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        onSave={(data) => {
+          addArchive(data);
+          setIsFormOpen(false);
+        }}
+      />
+
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Package, Layers, FileText, Hash, Sparkles } from 'lucide-react';
-import { InputGroup } from "../../pages/Admin/components/InputGroup";
+import { InputGroup } from "../common/InputGroup";
 
 export const InventoryModal = ({ item, onClose, onSave }: any) => {
     const [formData, setFormData] = useState({

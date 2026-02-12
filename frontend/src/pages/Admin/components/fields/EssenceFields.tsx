@@ -1,5 +1,5 @@
 import { Crosshair, LinkIcon, Zap, Info, Palette } from 'lucide-react';
-import { InputGroup } from '../InputGroup';
+import { InputGroup } from '../../../../components/common/InputGroup';
 
 import { ColorInput } from '../../../../components/common/ColorInput';
 import { IconInput } from '../../../../components/common/IconInput';

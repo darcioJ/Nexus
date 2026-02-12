@@ -1,5 +1,5 @@
 import { Zap, Settings, ShieldCheck, Terminal } from 'lucide-react';
-import { InputGroup } from '../InputGroup';
+import { InputGroup } from '../../../../components/common/InputGroup';
 import { IconInput } from '../../../../components/common/IconInput';
 import { ColorInput } from '../../../../components/common/ColorInput';
 import { LogicInput } from '../../../../components/common/LogicInput';

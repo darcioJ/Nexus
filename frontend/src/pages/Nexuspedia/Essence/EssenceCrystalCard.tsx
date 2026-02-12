@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Info } from 'lucide-react';
-import { NexusIcon } from '../../components/common/NexusIcon';
+import { NexusIcon } from '../../../components/common/NexusIcon';
 
 /* --- CARD SIMPLIFICADO (GATILHO) --- */
 export const EssenceCrystalCard = ({ essence, onClick }) => {

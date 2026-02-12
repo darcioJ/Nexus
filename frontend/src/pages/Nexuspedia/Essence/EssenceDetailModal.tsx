@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import { X, Quote, Activity, Zap, Fingerprint, ShieldAlert } from 'lucide-react'
-import { NexusIcon } from "../../components/common/NexusIcon";
+import { NexusIcon } from "../../../components/common/NexusIcon";
 
 /* --- MINI COMPONENTE DE MÉTRICA --- */
 const StatusMetricTile = ({ label, value, icon, color }) => (

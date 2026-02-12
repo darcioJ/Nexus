@@ -12,7 +12,7 @@ import { triggerHaptic } from '../../../utils/triggerHaptic';
 import { VAULT_CONFIG, type VaultTab, inputBaseClass, textareaBaseClass } from '../../../config/vault.config';
 
 // --- COMPONENTES DE ESTRUTURA ---
-import { InputGroup } from './InputGroup';
+import { InputGroup } from '../../../components/common/InputGroup';
 
 // --- DOSSIÊS DE CAMPOS (COMPONENTES EXTERNOS) ---
 import { ArchetypeFields } from './fields/ArchetypeFields';

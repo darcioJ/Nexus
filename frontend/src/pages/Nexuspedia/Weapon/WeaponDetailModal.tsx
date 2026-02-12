@@ -1,8 +1,8 @@
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { X, Activity, Maximize, Crosshair, Target, Shield, Quote } from 'lucide-react';
-import { NexusIcon } from '../../components/common/NexusIcon';
-import { NodeCard } from '../../components/shared/NodeCardWeapon';
+import { NexusIcon } from '../../../components/common/NexusIcon';
+import { NodeCard } from '../../../components/shared/NodeCardWeapon';
 
 export const WeaponDetailModal = ({ weapon, onClose }) => {
     const essence = weapon.essenceId;

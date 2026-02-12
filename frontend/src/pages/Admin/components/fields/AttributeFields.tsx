@@ -1,5 +1,5 @@
 import { Hash, Binary, Zap, Info, Palette } from 'lucide-react';
-import { InputGroup } from '../InputGroup';
+import { InputGroup } from '../../../../components/common/InputGroup';
 import { IconInput } from '../../../../components/common/IconInput';
 import { ColorInput } from '../../../../components/common/ColorInput';
 import { inputBaseClass } from '../../../../config/vault.config';
