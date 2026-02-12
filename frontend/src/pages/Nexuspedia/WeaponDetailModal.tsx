@@ -9,15 +9,19 @@ export const WeaponDetailModal = ({ weapon, onClose }) => {
     const status = essence?.statusId;
     const colorToken = essence?.colorVar || 'var(--color-neutro)';
 
-    const synergyNote = weapon.specialNotes?.find((note: any) =>
-        note.name?.toUpperCase().includes('SINERGIA')
+    // 1. Localiza a Sinergia usando o campo 'category' e 'content'
+    const synergyNote = weapon.specialNotes?.find((note) =>
+        note.category?.toUpperCase() === 'SINERGIA'
     );
-    const synergyText = synergyNote?.description || null;
+    const synergyText = synergyNote?.content || null;
 
-    // 2. Localiza o Efeito Principal (o primeiro item que NÃO seja Sinergia, ou o primeiro do array)
-    const mainEffect = weapon.specialNotes?.find((note: any) =>
-        !note.name?.toUpperCase().includes('SINERGIA')
-    )?.description || weapon.specialNotes?.[0]?.description || 'Protocolo de Combate Padrão';
+    // 2. Localiza o Efeito Principal (qualquer nota que NÃO seja SINERGIA)
+    const mainNote = weapon.specialNotes?.find((note) =>
+        note.category?.toUpperCase() !== 'SINERGIA'
+    );
+
+    const mainEffect = mainNote?.content || 'Protocolo de Combate Padrão';
+    const mainLabel = mainNote?.category || 'Efeito_Principal';
 
     const modalJSX = (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-8 lg:p-12 overflow-hidden">
@@ -135,7 +139,10 @@ export const WeaponDetailModal = ({ weapon, onClose }) => {
                             </div>
 
                             <div className="relative h-3 w-full bg-slate-100 rounded-full border border-white shadow-inner p-1 overflow-hidden">
-                                <div
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: '99.8%' }} // Ou use um valor dinâmico se houver
+                                    transition={{ duration: 1.5, ease: "easeOut" }}
                                     className="h-full rounded-full shadow-[0_0_20px_var(--accent-color)]"
                                     style={{ backgroundColor: 'var(--accent-color)' }}
                                 />
@@ -151,30 +158,32 @@ export const WeaponDetailModal = ({ weapon, onClose }) => {
 
                         {/* GRID DE MÓDULOS TÁTICOS */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <NodeCard
-                                icon={<Activity size={18} />}
-                                label="Potencial_Letal"
-                                value={status?.mechanic || "Dano_Puro"}
-                                colorToken={colorToken}
-                            />
+
+                            {synergyText && (
+                                <NodeCard
+                                    icon={<Maximize size={18} />}
+                                    label="Sinergia_Neural"
+                                    value={synergyText} // Exibe a descrição da sinergia
+                                    colorToken={colorToken}
+                                />
+                            )}
 
                             <NodeCard
                                 icon={<Shield size={18} />}
-                                label="Efeito_Principal"
-                                value={mainEffect} // Exibe a descrição da nota principal
+                                label={mainLabel} // Usará "RESISTÊNCIA" ou a categoria que vier no note
+                                value={mainEffect}
                                 colorToken={colorToken}
                             />
 
-                            {synergyText && (
-                                <div className="md:col-span-2">
-                                    <NodeCard
-                                        icon={<Maximize size={18} />}
-                                        label="Sinergia_Neural"
-                                        value={synergyText} // Exibe a descrição da sinergia
-                                        colorToken={colorToken}
-                                    />
-                                </div>
-                            )}
+
+                            <div className="md:col-span-2">
+                                <NodeCard
+                                    icon={<Activity size={18} />}
+                                    label="Potencial_Letal"
+                                    value={status?.mechanic || "Dano_Puro"}
+                                    colorToken={colorToken}
+                                />
+                            </div>
                         </div>
 
                         {/* FOOTER TÉCNICO */}

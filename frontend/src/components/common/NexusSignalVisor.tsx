@@ -26,7 +26,7 @@ export const NexusSignalVisor = ({
   // Calcula quantos slots preencher com base no valor (separado por ' e ')
   const activeCount = value ? value.split(' e ').filter(Boolean).length : 0;
   // Se não houver displayValue, usa o value bruto
-  const textToShow = displayValue || value;
+  const textToShow = displayValue || value || "";
 
   return (
     <div className="relative group overflow-hidden rounded-[2rem]">

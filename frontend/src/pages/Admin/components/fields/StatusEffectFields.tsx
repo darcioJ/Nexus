@@ -1,11 +1,9 @@
-import { Zap, Settings, ShieldCheck } from 'lucide-react';
+import { Zap, Settings, ShieldCheck, Terminal } from 'lucide-react';
 import { InputGroup } from '../InputGroup';
 import { IconInput } from '../../../../components/common/IconInput';
 import { ColorInput } from '../../../../components/common/ColorInput';
+import { LogicInput } from '../../../../components/common/LogicInput';
 
-import {
-  textareaBaseClass
-} from '../../../../config/vault.config';
 import { CategorySelector } from '../../../../components/common/CategorySelector';
 import { AttributeSelector } from '../../../../components/common/AttributeSelector';
 
@@ -65,24 +63,19 @@ export const StatusEffectFields = ({ register, watch, attributes, setValue, erro
         />
       </InputGroup>
 
-      {/* 5. PROTOCOLO DE EXECUÇÃO (Mecânica) */}
+      {/* 5. PROTOCOLO DE EXECUÇÃO (Terminal Lógico) */}
       <div className="col-span-2">
-        <InputGroup label="Mecânica do Efeito (Mechanic)" >
-          <div className="relative group">
-            {/* 1. ÍCONE TÁTICO: BOOKOPEN */}
-            <div className="absolute left-6 top-6 text-slate-400 group-focus-within:text-indigo-500 transition-colors duration-300 pointer-events-none z-10">
-              <Settings size={20} strokeWidth={2.5} />
-            </div>
-            <textarea
-              {...register('mechanic')}
-              rows={4}
-              // pl-16 para dar espaço confortável ao ícone
-              className={`${textareaBaseClass} pl-16 pr-10 bg-stone-100/30 group-focus-within:bg-white`}
-              placeholder="ex.: -2 HP por turno. Redução de 50% de..."
-            />
-            {/* 2. LED DE SINCRONIA ATIVA (Top Right) */}
-            <div className="absolute right-7 top-7 w-1.5 h-1.5 rounded-full bg-stone-300 group-focus-within:bg-indigo-500 group-focus-within:shadow-[0_0_10px_#6366f1] transition-all duration-300" />
-          </div>
+        <InputGroup
+          label="Mecânica de Execução (Logic Script)"
+          icon={<Settings size={14} className="text-blue-500" />}
+        >
+          <LogicInput
+            name="mechanic"
+            register={register}
+            watch={watch}
+            setValue={setValue}
+            placeholder="Descreva a lógica do efeito..."
+          />
         </InputGroup>
       </div>
     </>

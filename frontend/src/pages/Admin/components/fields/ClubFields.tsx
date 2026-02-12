@@ -3,7 +3,7 @@ import { IconInput } from '../../../../components/common/IconInput';
 import { inputBaseClass } from '../../../../config/vault.config';
 import { AttributeSelector } from '../../../../components/common/AttributeSelector';
 
-export const ClubFields = ({ register, attributes, setValue, watch }: any) => {
+export const ClubFields = ({ register, attributes, setValue, watch }) => {
   return (
     <>
 
@@ -29,6 +29,7 @@ export const ClubFields = ({ register, attributes, setValue, watch }: any) => {
             register={register}
             name="bonus.attributeId"
             max={1}
+            sendId={true}
           />
         </InputGroup>
       </div>

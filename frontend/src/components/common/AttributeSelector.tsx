@@ -1,3 +1,4 @@
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NexusIcon } from '../common/NexusIcon';
 import { NexusSignalVisor } from './NexusSignalVisor';
@@ -7,8 +8,9 @@ interface AttributeSelectorProps {
     watch: any;
     setValue: any;
     register: any;
-    name?: string; // O caminho do campo no form (ex: "resistance" ou "bonus.attributeId")
-    max?: number;  // Limite de seleção (1 ou 2)
+    name?: string;
+    max?: number;
+    sendId?: boolean; // 🔑 Nova prop para decidir se envia o ID ou a Label
 }
 
 export const AttributeSelector = ({
@@ -16,20 +18,37 @@ export const AttributeSelector = ({
     watch,
     setValue,
     register,
-    name = "resistance", // Default para não quebrar onde já existe
-    max = 2
+    name = "resistance",
+    max = 2,
+    sendId = false // Por padrão mantém o comportamento de string (para Resistência)
 }: AttributeSelectorProps) => {
 
     const currentValue = watch(name) || "";
+    
+    // Função auxiliar para encontrar a label quando o valor é um ID
+    const getDisplayValue = () => {
+        if (!currentValue) return "";
+        if (!sendId) return currentValue;
+
+        // Se estivermos enviando IDs, precisamos traduzir o ID de volta para label no visor
+        const ids = currentValue.split(' e ');
+        const labels = ids.map((id: string) => {
+            const attr = attributes.find(a => a._id === id);
+            return attr ? `${attr.name} (${attr.name.slice(0, 3).toUpperCase()})` : id;
+        });
+        return labels.join(' e ');
+    };
 
     return (
         <div className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {attributes?.filter(attr => !attr.isSystem).map((attr) => {
                     const color = attr.colorVar || "#cbd5e1";
-                    // Padrão de string: Nome (ABR)
                     const attrLabel = `${attr.name} (${attr.name.slice(0, 3).toUpperCase()})`;
-                    const isSelected = currentValue.includes(attrLabel);
+                    
+                    // 🔑 Lógica de seleção baseada em ID ou Label
+                    const identifier = sendId ? attr._id : attrLabel;
+                    const isSelected = currentValue.includes(identifier);
 
                     return (
                         <motion.button
@@ -41,14 +60,13 @@ export const AttributeSelector = ({
                                 const selectedArray = currentValue ? currentValue.split(' e ') : [];
 
                                 if (isSelected) {
-                                    const filtered = selectedArray.filter((item: string) => item !== attrLabel);
+                                    const filtered = selectedArray.filter((item: string) => item !== identifier);
                                     setValue(name, filtered.join(' e '), { shouldValidate: true });
                                 } else {
-                                    // Lógica de limite dinâmico (max)
                                     if (max === 1) {
-                                        setValue(name, attrLabel, { shouldValidate: true });
+                                        setValue(name, identifier, { shouldValidate: true });
                                     } else if (selectedArray.length < max) {
-                                        const updated = [...selectedArray, attrLabel];
+                                        const updated = [...selectedArray, identifier];
                                         setValue(name, updated.join(' e '), { shouldValidate: true });
                                     }
                                 }
@@ -59,9 +77,7 @@ export const AttributeSelector = ({
                             } as any}
                             className={`
                                 relative flex flex-col items-center justify-center p-5 rounded-[2.5rem] border-2 transition-all duration-500 overflow-hidden
-                                ${isSelected
-                                    ? 'bg-white'
-                                    : 'bg-white/40 border-white/80 text-slate-400 hover:border-slate-200 hover:bg-white'}
+                                ${isSelected ? 'bg-white' : 'bg-white/40 border-white/80 text-slate-400 hover:border-slate-200 hover:bg-white'}
                             `}
                         >
                             <div
@@ -103,6 +119,7 @@ export const AttributeSelector = ({
                 register={register}
                 fieldName={name}
                 value={currentValue}
+                displayValue={getDisplayValue()} // 🔑 Mostra o nome mesmo que o valor seja o ID
                 maxSlots={max}
                 placeholder={max === 1 ? "Selecionar atributo de vínculo..." : "Selecionar módulos de defesa..."}
             />

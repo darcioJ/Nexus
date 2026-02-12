@@ -19,7 +19,7 @@ export const CategorySelector = ({
         <div className="space-y-4">
             {/* GRID DE MÓDULOS IRIDESCENTES */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {Object.entries(CATEGORY_CONFIG).map(([key, config]: [string, any]) => {
+                {Object.entries(CATEGORY_CONFIG).map(([key, config]) => {
                     const isSelected = currentCategory === key;
                     const Icon = config.icon;
 
@@ -86,6 +86,7 @@ export const CategorySelector = ({
                 register={register}
                 fieldName="category"
                 value={watch('category')}
+                placeholder='Aguardando categoria...'
                 maxSlots={1}
                 accentColor={CATEGORY_CONFIG[watch('category')]?.color}
             />

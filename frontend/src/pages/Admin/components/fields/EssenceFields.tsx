@@ -1,22 +1,20 @@
-import { Crosshair, LinkIcon, Activity } from 'lucide-react';
+import { Crosshair, LinkIcon, Zap, Info, Palette } from 'lucide-react';
 import { InputGroup } from '../InputGroup';
+
 import { ColorInput } from '../../../../components/common/ColorInput';
 import { IconInput } from '../../../../components/common/IconInput';
 import { CategorySelector } from '../../../../components/common/CategorySelector';
-
-import {
-  inputBaseClass
-} from '../../../../config/vault.config';
 import { StatusSelector } from '../../../../components/common/StatusSelector';
+import { TagInput } from '../../../../components/common/TagInput';
 
-export const EssenceFields = ({ register, statusEffects, watch, setValue, errors }: any) => {
+export const EssenceFields = ({ register, statusEffects, watch, setValue, errors }) => {
   return (
     <>
       {/* --- SEÇÃO 01: MATRIZ TÉCNICA (CATEGORIA E VANTAGEM) --- */}
 
       {/* Categoria */}
       <div className="col-span-2">
-        <InputGroup label="Setor de Categoria" error={errors?.category}>
+        <InputGroup label="Setor de Categoria" error={errors?.category} icon={<Zap size={14} className="text-blue-500" />} >
           <CategorySelector
             register={register}
             watch={watch}
@@ -27,25 +25,22 @@ export const EssenceFields = ({ register, statusEffects, watch, setValue, errors
 
       {/* Vantagem Tática */}
       <div className='col-span-2'>
-        <InputGroup label="Vantagem Tática (VS)" error={errors?.advantageAgainst}>
-          <div className="relative group">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-10">
-              <Crosshair size={18} strokeWidth={2.5} />
-            </div>
-            <input
-              {...register('advantageAgainst', { required: "Obrigatório" })}
-              className={`${inputBaseClass} pl-12 pr-10`}
-              placeholder="ex.: Humanos, Demônios, Aquáticos..."
-            />
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-indigo-500/20 group-focus-within:bg-indigo-500 group-focus-within:shadow-[0_0_8px_#6366f1] transition-all" />
-          </div>
+        <InputGroup label="Vantagem Tática (VS)" error={errors?.advantageAgainst} icon={<Crosshair size={14} className="text-blue-500" />} >
+          <TagInput
+            name="advantageAgainst"
+            icon={<Crosshair size={18} strokeWidth={2.5} />}
+            register={register}
+            watch={watch}
+            setValue={setValue}
+            placeholder="ex.: Humanos, Demônios..."
+          />
         </InputGroup>
       </div>
 
       {/* --- SEÇÃO 02: IDENTIDADE VISUAL (LADO A LADO) --- */}
 
       <div className="z-50">
-        <InputGroup label="Ícone Representativo">
+        <InputGroup label="Ícone Representativo" icon={<Info size={14} className="text-blue-500" />}>
           <IconInput
             register={register}
             watch={watch}
@@ -55,21 +50,21 @@ export const EssenceFields = ({ register, statusEffects, watch, setValue, errors
         </InputGroup>
       </div>
 
-      <InputGroup label="Aura Cromática">
+      <InputGroup label="Aura Cromática" icon={<Palette size={14} className="text-blue-500" />} >
         <ColorInput
           register={register}
           watch={watch}
           setValue={setValue}
           name="colorVar"
         />
-      </InputGroup>
+      </InputGroup >
 
       {/* --- SEÇÃO 03: VÍNCULO DE STATUS (FULL WIDTH) --- */}
 
       {/* 3. VÍNCULO DE STATUS (Módulos de Efeito Cromático) */}
       <div className="col-span-2">
         <InputGroup
-          label="Status Effect Vinculado"
+          label="Status Vinculado"
           icon={<LinkIcon size={14} className="text-blue-500" />}
           error={errors?.statusId}
         >
