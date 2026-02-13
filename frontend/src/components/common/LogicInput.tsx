@@ -1,6 +1,6 @@
 import React from 'react';
-import { Terminal, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { textareaBaseClass } from '../../config/vault.config';
 
 interface Macro {
@@ -50,65 +50,69 @@ export const LogicInput = ({
     watch,
     setValue,
     name,
-    placeholder = "Aguardando definição de protocolo...",
+    placeholder = "Inicie a redação do protocolo...",
     macros = DEFAULT_MACROS
 }: LogicInputProps) => {
-
     const currentValue = watch(name) || "";
+    const textAreaRef = React.useRef<HTMLTextAreaElement | null>(null);
+
+    // Protocolo de expansão automática do terminal
+    React.useEffect(() => {
+        if (textAreaRef.current) {
+            textAreaRef.current.style.height = "auto";
+            textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+        }
+    }, [currentValue]);
 
     const injectMacro = (macroValue: string) => {
         const space = currentValue && !currentValue.endsWith(' ') ? ' ' : '';
         setValue(name, currentValue + space + macroValue, { shouldValidate: true });
     };
 
+    const { ref, ...rest } = register(name);
+
     return (
-        <div className="space-y-4 w-full">
-            {/* 1. SELETOR DE MACROS (NUVEM DE INJEÇÃO COMPACTA) */}
-            <div className="flex flex-wrap gap-2 px-1 py-2 max-h-40 overflow-y-auto no-scrollbar">
+        <div className="space-y-6 w-full">
+            {/* 1. NUVEM DE INJEÇÃO (MACROS SUAVES) */}
+            <div className="flex flex-wrap gap-2.5">
                 {macros.map((macro) => (
                     <motion.button
                         key={macro.label}
                         type="button"
-                        whileHover={{
-                            y: -2,
-                            backgroundColor: "rgba(255, 255, 255, 1)",
-                            boxShadow: `0 8px 15px -8px ${macro.color}60`
-                        }}
-                        whileTap={{ scale: 0.96 }}
+                        whileHover={{ y: -2, backgroundColor: "#fff" }}
+                        whileTap={{ scale: 0.97 }}
                         onClick={() => injectMacro(macro.value)}
-                        style={{ '--hover-color': macro.color } as any}
-                        className={`
-        relative flex items-center gap-2.5 px-3 py-1.5 
-        bg-white/60 backdrop-blur-sm border-2 border-white/80 rounded-xl 
-        transition-all duration-300 hover:border-[var(--hover-color)]
-      `}
+                        className="flex items-center gap-2.5 px-4 py-2 bg-white/40 backdrop-blur-md border border-white rounded-2xl shadow-sm hover:shadow-md transition-all group"
                     >
-                        {/* DOT DE FREQUÊNCIA (STATUS LED) */}
                         <div
-                            className="w-1.5 h-1.5 rounded-full shadow-inner shrink-0"
+                            className="w-1.5 h-1.5 rounded-full shadow-sm"
                             style={{ backgroundColor: macro.color }}
                         />
-
-                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-wider group-hover:text-slate-800 whitespace-nowrap">
+                        <span className="text-[10px] font-bold text-slate-500 tracking-tight group-hover:text-slate-800 transition-colors">
                             {macro.label}
                         </span>
-
-                        {/* INDICADOR DE CATEGORIA (OVERLAY SUTIL) */}
-                        <div
-                            className="absolute inset-x-0 bottom-0 h-0.5 opacity-0 group-hover:opacity-40 transition-opacity"
-                            style={{ backgroundColor: macro.color }}
-                        />
                     </motion.button>
                 ))}
             </div>
 
-            <textarea
-                {...register(name)}
-                rows={4}
-                className={textareaBaseClass}
-                placeholder={placeholder}
-            />
+            {/* 2. ÁREA DE TEXTO AUTO-EXPANSÍVEL (CERAMIC GLASS) */}
+            <div className="relative group">
+                <textarea
+                    {...rest}
+                    ref={(e) => {
+                        ref(e);
+                        textAreaRef.current = e;
+                    }}
+                    placeholder={placeholder}
+                    className={`${textareaBaseClass} min-h-45! bg-white/20! backdrop-blur-xl! border-white! rounded-[2.5rem]! py-8! px-8! text-base! leading-relaxed! resize-none! overflow-hidden focus:bg-white/80! focus:shadow-2xl focus:shadow-blue-500/5 transition-all duration-700`}
+                />
 
+                {/* INDICADOR DE SINAL (VISUAL) */}
+                <div className="absolute bottom-6 right-8 flex items-center gap-2 opacity-20 group-focus-within:opacity-100 transition-opacity duration-500">
+                    <span className="text-[9px] font-bold text-blue-500 tracking-widest uppercase">Escrita_Ativa</span>
+                    <Sparkles size={14} className="text-blue-500" />
+                </div>
+            </div>
         </div>
     );
 };

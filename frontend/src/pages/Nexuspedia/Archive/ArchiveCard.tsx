@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Bookmark, Clock, User, Hash } from 'lucide-react';
+import { Bookmark, Clock, User } from 'lucide-react';
 
 const CATEGORY_STYLES = {
   LORE: "from-purple-500/20 to-indigo-500/20 text-indigo-600 border-indigo-100",
@@ -21,7 +21,7 @@ export const ArchiveCard = ({ archive, onClick }) => {
       <div className="relative bg-white/90 rounded-[3.2rem] p-8 h-full overflow-hidden border border-white">
         
         {/* EFEITO DE LUZ (PRISMA) */}
-        <div className={`absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br ${style} blur-3xl opacity-40 group-hover:opacity-70 transition-opacity`} />
+        <div className={`absolute -top-24 -right-24 w-48 h-48 bg-linear-to-br ${style} blur-3xl opacity-40 group-hover:opacity-70 transition-opacity`} />
 
         <div className="relative z-10 flex flex-col h-full">
           {/* HEADER */}

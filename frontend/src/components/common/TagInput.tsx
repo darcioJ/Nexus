@@ -1,4 +1,4 @@
-import React, { useState, type KeyboardEvent } from 'react';
+import React, { useState, useMemo, type KeyboardEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus } from 'lucide-react';
 import { triggerHaptic } from '../../utils/triggerHaptic'; // Ajuste o path
@@ -13,23 +13,26 @@ interface TagInputProps {
   placeholder?: string;
 }
 
-export const TagInput = ({ 
-  register, 
-  watch, 
-  setValue, 
-  name, 
-  icon, 
-  placeholder = "Adicionar..." 
+export const TagInput = ({
+  register,
+  watch,
+  setValue,
+  name,
+  icon,
+  placeholder = "Adicionar..."
 }: TagInputProps) => {
   const [inputValue, setInputValue] = useState('');
-  
+
   // Recupera o valor atual do form e converte em array para manipulação local
   const currentString = watch(name) || "";
-  
+
   // Converte a string "Item 1, Item 2 e Item 3" de volta para Array
-  const items = currentString 
-    ? currentString.split(/, | e /).filter(Boolean) 
-    : [];
+  const items = useMemo(() => {
+    if (Array.isArray(currentString)) return currentString;
+    return typeof currentString === 'string' && currentString
+      ? currentString.split(/, | e /).filter(Boolean)
+      : [];
+  }, [currentString]);
 
   const updateFormValue = (newItems: string[]) => {
     // Formata o array para: "Item 1, Item 2 e Item 3"
@@ -40,7 +43,7 @@ export const TagInput = ({
       const last = newItems.pop();
       formattedString = `${newItems.join(', ')} e ${last}`;
     }
-    
+
     setValue(name, formattedString, { shouldValidate: true });
   };
 
@@ -74,13 +77,13 @@ export const TagInput = ({
         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors z-10">
           {icon}
         </div>
-        
+
         <input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className={`${inputBaseClass} !pl-12 !pr-16`}
+          className={`${inputBaseClass} pl-12! pr-16!`}
         />
 
         {/* BOTÃO ADICIONAR RÁPIDO */}

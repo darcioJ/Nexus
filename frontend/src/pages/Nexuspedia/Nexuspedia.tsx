@@ -36,11 +36,17 @@ export const Nexuspedia: React.FC = () => {
   const [selectedWeapon, setSelectedWeapon] = useState();
   const [selectedArchive, setSelectedArchive] = useState<any>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingArchive, setEditingArchive] = useState<any>(null);
 
   // Efeito para carregar os arquivos ao montar
   useEffect(() => {
     fetchAll();
   }, [fetchAll]);
+
+  const handleOpenCreate = () => {
+    setEditingArchive(null); // Limpa qualquer resquício de edição
+    setIsFormOpen(true);
+  };
 
   // Lógica de filtragem para Arquivos
   const filteredArchives = useMemo(() => {
@@ -57,7 +63,7 @@ export const Nexuspedia: React.FC = () => {
     if (activeTab === 'essences') return Array.from(new Set(vault?.essences?.map((e) => e.category) || []));
     if (activeTab === 'archives') return ["LORE", "REGRAS", "LOGS", "SISTEMA"];
     return [];
-  }, [activeTab, vault, archives]);
+  }, [activeTab, vault]);
 
 
   const filteredEssences = useMemo(() => {
@@ -68,11 +74,6 @@ export const Nexuspedia: React.FC = () => {
       return matchesSearch && matchesCat;
     });
   }, [searchTerm, selectedCat, vault]);
-
-  const categories = useMemo(() => {
-    if (!vault?.essences) return [];
-    return Array.from(new Set(vault.essences.map((e) => e.category)));
-  }, [vault]);
 
   if (isLoading) return <LoadingScreen message="Sincronizando Nexuspédia..." />;
 
@@ -183,7 +184,7 @@ export const Nexuspedia: React.FC = () => {
 
                     {/* ACESSO RÁPIDO PARA INJEÇÃO (Mestre_Nexus) */}
                     <button
-                      onClick={() => setIsFormOpen(true)}
+                      onClick={handleOpenCreate}
                       className="ml-auto shrink-0 px-6 py-3 rounded-2xl text-[10px] font-black uppercase bg-blue-600 text-white flex items-center gap-2 hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-200"
                     >
                       <FilePlus size={14} /> Injetar_Log
@@ -233,17 +234,37 @@ export const Nexuspedia: React.FC = () => {
           <ArchiveDetailModal
             archive={selectedArchive}
             onClose={() => setSelectedArchive(null)}
-            isMaster={true} // Aqui você passaria a lógica do seu hook de Auth
+            isMaster={true} // Aqui entra sua lógica de permissão
+            onEditRequested={(archive) => {
+              setSelectedArchive(null); // Fecha o detalhe
+              setEditingArchive(archive); // Define quem vamos editar
+              setIsFormOpen(true); // Abre o formulário
+            }}
           />
         )}
       </AnimatePresence>
 
       <ArchiveFormModal
         isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        onSave={(data) => {
-          addArchive(data);
+        initialData={editingArchive} // Passamos os dados atuais para o form
+        onClose={() => {
           setIsFormOpen(false);
+          setEditingArchive(null); // Limpa ao fechar
+        }}
+        onSave={async (data) => {
+          try {
+            if (editingArchive) {
+              // MODO EDIÇÃO: Re-calibra os dados existentes
+              await editArchive(editingArchive._id, data);
+            } else {
+              // MODO CRIAÇÃO: Injeta novo log
+              await addArchive(data);
+            }
+            setIsFormOpen(false);
+            setEditingArchive(null);
+          } catch (err) {
+            console.error("Falha na operação do Códice");
+          }
         }}
       />
 
